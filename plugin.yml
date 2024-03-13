@@ -1,0 +1,14 @@
+name: Rebug
+version: 1.0
+main: me.killstorm103.Rebug.Main.Rebug
+author: killstorm103
+description: helpful plugin
+commands:
+  rebug:
+    description: command prefix for using rebugs commands
+    usage: rebug <command>
+    permissions:
+      me.killstorm103.rebug.commands.*:
+      description: gives all rebug permissions!
+     
+    
