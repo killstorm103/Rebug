@@ -51,6 +51,7 @@ if (packet instanceof S2BPacketChangeGameState)
 
 Fake Death Exploit:
 in: AntiExploit
+on: EventPacket
 Do:
 if (packet instanceof S19PacketEntityStatus) 
 				{
@@ -63,5 +64,30 @@ if (packet instanceof S19PacketEntityStatus)
 						e.Skip();
 					}
 				}
+
+------------------
+
+Log4j Crash Exploit:
+in: AntiCrasher:
+on EventPacket:
+Do:
+if (packet instanceof S02PacketChat && getBool("Log4j"))
+				{
+					S02PacketChat chat = (S02PacketChat) packet;
+					if (chat.getChatComponent().getUnformattedText().contains("${jndi:ldap")
+							|| chat.getChatComponent().getUnformattedText().contains("${java:version}")) {
+						if (getBool("Notify"))
+							Log(null, "Log4j Crash Exploit");
+
+						e.Skip();
+					}
+				}
+
+------------------
+
+Particles Crash:
+in: AntiCrasher
+on: EventPacket
+Do: if (getBool("Particles") && packet instanceof S2APacketParticles) e.Skip ();
 
 ------------------
