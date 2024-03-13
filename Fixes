@@ -1,0 +1,50 @@
+How to fix some of the Client Crashers/Exploits:
+
+------------------
+
+SpawnEntity Crash:
+in: DataWatcher.class
+go to:  /**
+     * gets the bytevalue of a watchable object
+     */
+    public byte getWatchableObjectByte(int id)
+
+and Do:
+final AntiCrasher antiCrasher = (AntiCrasher) Module.getMod(AntiCrasher.class);
+    	if (antiCrasher.isEnabled() && antiCrasher.getBool("Catch DataWatcher"))
+    	{
+    		byte Flex = 0;
+    		try
+    		{
+    			 Flex = ((Byte) this.getWatchedObject(id).getObject()).byteValue();
+    		}
+    		catch (Exception e) 
+    		{
+    			if (antiCrasher.getBool("Notify"))
+    			{
+    				Module.Log(null, "You were attacked, spawn entity Crash Exploit");
+    			}
+			}
+    		return Flex;
+    	}
+        return ((Byte) this.getWatchedObject(id).getObject()).byteValue();
+
+------------------
+
+Game Demo Exploit:
+in: AntiExploit:
+on: EventPacket:
+Do:
+if (packet instanceof S2BPacketChangeGameState)
+				{
+					S2BPacketChangeGameState GameState = (S2BPacketChangeGameState) packet;
+					if (getBool("GameStateDemo") && GameState.getGameState() == 5)
+					{
+						if (getBool("Notify"))
+							Log(Method.BothChatAndConsole, "Player/Server tried using the " + ChatFormatting.RED
+									+ "GameState " + ChatFormatting.RED + "Demo Exploit");
+						e.Skip();
+					}
+				}
+
+------------------
