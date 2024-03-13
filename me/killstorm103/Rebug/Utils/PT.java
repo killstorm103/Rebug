@@ -12,44 +12,52 @@ import net.minecraft.server.v1_8_R3.*;
 
 public class PT
 {
-	public static Class<?> getNMSClass(String name) {
-        try {
+	public static Class<?> getNMSClass(String name) 
+	{
+        try 
+        {
             return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
         }
-        catch (ClassNotFoundException e) {
+        catch (ClassNotFoundException e) 
+        {
             e.printStackTrace();
             return null;
         }
     }
-	public static void SendPacket(Player player, Packet<?> p) {
-        try {
-            Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke((Object)player, new Object[0]);
+	public static void SendPacket(Player player, Packet<?> packet) 
+	{
+        try 
+        {
+            Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke((Object) player, new Object[0]);
             Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, p);
+            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
         }
         catch (Exception e) 
         {
             e.printStackTrace();
         }
     }
-	public static double randomNumber(int max, int min) 
+	public static double randomNumber (int max, int min) 
     {
         return (Math.random() * (max - min)) + min;
     }
-	public static float randomNumber(float max, float min) {
+	public static float randomNumber (float max, float min) 
+	{
         return (float) ((Math.random() * (max - min)) + min);
     }
-    public static long randomNumber(long max, long min) {
+    public static long randomNumber (long max, long min) 
+    {
         return (long) ((Math.random() * (max - min)) + min);
     }
-    public static double randomNumber(double max, double min) 
+    public static double randomNumber (double max, double min) 
     {
         return (Math.random() * (max - min)) + min;
     }
-    public static boolean nextBoolean() {
+    public static boolean nextBoolean () 
+    {
         return new Random().nextBoolean();
     }
-	public static int nextInt(final int startInclusive, final int endExclusive) 
+	public static int nextInt (final int startInclusive, final int endExclusive) 
 	{
         if (endExclusive - startInclusive <= 0) 
             return startInclusive;
@@ -57,7 +65,7 @@ public class PT
         return startInclusive + new Random().nextInt(endExclusive - startInclusive);
     }
     
-    public static double nextDouble(final double startInclusive, final double endInclusive)
+    public static double nextDouble (final double startInclusive, final double endInclusive)
     {
         if (startInclusive == endInclusive || endInclusive - startInclusive <= 0.0) 
             return startInclusive;
@@ -65,30 +73,30 @@ public class PT
         return startInclusive + (endInclusive - startInclusive) * Math.random();
     }
     
-    public static float nextFloat(final float startInclusive, final float endInclusive)
+    public static float nextFloat (final float startInclusive, final float endInclusive)
     {
         if (startInclusive == endInclusive || endInclusive - startInclusive <= 0.0f)
             return startInclusive;
         
         return (float)(startInclusive + (endInclusive - startInclusive) * Math.random());
     }
-    
-    public static String randomNumber(final int length) 
+     
+    public static String randomNumber (final int length) 
     {
         return random(length, "123456789");
     }
     
-    public static String randomString(final int length) 
+    public static String randomString (final int length) 
     {
         return random(length, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
     }
     
-    public static String random(final int length, final String chars)
+    public static String random (final int length, final String chars)
     {
         return random(length, chars.toCharArray());
     }
     
-    public static String random(final int length, final char[] chars)
+    public static String random (final int length, final char[] chars)
     {
         final StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < length; ++i) {
@@ -97,7 +105,7 @@ public class PT
         return stringBuilder.toString();
     }
     private static EntityLiving entity = null;
-    public static void CrashPlayer(CommandSender sender, Player willBeCrashed, String mode)
+    public static void CrashPlayer (CommandSender sender, Player willBeCrashed, String mode)
     {
     	entity = null;
     	if (mode != null && mode.length() > 0)
