@@ -48,3 +48,20 @@ if (packet instanceof S2BPacketChangeGameState)
 				}
 
 ------------------
+
+Fake Death Exploit:
+in: AntiExploit
+Do:
+if (packet instanceof S19PacketEntityStatus) 
+				{
+					S19PacketEntityStatus EntityStatus = (S19PacketEntityStatus) packet;
+					if (getBool("Fake Death") && EntityStatus.getEntity(theWorld()) == thePlayer() && EntityStatus.getOpCode() == 3) 
+					{
+						if (getBool("Notify"))
+							Log(null, "Player/Server tried using the " + ChatFormatting.RED + "FakeDeath Exploit");
+
+						e.Skip();
+					}
+				}
+
+------------------
