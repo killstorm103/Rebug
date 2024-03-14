@@ -64,7 +64,7 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventJoinAndLeave(), this);
         pm.registerEvents(new EventTest(), this);
         pm.registerEvents(new EventWeather(),  this);
-        pm.registerEvents(new EventPlayerSpawnLocation(), this);
+        pm.registerEvents(new EventHandlePlayerSpawn(), this);
         
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
 
