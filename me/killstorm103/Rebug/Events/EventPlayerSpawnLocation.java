@@ -10,6 +10,7 @@ public class EventPlayerSpawnLocation implements Listener
 	 @EventHandler
 	 public void onPlayerSpawn(PlayerSpawnLocationEvent e)
 	 {
-		 e.setSpawnLocation(new Location(e.getPlayer().getWorld(), 41, 58, 319));
+		 if (!e.getPlayer().isOp())
+			 e.setSpawnLocation(new Location(e.getPlayer().getWorld(), 41, 58, 319));
 	 }
 }
