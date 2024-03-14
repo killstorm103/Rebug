@@ -24,6 +24,10 @@ public class PT
             return null;
         }
     }
+	public static EntityPlayer getEntityPlayer (Player player)
+	{
+		return ((CraftPlayer) player).getHandle();
+	}
 	public static void SendPacket(Player player, Packet<?> packet) 
 	{
         try 
