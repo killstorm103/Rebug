@@ -9,6 +9,6 @@ public class EventWeather implements Listener
 	@EventHandler
 	public void onWeather (WeatherChangeEvent e)
 	{
-		e.setCancelled(true);
+		e.setCancelled(Rebug.getGetMain().getConfig().getBoolean("cancel-weather-changes"));
 	}
 }
