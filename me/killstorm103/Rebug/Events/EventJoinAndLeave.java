@@ -16,7 +16,7 @@ public class EventJoinAndLeave implements Listener
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoin (PlayerJoinEvent e) 
 	{
-		if (!e.getPlayer().isOp())
+		if (Rebug.getGetMain().getConfig().getBoolean("force-gamemode-on-join") && !e.getPlayer().isOp())
 			e.getPlayer().setGameMode(GameMode.SURVIVAL);
 		
 		String message = Rebug.getGetMain().getConfig().getString("join-message");
