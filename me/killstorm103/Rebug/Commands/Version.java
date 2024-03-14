@@ -31,7 +31,7 @@ public class Version extends Command
 	@Override
 	public void onCommand(CommandSender sender, String[] args) throws Exception 
 	{
-		Log(sender, "Rebug v" + Rebug.PluginVersion() + " made by " + Rebug.getAuthor());
+		Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.RESET + "v" + Rebug.PluginVersion() + " made by " + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|");
 	}
 	
 }
