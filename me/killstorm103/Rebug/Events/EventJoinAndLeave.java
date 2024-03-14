@@ -19,9 +19,9 @@ public class EventJoinAndLeave implements Listener
 		if (!e.getPlayer().isOp())
 			e.getPlayer().setGameMode(GameMode.SURVIVAL);
 		
-		String message = Rebug.getGetMain().getConfig().getString("join-message").replace("%player%", e.getPlayer().getName());
+		String message = Rebug.getGetMain().getConfig().getString("join-message");
 		if (message != null && message.length() > 0 && e.getPlayer().isOp())
-			e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+			e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', message.replace("%player%", e.getPlayer().getName())));
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
