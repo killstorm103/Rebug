@@ -21,6 +21,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin
 {
+	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
 	private static Rebug getMain;
 	private ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
     
@@ -74,12 +75,10 @@ public class Rebug extends JavaPlugin
 	@Override
 	public void onDisable ()
 	{
-		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug Plugin");
+		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug");
 	}
 	  @Override
 	    public void onLoad() {
-	        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-	        PacketEvents.getAPI().load();
 	    }
 
 	
@@ -120,19 +119,28 @@ public class Rebug extends JavaPlugin
 				
 			for (me.killstorm103.Rebug.Main.Command commands : commands)
 			{
-				if (args[0].equalsIgnoreCase(commands.getName()) && (player == null || player.hasPermission(commands.getPermission()) || player.hasPermission("me.killstorm103.rebug.commands.*")))
+				if (args[0].equalsIgnoreCase(commands.getName()))
 				{
-					try
+					if (player == null || player.hasPermission(commands.getPermission()) || player.hasPermission(AllCommands_Permission))
 					{
-						commands.onCommand(sender, args);
-						if (Debug())
-							sender.sendMessage("args.length= " + args.length);
-					} 
-					catch (Exception e) 
-					{
-						e.printStackTrace();
+						try
+						{
+							commands.onCommand(sender, args);
+							if (Debug())
+								sender.sendMessage("args.length= " + args.length);
+						} 
+						catch (Exception e) 
+						{
+							e.printStackTrace();
+							if (Debug())
+								sender.sendMessage("args.length= " + args.length);
+						}
 					}
-					
+					else
+					{
+						if (player != null)
+							player.sendMessage("You don't have Permission to use this Command!");
+					}
 					return true;
 				}
 			}
