@@ -74,7 +74,7 @@ public class Rebug extends JavaPlugin
 		PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new EventBlockHandling(), this);
         pm.registerEvents(new EventJoinAndLeave(), this);
-        pm.registerEvents(new EventTest(), this);
+        pm.registerEvents(new EventMenus(), this);
         pm.registerEvents(new EventWeather(),  this);
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
         
