@@ -17,6 +17,7 @@ import net.md_5.bungee.api.ChatColor;
 public class Rebug extends JavaPlugin
 {
 	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
+	private static String Version = "0.0";
 	private static Rebug getMain;
 	private ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
     
@@ -34,7 +35,11 @@ public class Rebug extends JavaPlugin
 	}
 	public static double PluginVersion ()
 	{
-		return 1;
+		if (Version.contains("0.0"))
+			getGetMain().getServer().getConsoleSender().sendMessage("Please restart the server, there was a error when you enabled/loaded Rebug");
+		
+		
+		return Double.parseDouble(Version);
 	}
 	public boolean DevMode ()
 	{
@@ -42,12 +47,19 @@ public class Rebug extends JavaPlugin
 	}
 	public boolean Debug ()
 	{
-		return false;
+		return getConfig().getBoolean("debugger");
 	}
 	@Override
 	public void onEnable ()
 	{
 		getMain = this;
+		saveDefaultConfig();
+		try
+		{
+			Version = Rebug.getGetMain().getDescription().getVersion();
+		}
+		catch (Exception e) {e.printStackTrace();}
+		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
 		commands.add(new Crasher());
 		commands.add(new GetIP());
@@ -69,16 +81,16 @@ public class Rebug extends JavaPlugin
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
 
         
-        getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug V" + PluginVersion());
+        getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug v" + PluginVersion());
 	}
 	@Override
 	public void onDisable ()
 	{
-		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug Plugin");
+		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug");
 	}
 	
 	@Override
-	public void onLoad() {}
+	public void onLoad () {}
 
 	
 	public ArrayList<me.killstorm103.Rebug.Main.Command> getCommands() {
