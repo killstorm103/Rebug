@@ -1,2 +1,4 @@
-join-message: 'Welcome &cRebugger'
+join-message: '&l&7Welcome &l&4Rebugger&l&7 %player%'
 debugger: false
+cancel-weather-changes: true
+force-gamemode-on-join: true
