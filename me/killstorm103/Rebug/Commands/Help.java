@@ -15,16 +15,16 @@ public class Help extends Command
 
 	@Override
 	public String getSyntax() {
-		return "help | help <command>";
+		return "help | help <'command'> <command name>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "gets a list of commands";
+		return "gets a list of commands and Syntax of commands";
 	}
 	@Override
 	public String getPermission() {
-		return "me.killstorm103.rebug.commands.help";
+		return StartOfPermission() + "help";
 	}
 	
 
@@ -38,12 +38,16 @@ public class Help extends Command
 		{
 			if (args.length == 1)
 			{
-				Log(sender, commands.getName());
+				if (sender instanceof Player)
+				{
+					if (((Player) sender).hasPermission(commands.getPermission()) || ((Player) sender).hasPermission(Rebug.AllCommands_Permission))
+						Log(sender, "/rebug " + commands.getName());
+				}
+				else
+					Log(sender, "/rebug " + commands.getName());
 			}
-			if (args.length == 2 && args[1].equalsIgnoreCase(commands.getName()))
-			{
-				Log(sender, commands.getSyntax());
-			}
+			if (args.length == 3 && args[1].equalsIgnoreCase("command") && args[2].equalsIgnoreCase(commands.getName()))
+				Log(sender, "/rebug " + commands.getSyntax());
 		}
 	}
 	
