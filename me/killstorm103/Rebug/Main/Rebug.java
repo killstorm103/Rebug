@@ -7,14 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.github.retrooper.packetevents.PacketEvents;
-
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.killstorm103.Rebug.Commands.*;
 import me.killstorm103.Rebug.Events.*;
 import net.md_5.bungee.api.ChatColor;
@@ -71,16 +66,19 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventWeather(),  this);
         pm.registerEvents(new EventPlayerSpawnLocation(), this);
         
-		getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug V" + PluginVersion());
+        getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
+
+        
+        getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug V" + PluginVersion());
 	}
 	@Override
 	public void onDisable ()
 	{
-		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug");
+		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug Plugin");
 	}
-	  @Override
-	    public void onLoad() {
-	    }
+	
+	@Override
+	public void onLoad() {}
 
 	
 	public ArrayList<me.killstorm103.Rebug.Main.Command> getCommands() {
@@ -114,6 +112,9 @@ public class Rebug extends JavaPlugin
 				Bukkit.dispatchCommand(sender, "rebug help");
 				return true;
 			}
+			if (Debug())
+				sender.sendMessage("args.length= " + args.length);
+			
 			Player player = null;
 			if (sender instanceof Player)
 				player = (Player) sender;
@@ -127,14 +128,10 @@ public class Rebug extends JavaPlugin
 						try
 						{
 							commands.onCommand(sender, args);
-							if (Debug())
-								sender.sendMessage("args.length= " + args.length);
 						} 
 						catch (Exception e) 
 						{
 							e.printStackTrace();
-							if (Debug())
-								sender.sendMessage("args.length= " + args.length);
 						}
 					}
 					else
