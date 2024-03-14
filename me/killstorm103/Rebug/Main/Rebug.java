@@ -65,10 +65,11 @@ public class Rebug extends JavaPlugin
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
 		PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents((Listener) new EventBlockHandling(), (Plugin)this);
-        pm.registerEvents((Listener) new EventJoinAndLeave(), (Plugin)this);
-        pm.registerEvents((Listener) new EventTest(), (Plugin)this);
-        pm.registerEvents((Listener) new EventWeather(), (Plugin)this);
+        pm.registerEvents(new EventBlockHandling(), this);
+        pm.registerEvents(new EventJoinAndLeave(), this);
+        pm.registerEvents(new EventTest(), this);
+        pm.registerEvents(new EventWeather(),  this);
+        pm.registerEvents(new EventPlayerSpawnLocation(), this);
         
 		getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug V" + PluginVersion());
 	}
