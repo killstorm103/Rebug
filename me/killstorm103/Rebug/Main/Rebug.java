@@ -68,6 +68,7 @@ public class Rebug extends JavaPlugin
 		commands.add(new getInfo());
 		commands.add(new Test());
 		commands.add(new Exploit());
+		commands.add(new Menu());
 		commands.add(new Help());
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
