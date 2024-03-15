@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import me.killstorm103.Rebug.Main.Rebug;
 import net.minecraft.server.v1_8_R3.*;
@@ -24,6 +26,13 @@ public class PT
             return null;
         }
     }
+	public static Inventory createInventory (InventoryHolder holder, int size, String title)
+	{
+		Inventory inv = Bukkit.createInventory(holder, size, title);
+		inv.clear();
+		
+		return inv;
+	}
 	public static EntityPlayer getEntityPlayer (Player player)
 	{
 		return ((CraftPlayer) player).getHandle();
@@ -41,9 +50,9 @@ public class PT
             e.printStackTrace();
         }
     }
-	public static double randomNumber (int max, int min) 
+	public static int randomNumber (int max, int min) 
     {
-        return (Math.random() * (max - min)) + min;
+        return (int) ((Math.random() * (max - min)) + min);
     }
 	public static float randomNumber (float max, float min) 
 	{
@@ -114,7 +123,7 @@ public class PT
     	entity = null;
     	if (mode != null && mode.length() > 0)
     	{
-    		final EntityPlayer px = ((CraftPlayer) willBeCrashed).getHandle();
+    		final EntityPlayer px = PT.getEntityPlayer(willBeCrashed);
     		if (mode.equalsIgnoreCase("creeper"))
     			entity = new EntityCreeper(px.world);
     		
