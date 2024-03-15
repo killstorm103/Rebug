@@ -67,7 +67,7 @@ public class Menu extends Command
 			Inventory inventory = OldInventory = null;
 			if (menu.equalsIgnoreCase("crashers"))
 			{
-				OldInventory = inventory = PT.createInventory(player, 18, ChatColor.DARK_RED + "Crashers");
+				inventory = OldInventory = PT.createInventory(player, 18, ChatColor.DARK_RED + "Crashers");
 				item = Reset(new ItemStack(Material.CLAY));
 				itemMeta.setDisplayName(ChatColor.RED + "GameState");
 				lore.add("GameState Exploit!");
@@ -128,7 +128,7 @@ public class Menu extends Command
 			}
 			if (menu.equalsIgnoreCase("exploits"))
 			{
-				OldInventory = inventory = PT.createInventory(player, 9, ChatColor.DARK_RED + "Crashers");
+				inventory = OldInventory = PT.createInventory(player, 9, ChatColor.DARK_RED + "Exploits");
 				item = Reset(new ItemStack(Material.DEAD_BUSH));
 				itemMeta.setDisplayName(ChatColor.RED + "Fake Death");
 				lore.add("Fake Death Exploit!");
