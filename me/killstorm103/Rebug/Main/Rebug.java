@@ -61,14 +61,13 @@ public class Rebug extends JavaPlugin
 		catch (Exception e) {e.printStackTrace();}
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
-		commands.add(new Crasher());
 		commands.add(new GetIP());
 		commands.add(new Unblock());
 		commands.add(new Version());
 		commands.add(new getInfo());
 		commands.add(new Test());
-		commands.add(new Exploit());
 		commands.add(new Menu());
+		commands.add(new GameVersion());
 		commands.add(new Help());
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
@@ -80,6 +79,8 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
         
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
+      
+      // 	PacketEvents.getAPI().getEventManager().registerListener(new TestPacket(), PacketListenerPriority.NORMAL);
 
         
         getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug v" + PluginVersion());
