@@ -3,4 +3,4 @@ debugger: false
 cancel-weather-changes: true
 force-gamemode-on-join: true
 rebug-scoreboard: true
-scoreboard-title: '&l&7killstorm103''s&r'
+scoreboard-title: '&l&7killstorm103''s&r %player%'
