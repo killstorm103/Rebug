@@ -6,6 +6,7 @@ import me.killstorm103.Rebug.Main.Command;
 
 public class Test extends Command
 {
+	public static boolean Packets = false;
 
 	@Override
 	public String getName() {
@@ -29,5 +30,7 @@ public class Test extends Command
 	@Override
 	public void onCommand(CommandSender sender, String[] args) throws Exception
 	{
+		Packets =! Packets;
+		sender.sendMessage("PacketEvents= " + Packets);
 	}
 }

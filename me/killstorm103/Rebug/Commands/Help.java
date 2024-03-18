@@ -1,6 +1,8 @@
 package me.killstorm103.Rebug.Commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
@@ -9,21 +11,25 @@ public class Help extends Command
 {
 
 	@Override
-	public String getName() {
+	public String getName() 
+	{
 		return "help";
 	}
 
 	@Override
-	public String getSyntax() {
+	public String getSyntax () 
+	{
 		return "help | help <'command'> <command name>";
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription () 
+	{
 		return "gets a list of commands and Syntax of commands";
 	}
 	@Override
-	public String getPermission() {
+	public String getPermission ()
+	{
 		return StartOfPermission() + "help";
 	}
 	
@@ -32,7 +38,7 @@ public class Help extends Command
 	public void onCommand(CommandSender sender, String[] args) throws Exception 
 	{
 		if (args.length == 1)
-			Log(sender, "commands:");
+			Log(sender, ChatColor.GRAY + "commands" + ChatColor.RESET + ":");
 		
 		for (Command commands : Rebug.getGetMain().getCommands())
 		{
@@ -41,14 +47,13 @@ public class Help extends Command
 				if (sender instanceof Player)
 				{
 					if (((Player) sender).hasPermission(commands.getPermission()) || ((Player) sender).hasPermission(Rebug.AllCommands_Permission))
-						Log(sender, "/rebug " + commands.getName());
+						Log(sender, ChatColor.GRAY + "/rebug " + commands.getName());
 				}
 				else
-					Log(sender, "/rebug " + commands.getName());
+					Log(sender, ChatColor.GRAY + "/rebug " + commands.getName());
 			}
 			if (args.length == 3 && args[1].equalsIgnoreCase("command") && args[2].equalsIgnoreCase(commands.getName()))
-				Log(sender, "/rebug " + commands.getSyntax());
+				Log(sender, ChatColor.GRAY + "/rebug " + commands.getSyntax());
 		}
 	}
-	
 }
