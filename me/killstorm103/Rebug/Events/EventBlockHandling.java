@@ -1,10 +1,15 @@
 package me.killstorm103.Rebug.Events;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+
 
 public class EventBlockHandling implements Listener
 {
@@ -22,6 +27,17 @@ public class EventBlockHandling implements Listener
 		
 		return false;
 	}
+	@EventHandler
+	public void onOpening (PlayerInteractEvent e)
+	{
+		Block block = e.getClickedBlock();
+		if (block != null && block.getType() == Material.SPRUCE_FENCE_GATE && !e.getPlayer().isOp())
+		{
+			if (block.getLocation().getBlockX() <= 59 && block.getLocation().getBlockY() == 58 && block.getLocation().getBlockZ() == 328 && block.getLocation().getBlockX() >= 58 && block.getLocation().getBlockY() == 58 && block.getLocation().getBlockZ() == 328)
+				e.setCancelled(true);
+		}
+	}
+	
 	@EventHandler
 	public void onBreakBlock (BlockBreakEvent e)
 	{
