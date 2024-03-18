@@ -67,7 +67,6 @@ public class Menu extends Command
 		{
 			if (args.length >= 3)
 			{
-				Log(sender, "" + args[2]);
 				Menu.player = getRebug().getServer().getPlayer(args[2]);
 				if (Menu.player == null)
 				{
