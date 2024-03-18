@@ -6,8 +6,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import me.killstorm103.Rebug.Main.Rebug;
 import net.minecraft.server.v1_8_R3.*;
@@ -26,9 +30,26 @@ public class PT
             return null;
         }
     }
+	public static void Log (CommandSender sender, String tolog)
+	{
+		sender.sendMessage(tolog);
+	}
+	public static void LogToConsole (String tolog)
+	{
+		Rebug.getGetMain().getServer().getConsoleSender().sendMessage(tolog);
+	}
+	// Inventory Size can be: 9, 18, 27, 36, 45, 54
+	
 	public static Inventory createInventory (InventoryHolder holder, int size, String title)
 	{
 		Inventory inv = Bukkit.createInventory(holder, size, title);
+		inv.clear();
+		
+		return inv;
+	}
+	public static Inventory createInventory (InventoryHolder holder, InventoryType type, String title)
+	{
+		Inventory inv = Bukkit.createInventory(holder, type, title);
 		inv.clear();
 		
 		return inv;
@@ -49,6 +70,11 @@ public class PT
         {
             e.printStackTrace();
         }
+    }
+	public static void SendPacket(Player player, Packet<?> packet, int loop) 
+	{
+		for (int i = 0;i < loop; i ++)
+			SendPacket(player, packet);
     }
 	public static int randomNumber (int max, int min) 
     {
@@ -148,4 +174,35 @@ public class PT
             }, 5L);
     	}
     }
+    public static int getPlayerVersion (Player player)
+    {
+    	return Via.getAPI().getPlayerVersion(player.getUniqueId());
+    }
+    public static String getPlayerVersion (int version)
+    {
+    	String v = "Protocol Number= " + version;
+    	v = ProtocolVersion.getProtocol(version).getName();
+    	return v;
+    }
+    
+    public static String SubString (String sub, int begin, int max)
+    {
+    	String ss = sub.substring(begin, Math.min(sub.length(), max));
+    	
+    	return ss;
+    }
+    public static int state (float seconds, float saturation, float brightness, long index)
+    {
+    	seconds = seconds < .002F ? .002F : seconds;
+    	float hue = ((System.currentTimeMillis() + index) % (int) (seconds * 1000)) / (float) (seconds * 1000);
+    	int color = java.awt.Color.HSBtoRGB(hue, saturation, brightness);
+    	return color;
+    }
+	public static World getWorld(Player crash_Victim) {
+		return getEntityPlayer(crash_Victim).getWorld();
+	}
+	public static String getServerVersion() 
+	{
+		return PT.SubString(Rebug.getGetMain().getServer().getBukkitVersion().trim(), 0, 6).replace("-", "");
+	}
 }
