@@ -191,13 +191,6 @@ public class PT
     	
     	return ss;
     }
-    public static int state (float seconds, float saturation, float brightness, long index)
-    {
-    	seconds = seconds < .002F ? .002F : seconds;
-    	float hue = ((System.currentTimeMillis() + index) % (int) (seconds * 1000)) / (float) (seconds * 1000);
-    	int color = java.awt.Color.HSBtoRGB(hue, saturation, brightness);
-    	return color;
-    }
 	public static World getWorld(Player crash_Victim) {
 		return getEntityPlayer(crash_Victim).getWorld();
 	}
