@@ -1,5 +1,5 @@
 name: Rebug
-version: 1.0
+version: 1.1
 main: me.killstorm103.Rebug.Main.Rebug
 author: killstorm103
 description: helpful plugin
@@ -10,5 +10,7 @@ commands:
     permissions:
       me.killstorm103.rebug.commands.*:
       description: gives all rebug permissions!
-     
-    
+ softdepend:
+ - ViaVersion
+ - ViaBackwards
+ - ViaRewind
