@@ -14,9 +14,13 @@ public abstract class Command
 	{
 		return Rebug.getGetMain();
 	}
-	public void Log (CommandSender sender, String tolog)
+	public static void Log (CommandSender sender, String tolog)
 	{
 		sender.sendMessage(tolog);
+	}
+	public static void LogToConsole (String tolog)
+	{
+		Rebug.getGetMain().getServer().getConsoleSender().sendMessage(tolog);
 	}
 	public String StartOfPermission ()
 	{
