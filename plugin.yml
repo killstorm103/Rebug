@@ -1,5 +1,5 @@
 name: Rebug
-version: 1.1
+version: 1.2
 main: me.killstorm103.Rebug.Main.Rebug
 author: killstorm103
 description: helpful plugin
@@ -7,3 +7,6 @@ commands:
   rebug:
     description: command prefix for using rebugs commands
     usage: rebug <command>
+    
+depend:
+- packetevents
