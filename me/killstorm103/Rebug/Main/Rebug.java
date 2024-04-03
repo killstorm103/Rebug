@@ -1,7 +1,9 @@
 package me.killstorm103.Rebug.Main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,9 +11,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.Messenger;
+import org.bukkit.scheduler.BukkitTask;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.killstorm103.Rebug.Commands.*;
 import me.killstorm103.Rebug.Events.*;
+import me.killstorm103.Rebug.PacketEvents.*;
+import me.killstorm103.Rebug.Tasks.ScoreBoard;
+import me.killstorm103.Rebug.Utils.*;
 import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin
@@ -20,6 +30,18 @@ public class Rebug extends JavaPlugin
 	private static String Version = "0.0";
 	private static Rebug getMain;
 	private ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
+	public static final HashMap<UUID, User> USERS = new HashMap<>();
+	
+	public static User getUser(Player player) 
+	{
+        for (User user : USERS.values()) 
+        {
+        	if (user.getPlayer() != player && !user.getPlayer().getUniqueId().equals(player.getUniqueId())) continue;
+        	
+        	return user;
+        }
+        return null;
+    }
     
 	public static String StartOfPermission ()
 	{
@@ -49,6 +71,8 @@ public class Rebug extends JavaPlugin
 	{
 		return getConfig().getBoolean("debugger");
 	}
+	private BukkitTask scoreboardTask;
+	
 	@Override
 	public void onEnable ()
 	{
@@ -67,7 +91,7 @@ public class Rebug extends JavaPlugin
 		commands.add(new getInfo());
 		commands.add(new Test());
 		commands.add(new Menu());
-		commands.add(new GameVersion());
+		commands.add(new ClientCMD());
 		commands.add(new Help());
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
@@ -77,28 +101,45 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventMenus(), this);
         pm.registerEvents(new EventWeather(),  this);
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
+        pm.registerEvents(new EventPlayer(),  this);
+        
+        Messenger messenger = Bukkit.getMessenger();
+        messenger.registerIncomingPluginChannel(this, "MC|Brand", new EventJoinAndLeave.BrandListener());
+        
+        scoreboardTask = getServer().getScheduler().runTaskTimer(this, ScoreBoard.getBoard(), 0, 25);
         
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
-      
-      // 	PacketEvents.getAPI().getEventManager().registerListener(new TestPacket(), PacketListenerPriority.NORMAL);
-
+        PacketEvents.IDENTIFIER = "REBUG";
+        PacketEvents.getAPI().getEventManager().registerListener(new TestPacket(), PacketListenerPriority.NORMAL);
         
+        PacketEvents.getAPI().init();
         getServer().getConsoleSender().sendMessage (ChatColor.DARK_GREEN + "Enabled Rebug v" + PluginVersion());
 	}
 	@Override
 	public void onDisable ()
 	{
+		if (scoreboardTask != null)
+			scoreboardTask.cancel();
+		
+		PacketEvents.getAPI().terminate();
 		getServer().getConsoleSender().sendMessage(ChatColor.DARK_RED + "Disabled Rebug");
 	}
 	
 	@Override
-	public void onLoad () {}
+	public void onLoad () 
+	{
+		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).bStats(true);
+        PacketEvents.getAPI().load();
+	}
 
 	
-	public ArrayList<me.killstorm103.Rebug.Main.Command> getCommands() {
+	public ArrayList<me.killstorm103.Rebug.Main.Command> getCommands ()
+	{
 		return commands;
 	}
-	public static Rebug getGetMain() {
+	public static Rebug getGetMain ()
+	{
 		return getMain;
 	}
 
@@ -118,7 +159,8 @@ public class Rebug extends JavaPlugin
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
 	{
-		if (command.equalsIgnoreCase(PluginName()))
+		command.toLowerCase();
+		if (command.equals(PluginName().toLowerCase()))
 		{
 			if (args.length == 0)
 			{
