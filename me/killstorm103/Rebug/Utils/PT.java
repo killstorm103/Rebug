@@ -1,18 +1,17 @@
 package me.killstorm103.Rebug.Utils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-
+import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemStack;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-
 import me.killstorm103.Rebug.Main.Rebug;
 import net.minecraft.server.v1_8_R3.*;
 
@@ -28,6 +27,29 @@ public class PT
         {
             e.printStackTrace();
             return null;
+        }
+    }
+	public static void PlaceItem (Player player, ItemStack item, BlockPosition blockposition, EnumDirection enumdirection, float facingX, float facingY, float facingZ)
+	{
+		net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
+		stack.placeItem(getEntityHuman(player), getWorld(player), blockposition, enumdirection, facingX, facingY, facingZ);
+	}
+	public static void IteminteractWith (Player player, ItemStack item, BlockPosition blockposition, EnumDirection enumdirection, float facingX, float facingY, float facingZ)
+	{
+		net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
+		stack.getItem().interactWith(stack, getEntityHuman(player), getWorld(player), blockposition, enumdirection, facingX, facingY, facingZ);
+	}
+	// TODO: Make
+	public static void PlaceItemWithPacket (Player player, BlockPosition blockposition, Block block, int arg, int arg2)
+	{
+		//SendPacket(player, packet);
+	}
+	public static void addChannel(Player p, String channel) {
+        try {
+            p.getClass().getMethod("addChannel", String.class).invoke(p, channel);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            e.printStackTrace();
         }
     }
 	public static void Log (CommandSender sender, String tolog)
@@ -57,6 +79,14 @@ public class PT
 	public static EntityPlayer getEntityPlayer (Player player)
 	{
 		return ((CraftPlayer) player).getHandle();
+	}
+	public static EntityHuman getEntityHuman (Player player)
+	{
+		return (EntityHuman) getEntityPlayer(player);
+	}
+	public static EnumDirection getDirection (Player player)
+	{
+		return getEntityPlayer(player).aH();
 	}
 	public static void SendPacket(Player player, Packet<?> packet) 
 	{
