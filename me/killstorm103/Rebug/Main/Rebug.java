@@ -1,5 +1,6 @@
 package me.killstorm103.Rebug.Main;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,20 +9,36 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitTask;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import me.killstorm103.Rebug.Commands.*;
-import me.killstorm103.Rebug.Events.*;
-import me.killstorm103.Rebug.PacketEvents.*;
+import me.killstorm103.Rebug.Commands.ClientCMD;
+import me.killstorm103.Rebug.Commands.ConsoleMessage;
+import me.killstorm103.Rebug.Commands.GetIP;
+import me.killstorm103.Rebug.Commands.Help;
+import me.killstorm103.Rebug.Commands.Menu;
+import me.killstorm103.Rebug.Commands.Test;
+import me.killstorm103.Rebug.Commands.Unblock;
+import me.killstorm103.Rebug.Commands.Version;
+import me.killstorm103.Rebug.Commands.getInfo;
+import me.killstorm103.Rebug.Events.EventBlockHandling;
+import me.killstorm103.Rebug.Events.EventHandlePlayerSpawn;
+import me.killstorm103.Rebug.Events.EventJoinAndLeave;
+import me.killstorm103.Rebug.Events.EventMenus;
+import me.killstorm103.Rebug.Events.EventPlayer;
+import me.killstorm103.Rebug.Events.EventWeather;
+import me.killstorm103.Rebug.PacketEvents.TestPacket;
 import me.killstorm103.Rebug.Tasks.ScoreBoard;
-import me.killstorm103.Rebug.Utils.*;
+import me.killstorm103.Rebug.Utils.User;
 import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin
@@ -72,12 +89,33 @@ public class Rebug extends JavaPlugin
 		return getConfig().getBoolean("debugger");
 	}
 	private BukkitTask scoreboardTask;
+	private File customConfigFile;
+
+	public FileConfiguration getCustomConfig()
+	{
+		return this.customConfig;
+	}
 	
+    private FileConfiguration customConfig;
+	
+    private void createCustomConfig() 
+    {
+        customConfigFile = new File(getDataFolder(), "config.yml");
+        if (!customConfigFile.exists())
+        {
+            customConfigFile.getParentFile().mkdirs();
+            saveResource("config.yml", false);
+         }
+
+        customConfig = new YamlConfiguration();
+        YamlConfiguration.loadConfiguration(customConfigFile);
+    }
 	@Override
 	public void onEnable ()
 	{
 		getMain = this;
-		saveDefaultConfig();
+		createCustomConfig();
+		
 		try
 		{
 			Version = Rebug.getGetMain().getDescription().getVersion();
@@ -92,6 +130,7 @@ public class Rebug extends JavaPlugin
 		commands.add(new Test());
 		commands.add(new Menu());
 		commands.add(new ClientCMD());
+		commands.add(new ConsoleMessage());
 		commands.add(new Help());
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
@@ -169,7 +208,7 @@ public class Rebug extends JavaPlugin
 				return true;
 			}
 			if (Debug())
-				sender.sendMessage("args.length= " + args.length);
+				sender.sendMessage("args.length= " + args.length + " command= " + command);
 			
 			Player player = null;
 			if (sender instanceof Player)
@@ -183,7 +222,7 @@ public class Rebug extends JavaPlugin
 					{
 						try
 						{
-							commands.onCommand(sender, args);
+							commands.onCommand(sender, command, args);
 						} 
 						catch (Exception e) 
 						{
