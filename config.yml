@@ -1,6 +1,7 @@
-join-message: '&l&7Welcome &l&4Rebugger&l&7'
+join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
 debugger: false
 cancel-weather-changes: true
 force-gamemode-on-join: true
 rebug-scoreboard: true
-scoreboard-title: '&l&7killstorm103''s&r %player%'
+scoreboard-title: '&l&7killstorm103''s&r'
+map-version: 'v1'
