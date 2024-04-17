@@ -7,7 +7,7 @@ it's my first plugin!
 it's made for my Minecraft server to test things like AntiCheats and Exploits.
 
 
-// Depends/Soft Depends
+// Libraries
 
 PacketEvents: spigot-2.2.1
 
