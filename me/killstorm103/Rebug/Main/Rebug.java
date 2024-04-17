@@ -15,14 +15,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-//import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.DisplaySlot;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-////import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
-
 import io.github.retrooper.packetevents.bstats.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.killstorm103.Rebug.Commands.ClientCMD;
@@ -123,23 +119,6 @@ public class Rebug extends JavaPlugin
 		if (scoreboardTask != null)
 			scoreboardTask.cancel();
 		
-		if (!USERS.isEmpty())
-		{
-			for (Player player : Bukkit.getOnlinePlayers())
-			{
-				if (player != null && player.getScoreboard() != null && player.getScoreboard().getObjective("Rebug") != null)
-				{
-					player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-				}
-				if (player != null)
-				{
-					player.kickPlayer("Rebug: Rejoin!");
-				}
-			}
-			USERS.clear();
-			User.joinTimeMap.clear();
-		}
-			
 		createCustomConfig();
 		
 		try
@@ -149,6 +128,7 @@ public class Rebug extends JavaPlugin
 		catch (Exception e) {e.printStackTrace();}
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
+		cmd.clear();
 		commands.add(new GetIP());
 		commands.add(new Unblock());
 		commands.add(new Version());
@@ -158,6 +138,8 @@ public class Rebug extends JavaPlugin
 		commands.add(new ClientCMD());
 		commands.add(new ConsoleMessage());
 		commands.add(new Help());
+		for (me.killstorm103.Rebug.Main.Command cmds : commands)
+			cmd.add(cmds.getName());
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
 		PluginManager pm = Bukkit.getPluginManager();
@@ -167,8 +149,6 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventWeather(),  this);
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
         pm.registerEvents(new EventPlayer(),  this);
-        
-     // Messenger messenger = Bukkit.getMessenger();   messenger.registerIncomingPluginChannel(this, "MC|Brand", new EventJoinAndLeave.BrandListener());
         
         scoreboardTask = getServer().getScheduler().runTaskTimer(this, ScoreBoard.getBoard(), 0, 30);
         
@@ -224,16 +204,27 @@ public class Rebug extends JavaPlugin
 		}
 		return null;
 	}
+	private final List<String> cmd = new ArrayList<>();
+	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
 	{
-		if (args.length > 0 && alias.equalsIgnoreCase("rebug"))
+		if (alias.equalsIgnoreCase("rebug"))
 		{
-			for (me.killstorm103.Rebug.Main.Command commands : commands)
+			for (me.killstorm103.Rebug.Main.Command c : commands)
 			{
-				if (args[0].equalsIgnoreCase(commands.getName()))
+				if (args.length == 1)
 				{
-					commands.onTabComplete(sender, command, args);
+					if (!args[0].isEmpty()) // TODO: Make a search
+					{
+						
+					}
+					return cmd;
+				}
+				
+				if (args.length > 1 && args[0].equalsIgnoreCase(c.getName()) && c.HasCustomTabComplete())
+				{
+					return c.onTabComplete(sender, command, args);
 				}
 			}
 		}
@@ -243,8 +234,7 @@ public class Rebug extends JavaPlugin
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
 	{
-		command.toLowerCase();
-		if (command.equals(PluginName().toLowerCase()))
+		if (command.toLowerCase().equals(PluginName().toLowerCase()))
 		{
 			if (args.length == 0)
 			{
