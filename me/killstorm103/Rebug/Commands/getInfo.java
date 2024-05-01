@@ -1,5 +1,7 @@
 package me.killstorm103.Rebug.Commands;
 
+import java.util.List;
+
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +33,7 @@ public class getInfo extends Command
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String[] args) throws Exception 
+	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
 		if (args.length == 1)
 		{
@@ -108,5 +110,29 @@ public class getInfo extends Command
 			}
 		}
 	}
-	
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
+		return null;
+	}
+
+	@Override
+	public boolean HasCustomTabComplete() {
+		return false;
+	}
+
+	@Override
+	public boolean HideFromCommandsList() {
+		return false;
+	}
+	@Override
+	public boolean HasToBeConsole() {
+		return false;
+	}
+
+	@Override
+	public String[] SubAliases() {
+		return null;
+	}
+
 }
