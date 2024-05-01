@@ -1,12 +1,14 @@
 package me.killstorm103.Rebug.Events;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import me.killstorm103.Rebug.Main.Rebug;
+import me.killstorm103.Rebug.Utils.User;
 
 public class EventHandlePlayerSpawn implements Listener
 {
@@ -17,12 +19,19 @@ public class EventHandlePlayerSpawn implements Listener
 		 if (Rebug.getGetMain().Debug())
 			 e.getPlayer().sendMessage(e.getPlayer().getWorld().getName());
 		 
-		 if (!e.getPlayer().isOp())
+		 if (!e.getPlayer().hasPlayedBefore())
 			 e.setSpawnLocation(new Location(Rebug.getGetMain().getServer().getWorld("world"), 41, 58, 319, -91.200165F, -0.5999501F));
 	 }
 	 @EventHandler
 	 public void onRespawn (PlayerRespawnEvent e)
 	 {
+		 Player player = e.getPlayer();
+		 User user = Rebug.getUser(player);
+		 if (user != null)
+		 {
+			 user.removeJoinTime(player.getUniqueId());
+			 user.setJoinTime(player.getUniqueId(), System.currentTimeMillis());
+		 }
 		 if (Rebug.getGetMain().Debug())
 			 e.getPlayer().sendMessage(e.getPlayer().getWorld().getName());
 		 
