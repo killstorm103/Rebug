@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.*;
 
@@ -18,12 +20,12 @@ public class EventJoinAndLeave implements Listener
 		Rebug.USERS.put(player.getUniqueId(), new User(player));
 		User user = Rebug.getUser(player);
 		user.setJoinTime(user.getPlayer().getUniqueId(), System.currentTimeMillis());
-		if (Rebug.getGetMain().getConfig().getBoolean("force-gamemode-on-join") && !player.isOp())
-			player.setGameMode(GameMode.SURVIVAL);
+		if (Config.ShouldForceGameMode() && !user.getPlayer().isOp())
+			user.getPlayer().setGameMode(GameMode.SURVIVAL);
 		
 		final String message = Rebug.getGetMain().getConfig().getString("join-message");
-		if (message != null && message.length() > 0 && player.isOp())
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', message.replace("%player%", player.getName())));
+		if (message != null && message.length() > 0 && user.getPlayer().isOp())
+			user.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', message.replace("%player%", user.getPlayer().getName())));
 	} 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit (PlayerQuitEvent e) 
@@ -32,8 +34,8 @@ public class EventJoinAndLeave implements Listener
 		User user = Rebug.getUser(player);
 		if (user != null)
 		{
-			user.removeJoinTime(player.getUniqueId());
-			Rebug.USERS.remove(player.getUniqueId(), user);
+			user.removeJoinTime(user.getPlayer().getUniqueId());
+			Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
 		}
 	}
 }
