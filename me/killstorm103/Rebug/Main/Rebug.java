@@ -19,24 +19,14 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
+
 import io.github.retrooper.packetevents.bstats.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import me.killstorm103.Rebug.Commands.ClientCMD;
-import me.killstorm103.Rebug.Commands.ConsoleMessage;
-import me.killstorm103.Rebug.Commands.GetIP;
-import me.killstorm103.Rebug.Commands.Help;
-import me.killstorm103.Rebug.Commands.Menu;
-import me.killstorm103.Rebug.Commands.Test;
-import me.killstorm103.Rebug.Commands.Unblock;
-import me.killstorm103.Rebug.Commands.Version;
-import me.killstorm103.Rebug.Commands.getInfo;
-import me.killstorm103.Rebug.Events.EventBlockHandling;
-import me.killstorm103.Rebug.Events.EventHandlePlayerSpawn;
-import me.killstorm103.Rebug.Events.EventJoinAndLeave;
-import me.killstorm103.Rebug.Events.EventMenus;
-import me.killstorm103.Rebug.Events.EventPlayer;
-import me.killstorm103.Rebug.Events.EventWeather;
-import me.killstorm103.Rebug.PacketEvents.EventCustomPayLoadPacket;
+import me.killstorm103.Rebug.Commands.*;
+import me.killstorm103.Rebug.Commands.Handler.EventCommandPreProcess;
+import me.killstorm103.Rebug.Commands.ShortCuts.ShortClient;
+import me.killstorm103.Rebug.Events.*;
+import me.killstorm103.Rebug.PacketEvents.*;
 import me.killstorm103.Rebug.Tasks.ScoreBoard;
 import me.killstorm103.Rebug.Utils.User;
 import net.md_5.bungee.api.ChatColor;
@@ -49,6 +39,7 @@ public class Rebug extends JavaPlugin
 	private static Rebug getMain;
 	private ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
 	public static final HashMap<UUID, User> USERS = new HashMap<>();
+	public static String RebugMessage = ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.DARK_GRAY + ">> ";
 	
 	public static User getUser(Player player) 
 	{
@@ -85,7 +76,7 @@ public class Rebug extends JavaPlugin
 	{
 		return true;
 	}
-	public boolean Debug ()
+	public final boolean Debug ()
 	{
 		return getConfig().getBoolean("debugger");
 	}
@@ -128,14 +119,21 @@ public class Rebug extends JavaPlugin
 		catch (Exception e) {e.printStackTrace();}
 		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
+		// ShortCuts
+		getCommand("client").setExecutor(new ShortClient());
+		
+		
 		cmd.clear();
 		commands.add(new GetIP());
 		commands.add(new Unblock());
 		commands.add(new Version());
 		commands.add(new getInfo());
 		commands.add(new Test());
+		commands.add(new SpawnCMD());
+		commands.add(new DamageCMD());
 		commands.add(new Menu());
 		commands.add(new ClientCMD());
+		commands.add(new BackCMD());
 		commands.add(new ConsoleMessage());
 		commands.add(new Help());
 		for (me.killstorm103.Rebug.Main.Command cmds : commands)
@@ -150,13 +148,20 @@ public class Rebug extends JavaPlugin
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
         pm.registerEvents(new EventPlayer(),  this);
         
+        pm.registerEvents(new EventCommandPreProcess(),  this);
+        
+        
         scoreboardTask = getServer().getScheduler().runTaskTimer(this, ScoreBoard.getBoard(), 0, 30);
         
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
         PacketEvents.IDENTIFIER = "REBUG";
-        PacketEvents.getAPI().getEventManager().registerListener(new EventCustomPayLoadPacket(), PacketListenerPriority.NORMAL);
+        PacketEvents.getAPI().getEventManager().registerListener(new EventCustomPayLoadPacket(), PacketListenerPriority.MONITOR);
+        PacketEvents.getAPI().getEventManager().registerListener(new EventTestPacket(), PacketListenerPriority.NORMAL);
+        PacketEvents.getAPI().getEventManager().registerListener(new EventAntiCancelBrandPacket(), PacketListenerPriority.NORMAL);
+   //    PacketEvents.getAPI().getEventManager().registerListener(new EventRedirectCommand(), PacketListenerPriority.NORMAL);
         PacketEvents.getAPI().init();
-        Metrics metrics = new Metrics(this, this.pluginID);
+        @SuppressWarnings("unused")
+		Metrics metrics = new Metrics(this, this.pluginID);
         
         getServer().getConsoleSender().sendMessage ("Rebug: onEnable - Post - " + ChatColor.DARK_GREEN + "Enabled Rebug v" + PluginVersion());
 	}
@@ -176,7 +181,7 @@ public class Rebug extends JavaPlugin
 	{
 		getServer().getConsoleSender().sendMessage("Rebug: onLoad - Pre");
 		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).bStats(true);
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).reEncodeByDefault(false).bStats(false);
         PacketEvents.getAPI().load();
         getServer().getConsoleSender().sendMessage("Rebug: onLoad - Post");
 	}
@@ -234,6 +239,9 @@ public class Rebug extends JavaPlugin
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
 	{
+		if (Debug())
+			sender.sendMessage("args.length= " + args.length + " command= " + command);
+		
 		if (command.toLowerCase().equals(PluginName().toLowerCase()))
 		{
 			if (args.length == 0)
@@ -242,9 +250,6 @@ public class Rebug extends JavaPlugin
 				Bukkit.dispatchCommand(sender, "rebug help");
 				return true;
 			}
-			if (Debug())
-				sender.sendMessage("args.length= " + args.length + " command= " + command);
-			
 			Player player = null;
 			if (sender instanceof Player)
 				player = (Player) sender;
