@@ -1,5 +1,7 @@
 package me.killstorm103.Rebug.Main;
 
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
 public abstract class Command 
@@ -8,7 +10,12 @@ public abstract class Command
 	public abstract String getSyntax();
 	public abstract String getDescription(); 
 	public abstract String getPermission();
-	public abstract void onCommand (CommandSender sender, String[] args) throws Exception;
+	public abstract String[] SubAliases();
+	public abstract void onCommand (CommandSender sender, String command, String[] args) throws Exception;
+	public abstract List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args);
+	public abstract boolean HasCustomTabComplete ();
+	public abstract boolean HideFromCommandsList ();
+	public abstract boolean HasToBeConsole ();
 	
 	public Rebug getRebug ()
 	{
