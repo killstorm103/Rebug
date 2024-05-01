@@ -21,4 +21,18 @@ public class Config
 	{
 		return Rebug.getGetMain().getConfig().getBoolean("tell-client-registers");
 	}
+	public static final boolean AntiCancelClientBrandPacket() 
+	{
+		return Rebug.getGetMain().getConfig().getBoolean("anti-cancel-client-brand-packet");
+	}
+	public static final int AntiCancelClientBrandCounter()
+	{
+		return  Rebug.getGetMain().getConfig().getInt("anti-cancel-client-brand-counter");
+	}
+	public static final boolean ShouldCancelWeatherChanges() {
+		return Rebug.getGetMain().getConfig().getBoolean("cancel-weather-changes");
+	}
+	public static final boolean ShouldForceGameMode() {
+		return Rebug.getGetMain().getConfig().getBoolean("force-gamemode-on-join");
+	}
 }
