@@ -7,6 +7,9 @@ commands:
   rebug:
     description: command prefix for using rebugs commands
     usage: rebug <command>
+  client:
+    description: Your description
+    usage: /<command>
     
 depend:
 - packetevents
