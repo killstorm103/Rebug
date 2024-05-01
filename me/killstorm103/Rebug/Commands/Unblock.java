@@ -1,5 +1,9 @@
 package me.killstorm103.Rebug.Commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import io.netty.buffer.ByteBuf;
@@ -33,7 +37,7 @@ public class Unblock extends Command
 	}
 	
 	@Override
-	public void onCommand(CommandSender sender, String[] args) throws Exception
+	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
 		if (args.length == 1)
 		{
@@ -53,12 +57,45 @@ public class Unblock extends Command
 		PacketPlayOutCustomPayload p = new PacketPlayOutCustomPayload("NWS|Debugger Switch",
 	    new PacketDataSerializer(buf));
 		PT.SendPacket(player, p);
-		if (player.getName().equals("killstorm103"))
-		{
-			Log(sender, "Tried to unlock packet debugger for NumbWare");
-			Log(sender, "if this isn't a Premium account it wouldn't have worked!");
-			return;
-		}
-		Log(sender, "User must be killstorm103 and a Premium account for this to work!");
+		Log(sender, Rebug.RebugMessage + "Tried to unlock packet debugger for NumbWare");
+		Log(sender, Rebug.RebugMessage + "if this didn't work it's cause your not using Developer Edition of NumbWare!");
 	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) 
+	{
+		if (args.length > 2 && args.length == 3)
+		{
+			List<String> PlayerNames = new ArrayList<String>();
+			Player[] Players = new Player[Bukkit.getOnlinePlayers().size()];
+			Bukkit.getOnlinePlayers().toArray(Players);
+			for (int i = 0; i < Players.length; i ++)
+			{
+				PlayerNames.add(Players[i].getName());
+			}
+			return PlayerNames;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean HasCustomTabComplete() {
+		return false;
+	}
+
+	@Override
+	public boolean HideFromCommandsList() {
+		return false;
+	}
+	@Override
+	public boolean HasToBeConsole() {
+		return false;
+	}
+
+	@Override
+	public String[] SubAliases() {
+		return null;
+	}
+
 }
