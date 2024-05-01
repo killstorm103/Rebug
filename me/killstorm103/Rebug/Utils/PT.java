@@ -1,8 +1,11 @@
 package me.killstorm103.Rebug.Utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -29,6 +32,88 @@ public class PT
             return null;
         }
     }
+	public static boolean isNumber_Float (String strNum) 
+	{
+	    if (strNum == null)
+	    {
+	        return false;
+	    }
+	    try {
+	        double d = Float.parseFloat(strNum);
+	    }
+	    catch (NumberFormatException nfe) 
+	    {
+	        return false;
+	    }
+	    return true;
+	}
+	public static boolean isNumber_Double (String strNum) 
+	{
+	    if (strNum == null)
+	    {
+	        return false;
+	    }
+	    try {
+	        double d = Double.parseDouble(strNum);
+	    }
+	    catch (NumberFormatException nfe) 
+	    {
+	        return false;
+	    }
+	    return true;
+	}
+	public static boolean isNumber_Integer (String strNum) 
+	{
+	    if (strNum == null)
+	    {
+	        return false;
+	    }
+	    try {
+	        double d = Integer.parseInt(strNum);
+	    }
+	    catch (NumberFormatException nfe) 
+	    {
+	        return false;
+	    }
+	    return true;
+	}
+	public static boolean isNumber_Short (String strNum) 
+	{
+	    if (strNum == null)
+	    {
+	        return false;
+	    }
+	    try {
+	        double d = Short.parseShort(strNum);
+	    }
+	    catch (NumberFormatException nfe) 
+	    {
+	        return false;
+	    }
+	    return true;
+	}
+	public static long getMaxMemory() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        return maxMemory / 0x100000L;
+    }
+
+    public static long getUsedMemory() {
+        long totalMemory = Runtime.getRuntime().totalMemory(), freeMemory = Runtime.getRuntime().freeMemory(), usedMemory = totalMemory - freeMemory;
+        return usedMemory / 0x100000L;
+    }
+	public static int getPing (Player player) 
+	{
+		try {
+			Object craftPlayer = player.getClass().getMethod("getHandle", new Class[0]).invoke((Object)player, new Object[0]);
+			int ping = (Integer)craftPlayer.getClass().getField("ping").get(craftPlayer);
+			return ping;
+		}
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+			return -1;
+		}
+	}
 	public static void PlaceItem (Player player, ItemStack item, BlockPosition blockposition, EnumDirection enumdirection, float facingX, float facingY, float facingZ)
 	{
 		net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
@@ -38,6 +123,10 @@ public class PT
 	{
 		net.minecraft.server.v1_8_R3.ItemStack stack = CraftItemStack.asNMSCopy(item);
 		stack.getItem().interactWith(stack, getEntityHuman(player), getWorld(player), blockposition, enumdirection, facingX, facingY, facingZ);
+	}
+	public static CraftPlayer getCraftPlayer (Player player)
+	{
+		return ((CraftPlayer) player);
 	}
 	// TODO: Make
 	public static void PlaceItemWithPacket (Player player, BlockPosition blockposition, Block block, int arg, int arg2)
@@ -90,6 +179,9 @@ public class PT
 	}
 	public static void SendPacket(Player player, Packet<?> packet) 
 	{
+		if (player == null || packet == null)
+			return;
+			
         try 
         {
             Object handle = player.getClass().getMethod("getHandle", new Class[0]).invoke((Object) player, new Object[0]);
@@ -103,12 +195,19 @@ public class PT
     }
 	public static void SendPacket(Player player, Packet<?> packet, int loop) 
 	{
+		if (player == null || packet == null || loop < 1)
+			return;
+		
 		for (int i = 0;i < loop; i ++)
 			SendPacket(player, packet);
     }
 	public static int randomNumber (int max, int min) 
     {
         return (int) ((Math.random() * (max - min)) + min);
+    }
+	public static short randomNumber (short max, short min) 
+    {
+        return (short) ((Math.random() * (max - min)) + min);
     }
 	public static float randomNumber (float max, float min) 
 	{
@@ -221,11 +320,68 @@ public class PT
     	
     	return ss;
     }
-	public static World getWorld(Player crash_Victim) {
-		return getEntityPlayer(crash_Victim).getWorld();
+	public static World getWorld(Player player) {
+		return getEntityPlayer(player).getWorld();
 	}
 	public static String getServerVersion() 
 	{
-		return PT.SubString(Rebug.getGetMain().getServer().getBukkitVersion().trim(), 0, 6).replace("-", "");
+		return PT.SubString(Bukkit.getServer().getBukkitVersion().trim(), 0, 6).replace("-", "");
+	}
+	public static List<String> getPlayerNames() 
+	{
+		List<String> t = new ArrayList<>();
+		t.clear();
+		Player[] Players = new Player[Bukkit.getOnlinePlayers().size()];
+		Bukkit.getOnlinePlayers().toArray(Players);
+		for (int i = 0; i < Players.length; i ++)
+		{
+			t.add(Players[i].getName());
+		}
+		return t;
+	}
+	public static String RebugsUserWasNullErrorMessage (String AddOn)
+	{
+		return ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Rebug's " + ChatColor.RED + "\"User\" was somehow null, " + AddOn;
+	}
+	public static void RunTaskCommand(CommandSender sender, String command)
+	{
+		Bukkit.getServer().getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		{
+			@Override
+			public void run() 
+			{
+				Bukkit.dispatchCommand(sender == null ? Bukkit.getServer().getConsoleSender() : sender, command);
+			}
+		});
+	}
+	public static void KickPlayer(Player player, String reason) 
+	{
+		if (player == null)
+			return;
+		
+		Bukkit.getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "kick " + player.getName() + " " + reason);
+			}
+		});
+	}
+	public static void BanPlayer(Player player, String reason) 
+	{
+		if (player == null)
+			return;
+		
+		Bukkit.getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		{
+			
+			@Override
+			public void run()
+			{
+				Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "ban " + player.getName() + " " + reason);
+			}
+		});
 	}
 }
