@@ -9,6 +9,6 @@ it's made for my Minecraft server to test things like AntiCheats and Exploits.
 
 // Libraries
 
-PacketEvents: spigot-2.2.1
+PacketEvents-spigot-2.3.0
 
-ViaVersion: 4.9.4-SNAPSHOT
+ViaVersion-4.10.1
