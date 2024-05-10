@@ -1,5 +1,5 @@
 name: Rebug
-version: 1.2
+version: 1.3
 main: me.killstorm103.Rebug.Main.Rebug
 author: killstorm103
 description: helpful plugin
@@ -10,6 +10,31 @@ commands:
   client:
     description: Your description
     usage: /<command>
+  exploits:
+    description: Your description
+    usage: /<command>
+  crashers:
+    description: Your description
+    usage: /<command>
+  items:
+    description: Your description
+    usage: /<command>
+  enchant:
+    description: Your description
+    usage: /<command>
+  enchantment:
+    description: Your description
+    usage: /<command>
+  settings:
+    description: Your description
+    usage: /<command>
+  heal:
+    description: Your description
+    usage: /<command>
+  feed:
+    description: Your description
+    usage: /<command>
+    
     
 depend:
 - packetevents
