@@ -1,5 +1,8 @@
 join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
-debugger: false
+
+rebug-scoreboard: true
+scoreboard-title: '&l&7killstorm103''s&r'
+
 client-info-grab-fail: warn
 allow-overriding-client-brand: false
 antiexploit-override-client-brand: warn
@@ -7,8 +10,10 @@ anti-cancel-client-brand-packet: true
 anti-cancel-client-brand-counter: 250
 tell-client-info-on-join: true
 tell-client-registers: true
+
 cancel-weather-changes: true
 force-gamemode-on-join: true
-rebug-scoreboard: true
-scoreboard-title: '&l&7killstorm103''s&r'
+
 map-version: 'v1'
+
+discord-link: 'https://invite.gg/mhecommunity'
