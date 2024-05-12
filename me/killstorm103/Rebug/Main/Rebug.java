@@ -31,6 +31,7 @@ import me.killstorm103.Rebug.Commands.Discord;
 import me.killstorm103.Rebug.Commands.Enchant;
 import me.killstorm103.Rebug.Commands.FeedCMD;
 import me.killstorm103.Rebug.Commands.GetIP;
+import me.killstorm103.Rebug.Commands.GetUUID;
 import me.killstorm103.Rebug.Commands.HealCMD;
 import me.killstorm103.Rebug.Commands.Help;
 import me.killstorm103.Rebug.Commands.Menu;
@@ -190,6 +191,8 @@ public class Rebug extends JavaPlugin
 		getCommand("settings").setExecutor(new ShortCutBasic());
 		getCommand("heal").setExecutor(new ShortCutBasic());
 		getCommand("feed").setExecutor(new ShortCutBasic());
+		getCommand("getuuid").setExecutor(new ShortCutBasic());
+		
 		
 		cmd.clear();
 		commands.clear();
@@ -197,6 +200,7 @@ public class Rebug extends JavaPlugin
 		commands.add(new Unblock());
 		commands.add(new Version());
 		commands.add(new getInfo());
+		commands.add(new GetUUID());
 		commands.add(new Test());
 		commands.add(new SpawnCMD());
 		commands.add(new DamageCMD());
@@ -332,7 +336,6 @@ public class Rebug extends JavaPlugin
 		
 		return super.onTabComplete(sender, command, alias, args);
 	}
-	
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
 	{
@@ -357,14 +360,13 @@ public class Rebug extends JavaPlugin
 					return true;
 				}
 			}
-				
-			for (me.killstorm103.Rebug.Main.Command commands : commands)
+			try
 			{
-				if (args[0].equalsIgnoreCase(commands.getName()))
+				for (me.killstorm103.Rebug.Main.Command commands : commands)
 				{
-					if (user == null || user.getPlayer() != null && (user.getPlayer().hasPermission(commands.getPermission()) || user.getPlayer().hasPermission(AllCommands_Permission) || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin")))
+					if (args[0].equalsIgnoreCase(commands.getName()))
 					{
-						try
+						if (user == null || user.getPlayer() != null && (user.getPlayer().hasPermission(commands.getPermission()) || user.getPlayer().hasPermission(AllCommands_Permission) || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin")))
 						{
 							if (user == null)
 								commands.onCommand(sender, command, args);
@@ -400,19 +402,19 @@ public class Rebug extends JavaPlugin
 									return true;
 								}
 							}
-						} 
-						catch (Exception e) 
-						{
-							e.printStackTrace();
 						}
+						else
+						{
+							if (user.getPlayer() != null)
+								user.getPlayer().sendMessage(RebugMessage + "You don't have Permission to use this Command!");
+						}
+						return true;
 					}
-					else
-					{
-						if (user.getPlayer() != null)
-							user.getPlayer().sendMessage(RebugMessage + "You don't have Permission to use this Command!");
-					}
-					return true;
 				}
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
 			}
 		}
 		
