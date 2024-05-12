@@ -2,6 +2,10 @@ package me.killstorm103.Rebug.Main;
 
 public class Config
 {
+	public static final boolean RebugScoreBoard ()
+	{
+		return Rebug.getGetMain().getConfig().getBoolean("rebug-scoreboard");
+	}
 	public static final boolean getAllowedToOverRideClientBrand() 
 	{
 		return Rebug.getGetMain().getConfig().getBoolean("allow-overriding-client-brand");
@@ -34,5 +38,9 @@ public class Config
 	}
 	public static final boolean ShouldForceGameMode() {
 		return Rebug.getGetMain().getConfig().getBoolean("force-gamemode-on-join");
+	}
+	public static final String DiscordInviteLink() 
+	{
+		return Rebug.getGetMain().getConfig().getString("discord-link");
 	}
 }
