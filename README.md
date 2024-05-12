@@ -11,4 +11,4 @@ it's made for my Minecraft server to test things like AntiCheats and Exploits.
 
 PacketEvents-spigot-2.3.0
 
-ViaVersion-4.10.1
+ViaVersion-4.10.2
