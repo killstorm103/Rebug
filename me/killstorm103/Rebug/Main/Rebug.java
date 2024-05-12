@@ -377,7 +377,7 @@ public class Rebug extends JavaPlugin
 										if (commands.CoolDown.get(user.getPlayer().getUniqueId()) > System.currentTimeMillis())
 										{
 											long time = (commands.CoolDown.get(user.getPlayer().getUniqueId()) - System.currentTimeMillis()) / 1000;
-											user.getPlayer().sendMessage(RebugMessage + "Command is on CoolDown for " + time + "second(s)!");
+											user.getPlayer().sendMessage(RebugMessage + "Command is on CoolDown for " + time + " second(s)!");
 											return true;
 										}
 										else
