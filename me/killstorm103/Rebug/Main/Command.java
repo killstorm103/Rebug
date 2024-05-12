@@ -1,6 +1,9 @@
 package me.killstorm103.Rebug.Main;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 
@@ -16,6 +19,7 @@ public abstract class Command
 	public abstract boolean HasCustomTabComplete ();
 	public abstract boolean HideFromCommandsList ();
 	public abstract boolean HasToBeConsole ();
+	public Map<UUID, Long> CoolDown = new HashMap<>();
 	
 	public Rebug getRebug ()
 	{
