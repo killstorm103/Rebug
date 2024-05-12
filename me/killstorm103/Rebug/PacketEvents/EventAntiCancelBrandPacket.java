@@ -15,7 +15,6 @@ import me.killstorm103.Rebug.Utils.User;
 
 public class EventAntiCancelBrandPacket implements PacketListener
 {
-	private int UserNulled;
 	@Override
 	public void onPacketReceive(PacketReceiveEvent e) 
 	{
@@ -29,12 +28,6 @@ public class EventAntiCancelBrandPacket implements PacketListener
 			User user = Rebug.getUser(player);
 			if (user == null)
 			{
-				UserNulled ++;
-				if (UserNulled >= 200)
-				{
-					PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("in " + ChatColor.RESET + getClass().getSimpleName()));
-					UserNulled = 0;
-				}
 				return;
 			}
 			if (!user.getIsBrandSet())
@@ -45,8 +38,8 @@ public class EventAntiCancelBrandPacket implements PacketListener
 					PT.KickPlayer(user.getPlayer(), ChatColor.RED + "You were kicked by " + ChatColor.DARK_RED.toString() + ChatColor.BOLD + "REBUG " + ChatColor.RED + "for not sending a Client Brand Packet!");
 					return;
 				}
-				if (Rebug.getGetMain().Debug())
-					player.sendMessage("UnReceivedBrand= " + user.UnReceivedBrand);
+				if (Rebug.debug)
+					Rebug.Debug(user.getPlayer(), "UnReceivedBrand= " + user.UnReceivedBrand);
 			}
 		}
 	}
