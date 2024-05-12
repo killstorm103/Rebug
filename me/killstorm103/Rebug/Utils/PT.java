@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,12 +12,26 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+
 import me.killstorm103.Rebug.Main.Rebug;
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.Block;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.DataWatcher;
+import net.minecraft.server.v1_8_R3.EntityCreeper;
+import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.EnumDirection;
+import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_8_R3.World;
 
 public class PT
 {
@@ -32,6 +47,7 @@ public class PT
             return null;
         }
     }
+	@SuppressWarnings("unused")
 	public static boolean isNumber_Float (String strNum) 
 	{
 	    if (strNum == null)
@@ -47,6 +63,7 @@ public class PT
 	    }
 	    return true;
 	}
+	@SuppressWarnings("unused")
 	public static boolean isNumber_Double (String strNum) 
 	{
 	    if (strNum == null)
@@ -62,6 +79,7 @@ public class PT
 	    }
 	    return true;
 	}
+	@SuppressWarnings("unused")
 	public static boolean isNumber_Integer (String strNum) 
 	{
 	    if (strNum == null)
@@ -77,6 +95,7 @@ public class PT
 	    }
 	    return true;
 	}
+	@SuppressWarnings("unused")
 	public static boolean isNumber_Short (String strNum) 
 	{
 	    if (strNum == null)
@@ -383,5 +402,15 @@ public class PT
 				Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "ban " + player.getName() + " " + reason);
 			}
 		});
+	}
+	public static boolean isInventoryFull (Player player)
+	{
+		return player.getInventory().firstEmpty() ==- 1;
+	}
+	public static ItemStack RepairItem(ItemStack item) 
+	{
+		ItemStack Stack = new ItemStack (item.getType());
+		Stack.setItemMeta(item.getItemMeta());
+		return Stack;
 	}
 }
