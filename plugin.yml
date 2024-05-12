@@ -8,31 +8,28 @@ commands:
     description: command prefix for using rebugs commands
     usage: rebug <command>
   client:
-    description: Your description
+    description: Gets the client brand of a player!
     usage: /<command>
   exploits:
-    description: Your description
+    description: Opens exploits menu!
     usage: /<command>
   crashers:
-    description: Your description
+    description: Opens crashers menu!
     usage: /<command>
   items:
-    description: Your description
+    description: Opens items menu!
     usage: /<command>
   enchant:
-    description: Your description
-    usage: /<command>
-  enchantment:
-    description: Your description
+    description: Enchant any item you want!
     usage: /<command>
   settings:
-    description: Your description
+    description: Settings for the player and can open Rebug settings from there if you perms!
     usage: /<command>
   heal:
-    description: Your description
+    description: Heals players
     usage: /<command>
   feed:
-    description: Your description
+    description: Feeds players
     usage: /<command>
     
     
