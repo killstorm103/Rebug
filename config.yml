@@ -27,7 +27,6 @@ loaded-anticheats:
   loaded-acs:
   - '&4Vulcan'
   - '&cHawk'
-  - '&8GrimAC'
   - '&dThotPatrol'
   thotpatrol:
     has-data: true
