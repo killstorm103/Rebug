@@ -1,49 +1,68 @@
-join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
-delete-player-config-after-loading: true
-allow-sub-commands: true
-rebug-scoreboard: true
-scoreboard-title: '&l&7killstorm103''s&r'
-client-info-grab-fail: warn
-allow-overriding-client-brand: false
-antiexploit-override-client-brand: warn
-anti-cancel-client-brand-packet: true
-anti-cancel-client-brand-counter: 250
-tell-client-info-on-join: true
-tell-client-registers: true
-cancel-weather-changes: true
-force-gamemode-on-join: true
-map-version: v1.1
-discord-link: https://invite.gg/mhecommunity
-server-rules:
-- No Doxing/Leaking info
-- No Dossing other players or the server
-- No Griefing
-- No Spamming
-- No Scamming
-- Don't be an uptight prick
-- Niggers a nigger a whore's whore a faggots a faggot women don't have dicks there's only 2 genders etc i COULDN'T GiVE A FUCK if someone states a fact so don't come to me over this stuff wanting me to mute/kick/ban them!
-user-update-perms-command: lp user %user% parent set %anticheat%
-loaded-anticheats:
-  loaded-acs:
-  - '&4Vulcan'
-  - '&cHawk'
-  - '&8GrimAC'
-  - '&dThotPatrol'
-  thotpatrol:
-    has-data: true
-    data: 120
-    item: 383
-    has-fixed-number: false
-  vulcan:
-    has-data: false
-    item: 327
-    has-fixed-number: false
-  hawk:
-    has-data: false
-    item: 288
-    has-fixed-number: false
-  grimac:
-    has-data: false
-    item: 397
-    has-fixed-number: true
-    fixed-number: 49
+name: Rebug
+version: 1.5
+main: me.killstorm103.Rebug.Main.Rebug
+author: killstorm103
+description: Helpful plugin
+commands:
+  rebug:
+    description: command prefix for using rebugs commands
+    usage: rebug <command>
+  client:
+    description: Gets the client brand of a player!
+    usage: /<command>
+  exploits:
+    description: Opens exploits menu!
+    usage: /<command>
+  credits:
+    description: Opens exploits menu!
+    usage: /<command>
+  crashers:
+    description: Opens crashers menu!
+    usage: /<command>
+  items:
+    description: Opens items menu!
+    usage: /<command>
+  enchant:
+    description: Enchant any item you want!
+    usage: /<command>
+  invsee:
+    description: Enchant any item you want!
+    usage: /<command>
+  player:
+    description: get info about a player
+    usage: /<command>
+  enchantment:
+    description: Enchant any item you want!
+    usage: /<command>
+  healandfeed:
+    description: Heal and feed players
+    usage: /<command>
+  health:
+    description: Set your health!
+    usage: /<command>
+  nobreak:
+    description: Stops items from breaking
+    usage: /<command>
+  anticheatslist:
+    description: Tries to get a list of anticheats on the server!
+    usage: /<command>
+  ac:
+    description: Pick what anticheat you wanna test!
+    usage: /<command>
+  settings:
+    description: Settings for the player and can open Rebug settings from there if you perms!
+    usage: /<command>
+  heal:
+    description: Heals players
+    usage: /<command>
+  feed:
+    description: Feeds players
+    usage: /<command>
+  getuuid:
+    description: Gets the uuid of players!
+    usage: /<command>
+    
+    
+depend:
+- packetevents
+- Netherboard
