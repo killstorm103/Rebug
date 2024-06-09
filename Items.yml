@@ -1,0 +1,105 @@
+delete-item-item: true
+debug-item: true
+Inventory-size: 54
+items:
+  STONE:
+      amount: 64
+      slot: 0
+  WOOL:
+      amount: 64
+      slot: 9
+  WOOD_STEP:
+      amount: 64
+      slot: 1
+  COOKED_BEEF:
+      amount: 64
+      slot: 36
+  DIAMOND_AXE:
+      amount: 1
+      slot: 19
+  DIAMOND_SWORD:
+      amount: 1
+      slot: 18
+  GOLDEN_APPLE1:
+      numbered: 1
+      amount: 64
+      slot: 37
+  GOLDEN_APPLE:
+      amount: 64
+      slot: 38
+      data: 1
+  WATER_BUCKET:
+      amount: 1
+      slot: 10
+  BOW1:
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchants:
+      - 51
+  BOW:
+      amount: 1
+      slot: 12
+      display-name: Teleport Bow
+  ARROW:
+      amount: 64
+      slot: 13
+  FIREBALL:
+      amount: 64
+      slot: 14
+  ENDER_PEARL:
+      amount: 16
+      slot: 15
+  SNOW_BALL:
+      amount: 16
+      slot: 16
+  TNT:
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+  SNOW:
+      amount: 64
+      slot: 4
+  FENCE:
+      amount: 64
+      slot: 5
+  OBSIDIAN:
+      amount: 64
+      slot: 6
+  TRAP_DOOR:
+      amount: 64
+      slot: 7
+  FENCE_GATE:
+      amount: 64
+      slot: 8
+  WOOD_STAIRS:
+      amount: 64
+      slot: 2
+  DIAMOND_SPADE:
+      amount: 1
+      slot: 20
+  DIAMOND_PICKAXE:
+      amount: 1
+      slot: 21
+  DIAMOND_HOE:
+      amount: 1
+      slot: 22
+  SHEARS:
+      amount: 1
+      slot: 23
+  FISHING_ROD:
+      amount: 1
+      slot: 24
+  DIAMOND_HELMET:
+      amount: 1
+      slot: 27
+  DIAMOND_CHESTPLATE:
+      amount: 1
+      slot: 28
+  DIAMOND_LEGGINGS:
+      amount: 1
+      slot: 29
+  DIAMOND_BOOTS:
+      amount: 1
+      slot: 30
+  
