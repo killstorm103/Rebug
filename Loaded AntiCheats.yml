@@ -1,0 +1,45 @@
+loaded-anticheats:
+  Inventory-size: 54
+  loaded-acs:
+  - '&4Vulcan'
+  - '&cHawk'
+  - '&1Warden'
+  - '&1NoCheatPlus'
+  - '&8GrimAC'
+  - '&2Spartan'
+  spartan:
+    has-data: false
+    data: 2
+    item: 314
+    has-fixed-number: false
+    fixed-number: 0
+  grimac:
+    has-data: false
+    data: 2
+    item: 397
+    has-fixed-number: true
+    fixed-number: 49
+  nocheatplus:
+    has-data: false
+    data: 2
+    item: 1
+    has-fixed-number: true
+    fixed-number: 44
+  warden:
+    has-data: false
+    data: 2
+    item: 7
+    has-fixed-number: false
+    fixed-number: 28
+  vulcan:
+    has-data: false
+    data: 2
+    item: 327
+    has-fixed-number: false
+    fixed-number: 49
+  hawk:
+    has-data: false
+    data: 2
+    item: 288
+    has-fixed-number: false
+    fixed-number: 49
