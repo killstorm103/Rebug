@@ -19,6 +19,8 @@ public abstract class Command
 	public abstract boolean HasCustomTabComplete ();
 	public abstract boolean HideFromCommandsList ();
 	public abstract boolean HasToBeConsole ();
+	public abstract boolean hasCommandCoolDown();
+	
 	public Map<UUID, Long> CoolDown = new HashMap<>();
 	
 	public Rebug getRebug ()
