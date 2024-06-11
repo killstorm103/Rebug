@@ -22,7 +22,10 @@ public class ConsoleMessage extends Command
 	public String getSyntax() {
 		return getName() + " <player> <message>";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getDescription() {
 		return "Message a player as Console!";

@@ -26,7 +26,10 @@ public class GetIP extends Command
 	public String getDescription() {
 		return "get's the ip of the player";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception {
 		if (args.length < 2)

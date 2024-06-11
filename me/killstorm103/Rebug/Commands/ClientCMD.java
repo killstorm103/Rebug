@@ -27,7 +27,10 @@ public class ClientCMD extends Command
 	{
 		return "client <nothing to target yourself or a player's name to target them>";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getDescription ()
 	{
@@ -45,11 +48,12 @@ public class ClientCMD extends Command
 	{
 		String brand;
 		User user;
+		Player player;
 		if (args.length < 2)
 		{
 			if (sender instanceof Player)
 			{
-				Player player = (Player) sender;
+			    player = (Player) sender;
 				user = Rebug.getUser(player);
 				if (user == null)
 				{
@@ -58,7 +62,7 @@ public class ClientCMD extends Command
 				}
 				
 				brand = user.getBrand();
-				if (brand == null || !user.getIsBrandSet() || brand.length() <= 0)
+				if (brand == null || !user.BrandSet || brand.length() <= 0)
 				{
 					if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
 	    				user.getPlayer().sendMessage(Rebug.RebugMessage + "failed to load your client brand this may cause issues!");
@@ -79,7 +83,7 @@ public class ClientCMD extends Command
 			
 			return;
 		}
-		Player player = Bukkit.getServer().getPlayer(args[1]);
+		player = Bukkit.getServer().getPlayer(args[1]);
 		if (player == null)
 		{
 			sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
@@ -93,7 +97,7 @@ public class ClientCMD extends Command
 		}
 		
 		brand = user.ClientBrand();
-		if (brand == null || !user.getIsBrandSet() || brand.length() <= 0)
+		if (brand == null || !user.BrandSet || brand.length() <= 0)
 		{
 			if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
 			{

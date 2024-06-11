@@ -26,7 +26,10 @@ public class SpawnCMD extends Command
 	public String getDescription() {
 		return "Teleports you to spawn";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "spawn";

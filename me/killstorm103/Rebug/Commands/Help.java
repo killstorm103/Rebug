@@ -30,6 +30,10 @@ public class Help extends Command
 		return "gets a list of commands and Syntax of commands";
 	}
 	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
+	@Override
 	public String getPermission ()
 	{
 		return StartOfPermission() + "help";

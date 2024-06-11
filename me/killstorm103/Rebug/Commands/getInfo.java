@@ -27,7 +27,10 @@ public class getInfo extends Command
 	public String getDescription() {
 		return "get info about a command or the server";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "getinfo";

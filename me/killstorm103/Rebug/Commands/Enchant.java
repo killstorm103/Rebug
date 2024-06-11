@@ -2,6 +2,7 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.User;
 
 public class Enchant extends Command
 {
@@ -28,7 +30,10 @@ public class Enchant extends Command
 	public String getDescription() {
 		return "enchant any item in your hand!";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "enchant";
@@ -59,13 +64,24 @@ public class Enchant extends Command
 					player.sendMessage(Rebug.RebugMessage + "You must put in a number!");
 					return;
 				}
+				User user = Rebug.getUser(player);
+				if (user == null)
+				{
+					player.sendMessage(PT.RebugsUserWasNullErrorMessage("When trying to enchant!"));
+					return;
+				}
+				if (user.getPlayer().getItemInHand().getItemMeta().hasDisplayName() && user.getPlayer().getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) 
+				{
+					user.getPlayer().sendMessage(Rebug.RebugMessage + "You can't enchant this item!");
+					return;
+				}
 				ItemStack item = player.getItemInHand(), Copy = item.clone();
 				int level;
 				@SuppressWarnings("deprecation")
 				Enchantment enchantment = Enchantment.getById(Integer.parseInt(args[1]));
 				if (enchantment == null)
 				{
-					player.sendMessage(Rebug.RebugMessage + "Unknown Enchantment!");
+					user.getPlayer().sendMessage(Rebug.RebugMessage + "Unknown Enchantment!");
 					return;
 				}
 				String name = enchantment.getName().toLowerCase();
@@ -80,13 +96,13 @@ public class Enchant extends Command
 						item.removeEnchantment(enchantment);
 						if (Copy.getEnchantments().containsKey(enchantment) && !Copy.getEnchantments().containsValue(level))
 						{
-							if (level > enchantment.getMaxLevel() && !player.isOp())
+							if (level > enchantment.getMaxLevel() && !player.isOp() && !player.hasPermission("me.killstorm103.rebug.server_owner") && !player.hasPermission("me.killstorm103.rebug.server_admin"))
 							{
-								player.sendMessage(Rebug.RebugMessage + name + "'s Max Level Reached you can't go > " + enchantment.getMaxLevel() + " unless your opped!");
+								user.getPlayer().sendMessage(Rebug.RebugMessage + name + "'s Max Level Reached you can't go > " + enchantment.getMaxLevel() + " you don't have perms!");
 								item.setItemMeta(item.getItemMeta());
-								player.setItemInHand(item);
-								player.updateInventory();
-								player.sendMessage(Rebug.RebugMessage + (Added == 3 ? "Added " + name + " " + level + " to your item!" : Added == 2 ? "Updated " + name : "Removed your item's " + name + " Enchantment!"));
+								user.getPlayer().setItemInHand(item);
+								user.getPlayer().updateInventory();
+								user.getPlayer().sendMessage(Rebug.RebugMessage + (Added == 3 ? "Added " + name + " " + level + " to your item!" : Added == 2 ? "Updated " + name : "Removed your item's " + name + " Enchantment!"));
 								return;
 							}
 							Added = 2;
@@ -96,9 +112,9 @@ public class Enchant extends Command
 					}
 					else
 					{
-						if (level > enchantment.getMaxLevel() && !player.isOp())
+						if (level > enchantment.getMaxLevel() && !player.isOp() && !player.hasPermission("me.killstorm103.rebug.server_owner") && !player.hasPermission("me.killstorm103.rebug.server_admin"))
 						{
-							player.sendMessage(Rebug.RebugMessage + name + "'s Max Level Reached you can't go > " + enchantment.getMaxLevel() + " unless your opped!");
+							user.getPlayer().sendMessage(Rebug.RebugMessage + name + "'s Max Level Reached you can't go > " + enchantment.getMaxLevel() + " you don't have perms!");
 							return;
 						}
 						Added = 3;
@@ -107,13 +123,13 @@ public class Enchant extends Command
 					}
 					
 					item.setItemMeta(item.getItemMeta());
-					player.setItemInHand(item);
-					player.updateInventory();
+					user.getPlayer().setItemInHand(item);
+					user.getPlayer().updateInventory();
 					
-					player.sendMessage(Rebug.RebugMessage + (Added == 3 ? "Added " + name + " " + level + " to your item!" : Added == 2 ? "Updated " + name : "Removed your item's " + name + " Enchantment!"));
+					user.getPlayer().sendMessage(Rebug.RebugMessage + (Added == 3 ? "Added " + name + " " + level + " to your item!" : Added == 2 ? "Updated " + name : "Removed your item's " + name + " Enchantment!"));
 				}
 				else
-					player.sendMessage(Rebug.RebugMessage + "You must put in a number!");
+					user.getPlayer().sendMessage(Rebug.RebugMessage + "You must put in a number!");
 			}
 			else
 				player.sendMessage(Rebug.RebugMessage + getSyntax());

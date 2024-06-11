@@ -32,6 +32,10 @@ public class Unblock extends Command
 		return "unblocks the packetdebugger for numbware";
 	}
 	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
+	@Override
 	public String getPermission() {
 		return StartOfPermission() + "unblock";
 	}

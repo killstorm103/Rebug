@@ -2,6 +2,7 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.User;
 
 public class NoBreak extends Command
 {
@@ -33,7 +35,10 @@ public class NoBreak extends Command
 	public String getPermission() {
 		return StartOfPermission() + "nobreak";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String[] SubAliases() 
 	{
@@ -46,20 +51,28 @@ public class NoBreak extends Command
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			if (player.getItemInHand() != null)
+			User user = Rebug.getUser(player);
+			if (user.getPlayer().getItemInHand() != null)
 			{
-				ItemStack Item = player.getItemInHand(), Repair = PT.RepairItem(Item);
+				ItemStack Item = user.getPlayer().getItemInHand(), Repair = PT.RepairItem(Item);
+				if (Item.getItemMeta().hasDisplayName() && Item.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) 
+				{
+					player.sendMessage(Rebug.RebugMessage + "You can't use this command on this item!");
+					return;
+				}
                 ItemMeta ItemM = Item.getItemMeta();
                 Item.setDurability(Repair.getDurability());
                 ItemM.spigot().setUnbreakable(!ItemM.spigot().isUnbreakable());
                 Item.setItemMeta(ItemM);
-                player.setItemInHand(Item);
-                player.updateInventory();
-				player.sendMessage(Rebug.RebugMessage + " Your item is now " + (player.getItemInHand().getItemMeta().spigot().isUnbreakable() ? "unbreakable" : "breakable") + "!");
+                user.getPlayer().setItemInHand(Item);
+                user.getPlayer().updateInventory();
+                user.getPlayer().sendMessage(Rebug.RebugMessage + " Your item is now " + (player.getItemInHand().getItemMeta().spigot().isUnbreakable() ? "unbreakable" : "breakable") + "!");
 			}
 			else
-				player.sendMessage(Rebug.RebugMessage + "You don't have a item to make unbreakable/breakable!");
+				user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have a item to make unbreakable/breakable!");
 		}
+		else
+			sender.sendMessage(Rebug.RebugMessage + "Only Players can run this command!");
 	}
 
 	@Override

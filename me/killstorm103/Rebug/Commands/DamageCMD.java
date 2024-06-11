@@ -28,7 +28,10 @@ public class DamageCMD extends Command
 	public String getDescription() {
 		return "damages you or a given player if you have op!";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return true;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "damage";

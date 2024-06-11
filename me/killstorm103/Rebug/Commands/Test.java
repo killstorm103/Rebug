@@ -3,8 +3,10 @@ package me.killstorm103.Rebug.Commands;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
+import me.killstorm103.Rebug.Main.Rebug;
 
 public class Test extends Command
 {
@@ -22,7 +24,10 @@ public class Test extends Command
 	public String getDescription() {
 		return "command for testing new commands";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "test";
@@ -30,7 +35,11 @@ public class Test extends Command
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		sender.sendMessage(sender.getName() + " is cute");
+		if (!(sender instanceof Player))
+			return;
+		
+		Player player = (Player) sender;
+		player.sendMessage(Rebug.RebugMessage + player.getWorld().getName());
 	}
 
 	@Override

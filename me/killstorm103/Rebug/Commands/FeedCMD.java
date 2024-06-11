@@ -26,7 +26,10 @@ public class FeedCMD extends Command
 	public String getDescription() {
 		return "feed yourself or other players!";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return true;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "feedcmd";

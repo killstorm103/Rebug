@@ -22,7 +22,10 @@ public class BackCMD extends Command
 	public String getSyntax() {
 		return "back";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getDescription() {
 		return "Teleports you back to where you died!";
@@ -41,8 +44,8 @@ public class BackCMD extends Command
 			User user = Rebug.getUser((Player) sender);
 			if (user != null)
 			{
-				if (user.getDeath_location() != null)
-					user.getPlayer().teleport(user.getDeath_location());
+				if (user.death_location != null)
+					user.getPlayer().teleport(user.death_location);
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.GRAY + "You don't have a last death location!");
 			}

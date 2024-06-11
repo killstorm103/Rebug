@@ -9,22 +9,22 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
-public class HealCMD extends Command
+public class HealAndFeedCMD extends Command
 {
 
 	@Override
 	public String getName() {
-		return "heal";
+		return "healandfeed";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "heal | heal <player>";
+		return "healandfeed | healandfeed <player>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "heal yourself or other players!";
+		return "heals and feeds players!";
 	}
 	@Override
 	public boolean hasCommandCoolDown() {
@@ -32,13 +32,14 @@ public class HealCMD extends Command
 	}
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "healcmd";
+		return StartOfPermission() + "healandfeed";
 	}
 
 	@Override
-	public String[] SubAliases()
+	public String[] SubAliases() 
 	{
-		String[] s = {"/heal"};
+		String s[] = {"/healandfeed"};
+		
 		return s;
 	}
 
@@ -51,11 +52,12 @@ public class HealCMD extends Command
 			if (sender instanceof Player)
 			{
 				player = (Player) sender;
+				player.setFoodLevel(20);
 				player.setHealth(player.getMaxHealth());
-				player.sendMessage(Rebug.RebugMessage + "Healed " + player.getName() + "!");
+				player.sendMessage(Rebug.RebugMessage + "Healed and Fed " + player.getName() + "!");
 			}
 			else
-				sender.sendMessage(Rebug.RebugMessage + "Only players can run this command!: do /heal <player>");
+				sender.sendMessage(Rebug.RebugMessage + "Only players can run this command!: do /healandfeed <player>");
 		}
 		else
 		{
@@ -65,8 +67,9 @@ public class HealCMD extends Command
 				sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
 				return;
 			}
+			player.setFoodLevel(20);
 			player.setHealth(player.getMaxHealth());
-			sender.sendMessage(Rebug.RebugMessage + "Healed " + player.getName() + "!");
+			sender.sendMessage(Rebug.RebugMessage + "Healed and Fed " + player.getName() + "!");
 		}
 	}
 

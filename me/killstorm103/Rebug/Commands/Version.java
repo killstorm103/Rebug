@@ -25,7 +25,10 @@ public class Version extends Command
 	public String getDescription() {
 		return "gets the version of rebug";
 	}
-
+	@Override
+	public boolean hasCommandCoolDown() {
+		return false;
+	}
 	@Override
 	public String getPermission() {
 		return StartOfPermission() + "version";
