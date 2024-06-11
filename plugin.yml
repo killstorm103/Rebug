@@ -2,7 +2,7 @@ name: Rebug
 version: 1.5
 main: me.killstorm103.Rebug.Main.Rebug
 author: killstorm103
-description: Helpful plugin
+description: REBUG is a Test Server Plugin that allows you to switch between different AntiCheats and allows users to test exploits on players clients
 commands:
   rebug:
     description: command prefix for using rebugs commands
