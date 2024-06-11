@@ -10,4 +10,4 @@ it's a AntiCheat Switcher with other things like crashers and other exploits for
 
 
 // Info
-Java Version: 1.8
+JavaSE: 1.8
