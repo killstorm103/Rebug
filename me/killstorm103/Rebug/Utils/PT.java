@@ -7,15 +7,16 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
@@ -35,6 +36,8 @@ import net.minecraft.server.v1_8_R3.World;
 
 public class PT
 {
+	public static final PT INSTANCE = new PT();
+	
 	public static Class<?> getNMSClass(String name) 
 	{
         try 
@@ -47,6 +50,13 @@ public class PT
             return null;
         }
     }
+	public boolean isStringNull (String... s)
+	{
+		if (s == null || s.length < 1)
+			return true;
+		
+		return false;
+	}
 	@SuppressWarnings("unused")
 	public static boolean isNumber_Float (String strNum) 
 	{
@@ -299,27 +309,26 @@ public class PT
     	{
     		final EntityPlayer px = PT.getEntityPlayer(willBeCrashed);
     		if (mode.equalsIgnoreCase("creeper"))
-    			entity = new EntityCreeper(px.world);
-    		
-    		if (entity == null)
     		{
-    			sender.sendMessage("Unsupported Entity");
-    			return;
-    		}
-    		final DataWatcher dw = new DataWatcher((net.minecraft.server.v1_8_R3.Entity) entity);
-            dw.a (mode.equalsIgnoreCase("creeper") ? 18 : 31, (Object) Integer.MAX_VALUE);
-            Packet<?> packet_spawn;
-            packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
-            px.playerConnection.sendPacket(packet_spawn);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getGetMain(), new Runnable()
-            {
-                @Override
-                public void run()
+    			entity = new EntityCreeper(px.world);
+    			final DataWatcher dw = new DataWatcher((net.minecraft.server.v1_8_R3.Entity) entity);
+                dw.a (18, (Object) Integer.MAX_VALUE);
+                Packet<?> packet_spawn;
+                packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
+                px.playerConnection.sendPacket(packet_spawn);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getGetMain(), new Runnable()
                 {
-                    PacketPlayOutEntityMetadata meta = new PacketPlayOutEntityMetadata(entity.getId(), dw, true);
-                    px.playerConnection.sendPacket(meta);
-                }
-            }, 5L);
+                    @Override
+                    public void run()
+                    {
+                        PacketPlayOutEntityMetadata meta = new PacketPlayOutEntityMetadata(entity.getId(), dw, true);
+                        px.playerConnection.sendPacket(meta);
+                    }
+                }, 5L);
+    		}
+    		if (mode.equalsIgnoreCase("test"))
+    		{
+    		}
     	}
     }
     public static int getPlayerVersion (Player player)
@@ -388,6 +397,7 @@ public class PT
 			}
 		});
 	}
+	 
 	public static void BanPlayer(Player player, String reason) 
 	{
 		if (player == null)
@@ -407,10 +417,22 @@ public class PT
 	{
 		return player.getInventory().firstEmpty() ==- 1;
 	}
+	public static boolean isInventoryFull (Inventory inventory)
+	{
+		return inventory.firstEmpty() ==- 1;
+	}
 	public static ItemStack RepairItem(ItemStack item) 
 	{
 		ItemStack Stack = new ItemStack (item.getType());
 		Stack.setItemMeta(item.getItemMeta());
 		return Stack;
+	}
+	public static void PlaySound(Player player, Sound sound, float volume, float pitch)
+	{
+		player.playSound(player.getLocation(), sound, volume, pitch);
+	}
+	public static Player getPlayerFromHumanEntity(LivingEntity entity) 
+	{
+		return (Player) entity;
 	}
 }
