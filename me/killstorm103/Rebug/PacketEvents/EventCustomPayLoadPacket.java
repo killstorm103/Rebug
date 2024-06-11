@@ -24,11 +24,7 @@ public class EventCustomPayLoadPacket implements PacketListener
 			me.killstorm103.Rebug.Utils.User user = Rebug.getUser(player);
 			if (packet.getChannelName().equalsIgnoreCase("REGISTER"))
 			{
-				if (user == null)
-		    	{
-					PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("when reading CustomPayLoad:Register - rejoin!"));
-		    		return;
-		    	}
+				if (user == null) return;
 				try
 				{
 					user.setRegister(new String(packet.getData(), "UTF-8").substring(0));
@@ -44,15 +40,12 @@ public class EventCustomPayLoadPacket implements PacketListener
 			}
 			if (packet.getChannelName().equalsIgnoreCase("MC|Brand"))
 			{
-		    	if (user == null)
-		    	{
-		    		PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("when reading CustomPayLoad:MC|Brand - rejoin!"));
-		    		return;
-		    	}
-		    	if (Config.getAllowedToOverRideClientBrand())
-		    		user.setBrandSet(false);
+		    	if (user == null) return;
 		    	
-		    	if (user.getIsBrandSet())
+		    	if (Config.getAllowedToOverRideClientBrand())
+		    		user.BrandSet = false;
+		    	
+		    	if (user.BrandSet)
 		    	{
 		    		if (Config.getCantOverrideClientBrand().equalsIgnoreCase("kick"))
 		    			PT.KickPlayer(user.getPlayer(), "Rebug's already collected your client brand you shound't be sending another client brand Packet!");
@@ -65,7 +58,7 @@ public class EventCustomPayLoadPacket implements PacketListener
 		    	}
 		    	try
 		    	{
-					if (!user.getIsBrandSet())
+					if (!user.BrandSet)
 		    		{
 						user.setBrand(new String(packet.getData(), "UTF-8").substring(1));
 						if (user.getBrand() == null || user.getBrand().length() <= 0)
@@ -84,7 +77,7 @@ public class EventCustomPayLoadPacket implements PacketListener
 			    				return;
 			    			}
 				    	}
-						if (!user.HasLoadedBefore())
+						if (!user.hasLoadedBefore)
 						{
 							Bukkit.getScheduler().runTaskLater(Rebug.getGetMain(), new Runnable()
 							{
@@ -99,8 +92,8 @@ public class EventCustomPayLoadPacket implements PacketListener
 							}, 11);
 						}
 						user.UnReceivedBrand = 0;
-						user.setHasLoadedBefore(true);
-						user.setBrandSet(true);
+						user.hasLoadedBefore = true;
+						user.BrandSet = true;
 		    		}
 		    	}
 		    	catch (Exception ee) 

@@ -30,7 +30,7 @@ public class EventAntiCancelBrandPacket implements PacketListener
 			{
 				return;
 			}
-			if (!user.getIsBrandSet())
+			if (!user.BrandSet)
 			{
 				user.UnReceivedBrand ++;
 				if (user.UnReceivedBrand >= (Config.AntiCancelClientBrandCounter() < 260 ? 260 : Config.AntiCancelClientBrandCounter()))
