@@ -1,45 +1,100 @@
 loaded-anticheats:
-  Inventory-size: 54
-  loaded-acs:
+  ## Size of the Anticheats Menu/Inventory!
+  ## Inventory Size can be: 9, 18, 27, 36, 45, 54
+  Inventory-size: 18
+  ## AC Names:
+  ## make them what their name is in their plugin.yml, color codes is supported use: &(code)
+  ac-names:
   - '&4Vulcan'
   - '&cHawk'
   - '&1Warden'
   - '&1NoCheatPlus'
   - '&8GrimAC'
   - '&2Spartan'
+  - '&cAntiCheat'
+  ## AC items:
+  ## Name them what their name is above but in lower case and without color codes!
+  ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
+  ## item is the item number ID
+  ## fix-description use this and offset-description to fix the AntiCheats description if it's going off of the screen!
+  ## unbreakable: Boolean
+  ## enable_enchantment: Boolean, enchantments:
+  ## - 'ID:Level'
+  ## - 'ID:Level' (so on!)
+  ## enable_item_flag: Boolean, ItemFlags: 
+  ## - Flag
+  ## - Flag (so on!)
+  ## has_extra_lore: Boolean, lore:
+  ## - 'string' 
+  ## - 'string' (color codes supported using &(code)string)
   spartan:
+    unbreakable: false
+    enable_enchantment: true
+    enchantments:
+    - '19:1'
+    has_extra_lore: false
+    lore:
+    - 'Big Dick'
+    - '&bBoy &c-_-'
+    enable_item_flag: true
+    ItemFlags:
+    - HIDE_ENCHANTS
     has-data: false
     data: 2
     item: 314
-    has-fixed-number: false
-    fixed-number: 0
+    fix-description: false
+    offset-description: 0
   grimac:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
     has-data: false
     data: 2
     item: 397
-    has-fixed-number: true
-    fixed-number: 49
+    fix-description: true
+    offset-description: 49
+  anticheat:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 260
+    fix-description: false
+    offset-description: 49
   nocheatplus:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
     has-data: false
     data: 2
     item: 1
-    has-fixed-number: true
-    fixed-number: 44
+    fix-description: true
+    offset-description: 44
   warden:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
     has-data: false
     data: 2
     item: 7
-    has-fixed-number: false
-    fixed-number: 28
+    fix-description: false
+    offset-description: 28
   vulcan:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
     has-data: false
     data: 2
     item: 327
-    has-fixed-number: false
-    fixed-number: 49
+    fix-description: false
+    offset-description: 49
   hawk:
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
     has-data: false
     data: 2
     item: 288
-    has-fixed-number: false
-    fixed-number: 49
+    fix-description: false
+    offset-description: 49
