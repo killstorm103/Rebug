@@ -1,4 +1,4 @@
-Rebug is a Minecraft server plugin made for Spigot 1.8.8
+Rebug is a Test server plugin made for Spigot 1.8.8
 
 It's only made and tested for 1.8.8!
 
