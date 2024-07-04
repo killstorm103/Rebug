@@ -107,9 +107,9 @@ public class Rebug extends JavaPlugin implements Listener
     }
     public static void Debug (Player player, String msg)
     {
-    	if (!debug) return;
+    	if (!debug || PT.isStringNull(msg)) return;
     	
-    	if (!debugOpOnly || player != null && (player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin") || player.isOp()))
+    	if (player != null && (hasAdminPerms(player) || !debugOpOnly))
     		player.sendMessage(RebugMessage + msg); 
     	
     	Bukkit.getServer().getConsoleSender().sendMessage(RebugMessage + msg);
