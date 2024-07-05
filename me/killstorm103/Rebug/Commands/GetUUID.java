@@ -52,7 +52,7 @@ public class GetUUID extends Command
 		if (sender instanceof Player)
 		{
 			player = (Player) sender;
-			if (player.isOp() || player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin"))
+			if (Rebug.hasAdminPerms(player))
 			{
 				if (args.length < 2)
 					player.sendMessage(Rebug.RebugMessage + player.getName() + "'s UUID: " + player.getUniqueId());

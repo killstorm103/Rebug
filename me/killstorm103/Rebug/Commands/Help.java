@@ -46,7 +46,7 @@ public class Help extends Command
 		if (args.length == 1)
 			Log(sender, ChatColor.GRAY + "commands" + ChatColor.RESET + ":");
 		
-		for (Command commands : Rebug.getGetMain().getCommands())
+		for (Command commands : Rebug.GetMain().getCommands())
 		{
 			if (args.length == 1)
 			{

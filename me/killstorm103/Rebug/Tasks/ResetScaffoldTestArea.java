@@ -30,10 +30,13 @@ public class ResetScaffoldTestArea implements Runnable
 	@Override
 	public void run() 
 	{
-		for (Player player : Bukkit.getOnlinePlayers())
+		if (!Bukkit.getOnlinePlayers().isEmpty())
 		{
-			player.sendMessage(Rebug.RebugMessage + "Clearing the Scaffold Test Area!");
-			player.sendMessage(Rebug.RebugMessage + "Clearing Lagg!");
+			for (Player player : Bukkit.getOnlinePlayers())
+			{
+				player.sendMessage(Rebug.RebugMessage + "Clearing the Scaffold Test Area!");
+				player.sendMessage(Rebug.RebugMessage + "Clearing Lagg!");
+			}
 		}
 		
 		

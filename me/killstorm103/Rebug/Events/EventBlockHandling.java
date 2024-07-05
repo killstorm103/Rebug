@@ -13,6 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -27,7 +28,7 @@ import me.killstorm103.Rebug.Utils.User;
 
 public class EventBlockHandling implements Listener
 {
-	private final String permission_toBlock = "me.killstorm103.rebug.handleblock";
+	//private final String permission_toBlock = "me.killstorm103.rebug.handleblock";
 	private double 
 	
 	minX = 3.0, minY = 52, minZ = 222,
@@ -41,12 +42,12 @@ public class EventBlockHandling implements Listener
 		
 		return false;
 	}
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onBreakBlock (BlockBreakEvent e)
 	{
 		Player player = e.getPlayer();
 		Location location = e.getBlock().getLocation();
-		if (!NotAllowed(location) && (!player.isOp() || !player.hasPermission(permission_toBlock) || !player.hasPermission("me.killstorm103.rebug.*")))
+		if (!NotAllowed(location) && !Rebug.hasAdminPerms(player))
 		{
 			e.setCancelled(true);
 		}
@@ -56,7 +57,7 @@ public class EventBlockHandling implements Listener
 			user.BlockPlaced.remove(e.getBlock(), e.getBlock().getLocation());
 		}
 	}
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInteract (PlayerInteractEvent e) 
 	{
 		Player player = e.getPlayer();
@@ -80,13 +81,13 @@ public class EventBlockHandling implements Listener
 	                	  
 	                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
 	                }
-	            }.runTaskTimer(Rebug.getGetMain(), 0, 1);
+	            }.runTaskTimer(Rebug.GetMain(), 0, 1);
 			}
 		}
 	}
 	
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlaceBlock (BlockPlaceEvent e)
 	{
 		Player player = e.getPlayer();
@@ -97,8 +98,7 @@ public class EventBlockHandling implements Listener
 		if (item != null)
 		{
 			if (user.Infinite_Blocks &&
-					(user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || 
-					user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin")) && user.getPlayer().getGameMode() != GameMode.CREATIVE)
+					(user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || Rebug.hasAdminPerms(user.getPlayer())) && user.getPlayer().getGameMode() != GameMode.CREATIVE)
 						user.getPlayer().setItemInHand(item);
 			
 			if (block != null && block.getType().equals(Material.TNT) && item.hasItemMeta() && item.getItemMeta().hasDisplayName() &&
@@ -124,13 +124,13 @@ public class EventBlockHandling implements Listener
 	                	  
 	                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
 	                }
-	            }.runTaskTimer(Rebug.getGetMain(), 0, 1);
+	            }.runTaskTimer(Rebug.GetMain(), 0, 1);
 	            
 				loc.getBlock().setType(Material.AIR);
 				return;
 			}
 		}
-		if (!NotAllowed(location) && (!player.isOp() && !player.hasPermission(permission_toBlock) && !player.hasPermission("me.killstorm103.rebug.*")))
+		if (!NotAllowed(location) && !Rebug.hasAdminPerms(player))
 		{
 			e.setCancelled(true);
 		}
@@ -139,9 +139,9 @@ public class EventBlockHandling implements Listener
 			user.BlockPlaced.put(e.getBlockPlaced().getLocation(), e.getBlockPlaced());
 		}
 	}
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onExplosion (EntityExplodeEvent e)
 	{
-		e.setCancelled(true);
+		e.blockList().clear();
 	}
 }

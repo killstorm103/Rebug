@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -20,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
+import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import me.killstorm103.Rebug.Main.Rebug;
+import net.kyori.adventure.text.Component;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.DataWatcher;
@@ -37,7 +40,6 @@ import net.minecraft.server.v1_8_R3.World;
 public class PT
 {
 	public static final PT INSTANCE = new PT();
-	
 	public static Class<?> getNMSClass(String name) 
 	{
         try 
@@ -50,9 +52,30 @@ public class PT
             return null;
         }
     }
-	public boolean isStringNull (String... s)
+	public static String getTextFromComponent (Component component)
 	{
-		if (s == null || s.length < 1)
+		return LegacyComponentSerializer.legacyAmpersand().serialize(component);
+	}
+	public static boolean isHoldingSword (ItemStack item)
+	{
+		if (item == null) return false;
+		
+		return item.getType() == Material.DIAMOND_SWORD || item.getType() == Material.GOLD_SWORD || item.getType() == Material.IRON_SWORD || item.getType() == Material.STONE_SWORD || item.getType() == Material.WOOD_SWORD;
+	}
+	public static boolean isStringNull_loop (String... s)
+    {
+		if (s.length < 1) return false;
+		
+    	for (int i = 0; i < s.length; i ++)
+    	{
+    		if (s[i] == null || s[i].length() < 1) return true;
+    	}
+    	
+    	return false;
+    }
+	public static boolean isStringNull (String s)
+	{
+		if (s == null || s.length() < 1)
 			return true;
 		
 		return false;
@@ -176,7 +199,7 @@ public class PT
 	}
 	public static void LogToConsole (String tolog)
 	{
-		Rebug.getGetMain().getServer().getConsoleSender().sendMessage(tolog);
+		Rebug.GetMain().getServer().getConsoleSender().sendMessage(tolog);
 	}
 	// Inventory Size can be: 9, 18, 27, 36, 45, 54
 	
@@ -316,7 +339,7 @@ public class PT
                 Packet<?> packet_spawn;
                 packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
                 px.playerConnection.sendPacket(packet_spawn);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getGetMain(), new Runnable()
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.GetMain(), new Runnable()
                 {
                     @Override
                     public void run()
@@ -373,7 +396,7 @@ public class PT
 	}
 	public static void RunTaskCommand(CommandSender sender, String command)
 	{
-		Bukkit.getServer().getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		Bukkit.getServer().getScheduler().runTask(Rebug.GetMain(), new Runnable()
 		{
 			@Override
 			public void run() 
@@ -384,10 +407,10 @@ public class PT
 	}
 	public static void KickPlayer(Player player, String reason) 
 	{
-		if (player == null)
+		if (player == null || !player.isOnline())
 			return;
 		
-		Bukkit.getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
 		{
 			
 			@Override
@@ -400,10 +423,10 @@ public class PT
 	 
 	public static void BanPlayer(Player player, String reason) 
 	{
-		if (player == null)
+		if (player == null || !player.isOnline())
 			return;
 		
-		Bukkit.getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+		Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
 		{
 			
 			@Override

@@ -30,7 +30,7 @@ public class EventCommandPreProcess implements Listener
 				Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
 				p.kickPlayer(Rebug.RebugMessage + "Reloading server - please rejoin!");
 			}
-			Bukkit.getScheduler().runTask(Rebug.getGetMain(), new Runnable()
+			Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
 			{
 				
 				@Override
@@ -79,7 +79,6 @@ public class EventCommandPreProcess implements Listener
 			if (Flagged)
 			{
 				e.setCancelled(true);
-				Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Blocked " + command);
 				user.getPlayer().sendMessage(Rebug.RebugMessage + "Blocked " + command);
 				return;
 			}
@@ -87,7 +86,7 @@ public class EventCommandPreProcess implements Listener
 		
 		if (!Config.AllowSubCommands()) return;
 		
-        for (Command cmd : Rebug.getGetMain().getCommands())
+        for (Command cmd : Rebug.GetMain().getCommands())
         {
         	if (cmd.SubAliases() != null && cmd.SubAliases().length > 0)
         	{

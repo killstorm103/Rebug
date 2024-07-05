@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,46 +14,128 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
+
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
-import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 
 public class User 
 {
 	private final Player player;
     private static User user;
-    private String brand, register;
-    private final int protocol;
-    public boolean SentUpdatedCommand, Infinite_Blocks, InvSeed, CancelInteract, AutoCloseAntiCheatMenu, hasLoadedBefore, BrandSet, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowAT, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, FallDamage;
+    private String brand = null, register = null;
+    private int protocol;
+    public boolean SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowAT, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, FallDamage;
     public org.bukkit.Location death_location;
-	public int UnReceivedBrand, ShouldTeleportByBow;
     public final Map<UUID, Long> joinTimeMap = new HashMap<UUID, Long>();
     public final Map<Location, Block> BlockPlaced = new HashMap<Location, Block>();
     public String AntiCheat;
     public Player CommandTarget; // TODO: Fix this not setting to null when it should or maybe should leave it!?
     public Map<String, Boolean> AlertsEnabled = new HashMap<>();
+    public int UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0,
+    potionlevel = 1, potion_effect_seconds = 240;
+    
+    public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
+    
+    
     public Player getPlayer ()
     {
     	return this.player;
     }
-    
+    public final String getName ()
+    {
+    	return getPlayer().getName();
+    }
 	public User (Player player)
     {
         setUser(this);
         AlertsEnabled.clear();
-        this.CommandTarget = null;
-        this.OldInventory = this.CrashersMenu = this.ExploitsMenu = this.SettingsMenu = this.VanillaFlyChecksMenu = this.getRebugSettingsMenu = this.SpawnEntityCrashersMenu = null;
-        this.AntiCheat = "Vanilla";
+        BlockPlaced.clear();
+        this.AntiCheat = Rebug.GetMain().getLoadedAntiCheatsFile().getString("default-anticheat");
+        this.AntiCheat = this.AntiCheat == null || this.AntiCheat.length() < 1 ? "Vanilla" : this.AntiCheat;
         this.player = player;
-        this.BrandSet = this.HideOnlinePlayers = this.hasLoadedBefore = this.Vanilla1_9FlyCheck = this.Fire_Resistance = this.Damage_Resistance = this.CancelInteract = this.SentUpdatedCommand = false;
-        this.brand = this.register = null;
-        this.UnReceivedBrand = this.ShouldTeleportByBow = 0;
-        this.protocol = getNumber (this.player);
-        this.death_location = null;
-        this.Hunger = this.Exterranl_Damage = this.NotifyFlyingKick = this.ProximityPlayerHider = this.AutoCloseAntiCheatMenu = this.AllowDirectMessages = this.AntiCheatKick = this.FallDamage = this.ShowFlags = this.PotionEffects = this.Vanilla1_8FlyCheck = this.AutoRefillBlocks = this.AllowAT = true;
+        LoadDefault();
+        this.protocol = getNumber ();
     }
+	private void LoadDefault ()
+	{
+		this.HideOnlinePlayers = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Hide Online Players");
+		this.ProximityPlayerHider = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Proximity Player Hider");
+		this.NotifyFlyingKick1_8 = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Notify Flying Kick 1.8.x");
+		this.NotifyFlyingKick1_9 = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Notify Flying Kick 1.9");
+		this.Vanilla1_8FlyCheck = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Vanilla 1.8.x fly Check");
+		this.Vanilla1_9FlyCheck = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Vanilla 1.9 fly Check");
+		this.Fire_Resistance = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Fire Resistance");
+		this.Damage_Resistance = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Damage Resistance");
+		this.Hunger = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Hunger");
+		this.Exterranl_Damage = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Exterranl Damage");
+		this.FallDamage = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Fall Damage");
+		this.AutoCloseAntiCheatMenu = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Auto Close AntiCheat Menu");
+		this.AntiCheatKick = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("AntiCheat Kick");
+		this.ShowFlags = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Show Flags");
+		this.AllowDirectMessages = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Direct Messages");
+		this.PotionEffects = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Potion Effects");
+		this.AutoRefillBlocks = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Auto Refill Blocks Placed");
+		this.AllowAT = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Mentions");
+		this.Infinite_Blocks = Rebug.GetMain().getDefaultPlayerSettingsConfigFile().getBoolean("Infinite Blocks");
+	}
+	
+	public Inventory getPotionsMenu ()
+	{
+		if (PotionsMenu == null)
+		{
+			Inventory inventory = PT.createInventory(getPlayer(), 18, ChatColor.RED + "Potions");
+			int add = 0;
+			
+			for (PotionType pots : PotionType.values())
+			{
+				Potion pot = new Potion(pots);
+				if (pots != null && !pots.name().equalsIgnoreCase("water") && pot != null)
+				{
+					item = Reset(pot.toItemStack(1));
+					String name = pot.getType().name().replace(" ", "_").toLowerCase();
+					name = name.replace("jump", "jump_boost").replace("instant_heal", "instant_health").replace("regen", "regeneration");
+					itemMeta.setDisplayName(ChatColor.GREEN + name);
+					item.setItemMeta(itemMeta);
+					inventory.setItem(add++, item);
+				}
+			}
+			item = Reset(Material.POTION, 1, (short) 0, (byte) 16387);
+			itemMeta.setDisplayName(ChatColor.GREEN + "resistance");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(13, item);
+			
+			item = Reset(Material.MILK_BUCKET);
+			lore.add("Clear potion effects");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(17, item);
+			
+			
+			for (int i = 0; i < inventory.getSize(); i ++)
+			{
+				ItemStack item = inventory.getItem(i);
+				if (item != null && item.getType() != Material.MILK_BUCKET)
+				{
+					this.item = Reset(item);
+					lore.add(ChatColor.BLUE + "Seconds: " + potion_effect_seconds);
+					lore.add(ChatColor.BLUE + "Level: " + potionlevel);
+					lore.add("");
+					lore.add(ChatColor.BLUE + "Use /potion");
+					lore.add(ChatColor.BLUE + "To change potion settings!");
+					itemMeta.setLore(lore);
+					this.item.setItemMeta(itemMeta);
+				}
+			}
+			
+			PotionsMenu = inventory;
+		}
+		
+		return PotionsMenu;
+	}
 	public Location getLocation ()
 	{
 		return this.player.getLocation();
@@ -67,36 +147,23 @@ public class User
 	}
 	public void sendMessage (String message)
 	{
-		this.player.sendMessage(message);
+		message = message.replace(Rebug.RebugMessage, "");
+		this.player.sendMessage(Rebug.RebugMessage + message);
 	}
-    public String getColoredAntiCheat () 
+	public String getColoredAntiCheat () 
 	{
-    	if (AntiCheat.equalsIgnoreCase("Vanilla"))
-    	{
-    		AntiCheat = ChatColor.GREEN + "Vanilla";
-    	}
-    	else
-    	{
-    		int size = Config.getLoadedAntiCheats().size();
-    		if (size > 0)
-        	{
-        		for (int i = 0; i < size; i ++)
-            	{
-        			String loaded = ChatColor.translateAlternateColorCodes('&', Config.getLoadedAntiCheats().get(i));
-            		if (AntiCheat.equalsIgnoreCase(ChatColor.stripColor(loaded)))
-            		{
-            			AntiCheat = loaded;
-            			break;
-            		}
-            	}
-        	}
-    	}
-		return AntiCheat;
+		String strip = ChatColor.stripColor(AntiCheat).toLowerCase();
+    	if (strip.equals("vanilla"))
+    		return ChatColor.GREEN + "Vanilla";
+    	
+		return ChatColor.translateAlternateColorCodes('&', Rebug.GetMain().getLoadedAntiCheatsFile().getString("loaded-anticheats." + strip + ".display-name"));
 	}
+
+
     public String getValues (String menu, String SettingValue)
     {
     	String text = null;
-    	if (!PT.INSTANCE.isStringNull(menu, SettingValue))
+    	if (!PT.isStringNull(menu) && !PT.isStringNull(SettingValue))
     	{
     		switch (menu.toLowerCase()) 
     		{
@@ -151,10 +218,6 @@ public class User
 					text = ChatColor.AQUA + "Status: " + (AntiCheatKick ? ChatColor.GREEN : ChatColor.DARK_RED) + AntiCheatKick;
 					break;
 					
-				case "notify on flying kick":
-					text = ChatColor.AQUA + "Status: " + (NotifyFlyingKick ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick;
-					break;
-					
 				case "infinite blocks":
 					text = ChatColor.AQUA + "Status: " + (Infinite_Blocks ? ChatColor.GREEN : ChatColor.DARK_RED) + Infinite_Blocks;
 					break;
@@ -167,6 +230,23 @@ public class User
 					text = ChatColor.AQUA + "Status: " + (Fire_Resistance ? ChatColor.GREEN : ChatColor.DARK_RED) + Fire_Resistance;
 					break;
 					
+				default:
+					text = "Unknown " + menu + " Setting!";
+					break;
+				}
+				break;
+				
+			case "vanilla fly checks":
+				switch (SettingValue.toLowerCase())
+				{
+				case "notify on flying kick 1.8.x":
+					text = ChatColor.AQUA + "Status: " + (NotifyFlyingKick1_8 ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick1_8;
+					break;
+					
+				case "notify on flying kick 1.9+":
+					text = ChatColor.AQUA + "Status: " + (NotifyFlyingKick1_9 ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick1_9;
+					break;
+
 				default:
 					text = "Unknown " + menu + " Setting!";
 					break;
@@ -190,6 +270,18 @@ public class User
     {
     	return ProtocolVersion.getProtocol(this.protocol).getName();
     }
+    public final String getVersion_Short ()
+    {
+    	String version = getVersion_();
+    	int find = 0;
+		if (version.contains("-"))
+		{
+			while (PT.SubString(version, find, version.length()).contains("-")) {find++;}
+			
+			version = PT.SubString(version, find, version.length());
+		}
+    	return version;
+    }
 	public long getJoinTime(UUID uuid) {
         return joinTimeMap.getOrDefault(uuid, 0L);
     }
@@ -202,27 +294,16 @@ public class User
 	public void setRegister(String register) {
 		this.register = register;
 	}
-	private int getNumber (Player player)
+	private int getNumber ()
     {
-    	int returning =- 1;
+    	int game_version =- 1;
     	try
     	{
-    		returning = PT.getPlayerVersion(player);
+    		game_version = Via.getAPI().getPlayerVersion(this.player.getUniqueId());
     	}
-    	catch (Exception e) 
-    	{
-    		e.printStackTrace();
-    		Bukkit.getServer().getScheduler().runTask(Rebug.getGetMain(), new Runnable()
-    		{
-				@Override
-				public void run()
-				{
-					Bukkit.getServer().getConsoleSender().sendMessage(Rebug.RebugMessage + "Failed to get " + player.getName() + "'s protocol number so returning: -1");
-				}
-			});
-    	}
+    	catch (Exception e) {e.printStackTrace();}
     	
-    	return returning;
+    	return game_version;
     }
 	public String getBrand() {
 		return brand;
@@ -253,7 +334,7 @@ public class User
     }
 	
 	// Inventory
-    public Inventory OldInventory, CrashersMenu, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, getRebugSettingsMenu, SpawnEntityCrashersMenu;
+    public Inventory OldInventory, CrashersMenu, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, getRebugSettingsMenu, SpawnEntityCrashersMenu, PotionsMenu;
  // Inventory Size can be: 9, 18, 27, 36, 45, 54
     
     
@@ -280,7 +361,7 @@ public class User
 	
 	public void UpdateMenuValueChangeLore(Inventory inventory, int slot, int loreslot, String ChangedTo)
 	{
-		if (inventory == null || PT.INSTANCE.isStringNull(ChangedTo)) return;
+		if (inventory == null || PT.isStringNull(ChangedTo)) return;
 		
 		
 		ItemMeta NewMeta = inventory.getItem(slot).getItemMeta();
@@ -297,7 +378,7 @@ public class User
 	}
 	public void UpdateMenuLore (Inventory inventory, int itemslot, int loreslot, String text)
 	{
-		if (inventory == null || PT.INSTANCE.isStringNull(text)) return;
+		if (inventory == null || PT.isStringNull(text)) return;
 		
 		
 		ItemMeta NewMeta = inventory.getItem(itemslot).getItemMeta();
@@ -308,7 +389,7 @@ public class User
 	}
 	public void UpdateItemInHandLore (int loreslot, String text)
 	{
-		if (this.player.getItemInHand() == null || PT.INSTANCE.isStringNull(text)) return;
+		if (this.player.getItemInHand() == null || PT.isStringNull(text)) return;
 		
 		
 		ItemMeta NewMeta = this.player.getItemInHand().getItemMeta();
@@ -494,6 +575,26 @@ public class User
 			item.setItemMeta(itemMeta);
 			inventory.setItem(0, item);
 			
+			item = Reset(Material.BOOK_AND_QUILL);
+			itemMeta.setDisplayName(ChatColor.ITALIC + "Notify On Flying Kick 1.8.x");
+			lore.add(ChatColor.AQUA + "Status: " + (NotifyFlyingKick1_8 ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick1_8);
+			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable alerts");
+			lore.add(ChatColor.RESET + "for you being picked up for");
+			lore.add(ChatColor.RESET + "flying by vanilla 1.8.x");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(1, item);
+			
+			item = Reset(Material.BOOK_AND_QUILL);
+			itemMeta.setDisplayName(ChatColor.ITALIC + "Notify On Flying Kick 1.9+");
+			lore.add(ChatColor.AQUA + "Status: " + (NotifyFlyingKick1_9 ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick1_9);
+			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable alerts");
+			lore.add(ChatColor.RESET + "for you being picked up for");
+			lore.add(ChatColor.RESET + "flying by vanilla 1.9+");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(2, item);
+			
 			item = Reset(Vanilla1_8FlyCheck ? Material.BAKED_POTATO : Material.POTATO_ITEM);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "1.8.x");
 			lore.add(ChatColor.AQUA + "Status: " + (Vanilla1_8FlyCheck ? ChatColor.GREEN : ChatColor.DARK_RED) + Vanilla1_8FlyCheck);
@@ -501,7 +602,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(1, item);
+			inventory.setItem(3, item);
 			
 			item = Reset(Vanilla1_9FlyCheck ? Material.BAKED_POTATO : Material.POTATO_ITEM);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "1.9+");
@@ -510,7 +611,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(2, item);
+			inventory.setItem(4, item);
 			
 			
 			for (int i = 0; i < inventory.getSize(); i ++)
@@ -532,7 +633,7 @@ public class User
     {
     	if (SettingsMenu != null)
     	{
-    		if (player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin") || player.isOp())
+    		if (Rebug.hasAdminPerms(player))
 			{
 				item = Reset(Material.TNT);
 				itemMeta.setDisplayName(ChatColor.ITALIC.toString() + ChatColor.BOLD + ChatColor.RED + "REBUG " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.GRAY + "Settings");
@@ -597,15 +698,7 @@ public class User
 			item.setItemMeta(itemMeta);
 			inventory.setItem(5, item);
 			
-			item = Reset(Material.BOOK_AND_QUILL);
-			itemMeta.setDisplayName(ChatColor.ITALIC + "Notify On Flying Kick");
-			lore.add(ChatColor.AQUA + "Status: " + (NotifyFlyingKick ? ChatColor.GREEN : ChatColor.DARK_RED) + NotifyFlyingKick);
-			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable alerts");
-			lore.add(ChatColor.RESET + "for you being picked up for");
-			lore.add(ChatColor.RESET + "flying by vanilla");
-			itemMeta.setLore(lore);
-			item.setItemMeta(itemMeta);
-			inventory.setItem(6, item);
+			// TODO was here
 			
 			item = Reset(Material.POTION);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Potions");
@@ -613,7 +706,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Potion Effects");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(7, item);
+			inventory.setItem(6, item);
 			
 			item = Reset(Material.STONE);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Auto Refill Blocks");
@@ -623,7 +716,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(8, item);
+			inventory.setItem(7, item);
 			
 			item = Reset(Material.DISPENSER);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Infinite Blocks");
@@ -631,7 +724,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable blocks you place being Infinite!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(9, item);
+			inventory.setItem(8, item);
 			
 			item = Reset(Material.PAPER);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "AllowAT");
@@ -640,16 +733,15 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(10, item);
+			inventory.setItem(9, item);
 			
 			item = Reset(Material.BANNER);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Flags");
 			lore.add(ChatColor.AQUA + "Status: " + (ShowFlags ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowFlags);
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Show anticheat flags");
-			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(11, item);
+			inventory.setItem(10, item);
 			
 			
 			item = Reset(Material.ANVIL);
@@ -659,7 +751,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(12, item);
+			inventory.setItem(11, item);
 			
 			item = Reset(Material.EXP_BOTTLE);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Hide All Online Players");
@@ -667,7 +759,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Hide/Unhide All Online Players");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(13, item);
+			inventory.setItem(12, item);
 			
 			item = Reset(Material.IRON_DOOR);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Proximity Player Hider");
@@ -675,7 +767,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Hide players that are near you!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(14, item);
+			inventory.setItem(13, item);
 			
 			item = Reset(Material.BOOK_AND_QUILL);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Direct Messages");
@@ -684,7 +776,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(15, item);
+			inventory.setItem(14, item);
 
 
 			item = Reset(Material.BED);
@@ -693,7 +785,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Auto Closing AntiCheat Menu");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(16, item);
+			inventory.setItem(15, item);
 			
 			
 			if (player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin") || player.isOp())
@@ -894,6 +986,13 @@ public class User
 			item.setItemMeta(itemMeta);
 			inventory.setItem(4, item);
 			
+			
+			item = Reset(Material.DROPPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(5, item);
+			
+			
 			item = Reset(Material.WOOL, 1, (short) 0, (byte) 14);
 			itemMeta.setDisplayName(ChatColor.ITALIC + ChatColor.RED.toString() + "Reset Scaffold Area");
 			item.setItemMeta(itemMeta);
@@ -912,7 +1011,7 @@ public class User
     public ItemStack getMadeItems (String ItemName, User user)
     {
     	ItemStack order = null;
-    	if (user == null || PT.INSTANCE.isStringNull(ItemName)) return order;
+    	if (user == null || PT.isStringNull(ItemName)) return order;
     	
     	ArrayList<String> lore = new ArrayList<>();
     	lore.clear();
@@ -984,6 +1083,13 @@ public class User
 			break;
 			
 		case "rebug settings":
+			if (itemName.equalsIgnoreCase("Per Player Alerts"))
+			{
+				item = Reset(Material.DROPPER);
+				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
 			if (itemName.equalsIgnoreCase("Debug"))
 			{
 				item = Reset(Material.REDSTONE);
@@ -1015,5 +1121,9 @@ public class User
 	public boolean hasPermission (String perm) 
 	{
 		return getPlayer().hasPermission(perm);
+	}
+	public boolean isOnLadder() 
+	{
+		return getLocation().getBlock().getType() == Material.LADDER || getLocation().getBlock().getType() == Material.VINE;
 	}
 }

@@ -62,7 +62,7 @@ public class ClientCMD extends Command
 				}
 				
 				brand = user.getBrand();
-				if (brand == null || !user.BrandSet || brand.length() <= 0)
+				if (brand == null || user.BrandSetCount < 1 || brand.length() <= 0)
 				{
 					if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
 	    				user.getPlayer().sendMessage(Rebug.RebugMessage + "failed to load your client brand this may cause issues!");
@@ -75,7 +75,7 @@ public class ClientCMD extends Command
 					
 					return;
 				}
-				sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+				sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + user.getVersion_Short() + " (" + user.getProtocol() + ")");
 				sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getRegister());
 			}
 			else
@@ -97,7 +97,7 @@ public class ClientCMD extends Command
 		}
 		
 		brand = user.ClientBrand();
-		if (brand == null || !user.BrandSet || brand.length() <= 0)
+		if (brand == null || user.BrandSetCount < 1 || brand.length() <= 0)
 		{
 			if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
 			{
@@ -118,7 +118,7 @@ public class ClientCMD extends Command
 			
 			return;
 		}
-		sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+		sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + user.getVersion_Short() + " (" + user.getProtocol() + ")");
 		sender.sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getRegister());
 	}
 

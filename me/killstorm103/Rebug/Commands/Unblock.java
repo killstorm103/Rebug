@@ -49,7 +49,7 @@ public class Unblock extends Command
 			return;
 		}
 		Player player = null;
-		player = Rebug.getGetMain().getServer().getPlayer(args[1]);
+		player = Rebug.GetMain().getServer().getPlayer(args[1]);
 		if (player == null)
 		{
 			Log(sender, "Player not found!");

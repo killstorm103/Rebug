@@ -41,14 +41,14 @@ public class ConsoleMessage extends Command
 	{
 		if (args.length >= 2)
 		{
-			Player player = Rebug.getGetMain().getServer().getPlayer(args[1]);
+			Player player = Rebug.GetMain().getServer().getPlayer(args[1]);
 			if (player == null)
 			{
 				sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
 				return;
 			}
 			String msg = PT.SubString(command, player.getName().length() + 1, command.length());
-			Bukkit.dispatchCommand(Rebug.getGetMain().getServer().getConsoleSender(), "tell " + player.getName() + " " + msg);
+			Bukkit.dispatchCommand(Rebug.GetMain().getServer().getConsoleSender(), "tell " + player.getName() + " " + msg);
 		}
 		else
 			sender.sendMessage(getSyntax());

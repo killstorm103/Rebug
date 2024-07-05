@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -33,12 +32,9 @@ import org.bukkit.scheduler.BukkitTask;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
 
-import ac.grim.grimac.api.GrimAbstractAPI;
 import fr.minuskube.netherboard.Netherboard;
 import fr.minuskube.netherboard.bukkit.BPlayerBoard;
-import io.github.retrooper.packetevents.bstats.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
-import me.killstorm103.Rebug.Commands.AntiCheatsCMD;
 import me.killstorm103.Rebug.Commands.BackCMD;
 import me.killstorm103.Rebug.Commands.ClientCMD;
 import me.killstorm103.Rebug.Commands.ConsoleMessage;
@@ -56,6 +52,7 @@ import me.killstorm103.Rebug.Commands.InvSeeCMD;
 import me.killstorm103.Rebug.Commands.Menu;
 import me.killstorm103.Rebug.Commands.NoBreak;
 import me.killstorm103.Rebug.Commands.PlayerInfoCMD;
+import me.killstorm103.Rebug.Commands.PotionCommand;
 import me.killstorm103.Rebug.Commands.Repair;
 import me.killstorm103.Rebug.Commands.ResetUserMenus;
 import me.killstorm103.Rebug.Commands.SetHealthCMD;
@@ -71,13 +68,10 @@ import me.killstorm103.Rebug.Events.EventHandlePlayerSpawn;
 import me.killstorm103.Rebug.Events.EventMenus;
 import me.killstorm103.Rebug.Events.EventPlayer;
 import me.killstorm103.Rebug.Events.EventWeather;
-import me.killstorm103.Rebug.PacketEvents.EventAntiCancelBrandPacket;
-import me.killstorm103.Rebug.PacketEvents.EventChatHandlerPacket;
-import me.killstorm103.Rebug.PacketEvents.EventCustomPayLoadPacket;
+import me.killstorm103.Rebug.PacketEvents.EventPackets;
 import me.killstorm103.Rebug.PacketEvents.EventTestPacket;
 import me.killstorm103.Rebug.PluginHooks.PlaceholderapiHook;
-import me.killstorm103.Rebug.Tasks.CheckForUpdatesToACs;
-import me.killstorm103.Rebug.Tasks.MainTaskClass;
+import me.killstorm103.Rebug.Tasks.OneSecondUpdater_Task;
 import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
 import me.killstorm103.Rebug.Utils.PT;
@@ -86,11 +80,10 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin implements Listener
 {
-	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true;
-	public final int pluginID = 10787;
+	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true;
 	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
 	private static String Version = "0.0";
-	private static Rebug getMain;
+	private static Rebug getMain, INSTANCE;
 	private final ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
 	public static final HashMap<UUID, User> USERS = new HashMap<>();
 	public static final String RebugMessage = ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.DARK_GRAY + ">> ";
@@ -118,18 +111,18 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		return "me.killstorm103.rebug.";
 	}
-	public static String PluginName ()
+	public static final String PluginName ()
 	{
 		return "Rebug";
 	}
-	public static String getAuthor ()
+	public static final String getAuthor ()
 	{
 		return "killstorm103";
 	}
-	public static double PluginVersion ()
+	public static final double PluginVersion ()
 	{
 		if (Version.contains("0.0"))
-			getGetMain().getServer().getConsoleSender().sendMessage("Please restart the server, there was a error when you enabled/loaded Rebug");
+			GetMain().getServer().getConsoleSender().sendMessage("Please restart the server, there was a error when you enabled/loaded Rebug");
 		
 		
 		return Double.parseDouble(Version);
@@ -138,15 +131,19 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		return true;
 	}
-	public BukkitTask MainTask, RestScaffoldTask, RunCheckForUpdatesToACs;
+	public BukkitTask RestScaffoldTask, EverySecondUpdaterTask;
 
     public File getConfigFile()
     {
 		return ConfigFile;
 	}
+    public FileConfiguration getDefaultPlayerSettingsConfigFile ()
+    {
+    	return DefaultPlayerSettingsConfig;
+    }
 
-	private FileConfiguration anticheatConfig, ItemsConfig;
-	private File folder, LoadedAntiCheatsConfigFile, LoadedItemsConfigFile, ConfigFile;
+	private FileConfiguration anticheatConfig, ItemsConfig, DefaultPlayerSettingsConfig;
+	private File folder, LoadedAntiCheatsConfigFile, LoadedItemsConfigFile, ConfigFile, DefaultPlayerSettingsFile;
 
 	public void initFolder() 
     {
@@ -206,6 +203,10 @@ public class Rebug extends JavaPlugin implements Listener
 
         
         User user = getUser(p);
+        if (user == null)
+        	return;
+        
+        
         user.FallDamage = playerConfig.getBoolean("Fall Damage");
         user.Exterranl_Damage = playerConfig.getBoolean("Exterranl Damage");
         user.Damage_Resistance = playerConfig.getBoolean("Damage Resistance");
@@ -224,13 +225,21 @@ public class Rebug extends JavaPlugin implements Listener
     	user.AntiCheatKick = playerConfig.getBoolean("AC Kick");
     	user.Vanilla1_8FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_8_Plus");
     	user.Vanilla1_9FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_9Plus");
-    	user.NotifyFlyingKick = playerConfig.getBoolean("Notify Vanilla Fly Kick");
+    	user.NotifyFlyingKick1_8 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1.8.x");
+    	user.NotifyFlyingKick1_9 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1.9");
+    	user.potionlevel = playerConfig.getInt("Potion Setting Level");
+    	user.potion_effect_seconds = playerConfig.getInt("Potion Setting Timer");
+    	int max_timer = getConfig().getInt("potion-settings-max-timer"), max_level = getConfig().getInt("potion-settings-max-level");
+    	user.potion_effect_seconds = user.potion_effect_seconds < 1 ? 1 : user.potion_effect_seconds > max_timer ? max_timer : user.potion_effect_seconds;
+    	user.potionlevel = user.potionlevel < 1 ? 1 : user.potionlevel > max_level ? max_level : user.potionlevel;
     	removeConfigs(p);
     }
     public void savePlayer (Player p) 
     {
     	YamlConfiguration playerConfig = new YamlConfiguration();
         User user = getUser(p);
+        if (user == null) return;
+        
         playerConfig.set("Player Name", p.getName());
 		playerConfig.set("Fall Damage", user.FallDamage);
 		playerConfig.set("Exterranl Damage", user.Exterranl_Damage);
@@ -251,7 +260,10 @@ public class Rebug extends JavaPlugin implements Listener
 		playerConfig.set("AC Kick", user.AntiCheatKick);
 		playerConfig.set("Vanilla Fly 1_8_Plus", user.Vanilla1_8FlyCheck);
 		playerConfig.set("Vanilla Fly 1_9Plus", user.Vanilla1_9FlyCheck);
-		playerConfig.set("Notify Vanilla Fly Kick", user.NotifyFlyingKick);
+		playerConfig.set("Notify Vanilla Fly Kick 1.8.x", user.NotifyFlyingKick1_8);
+		playerConfig.set("Notify Vanilla Fly Kick 1.9", user.NotifyFlyingKick1_9);
+		playerConfig.set("Potion Setting Level", user.potionlevel);
+		playerConfig.set("Potion Setting Timer", user.potion_effect_seconds);
         save(p, playerConfig);
     }
     private final static List<String> list_configs = new ArrayList<>();
@@ -261,6 +273,7 @@ public class Rebug extends JavaPlugin implements Listener
     	list_configs.add("config");
     	list_configs.add("loaded anticheats");
     	list_configs.add("loaded items");
+    	list_configs.add("default player settings");
     }
     public FileConfiguration getLoadedAntiCheatsFile ()
     {
@@ -270,26 +283,26 @@ public class Rebug extends JavaPlugin implements Listener
     {
     	return ItemsConfig;
     }
-    public void Reload_Configs ()
+    public void Reload_Configs (User user)
     {
     	anticheatConfig = YamlConfiguration.loadConfiguration(LoadedAntiCheatsConfigFile);
     	ItemsConfig = YamlConfiguration.loadConfiguration(LoadedItemsConfigFile);
+    	DefaultPlayerSettingsConfig = YamlConfiguration.loadConfiguration(DefaultPlayerSettingsFile);
     	anticheats.clear();
-    	anticheatsloaded.clear();
     	ItemsAndMenusUtils.INSTANCE.lore.clear();
-    	ItemsAndMenusUtils.INSTANCE.AntiCheatMenu = null;
-    	ItemsAndMenusUtils.INSTANCE.ItemPickerMenu = null;
+    	ItemsAndMenusUtils.INSTANCE.AntiCheatMenu = ItemsAndMenusUtils.INSTANCE.ItemPickerMenu = null;
     	try
 		{
-			getGetMain().getConfig().load(Rebug.getGetMain().getConfigFile());
-			getGetMain().getConfig().save(Rebug.getGetMain().getConfigFile());
+    		getConfig().load(getConfigFile());
+    		getConfig().save(getConfigFile());
+    		user.getPlayer().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
+    		Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
     }
-	
     private void createCustomConfig (String con) 
     {
     	if (con == null || con.length() < 1) return;
@@ -303,6 +316,17 @@ public class Rebug extends JavaPlugin implements Listener
                 saveResource("config.yml", false);
              }
             YamlConfiguration.loadConfiguration(ConfigFile);
+    	}
+    	if (con.equalsIgnoreCase("default player settings"))
+    	{
+    		DefaultPlayerSettingsFile = new File(getDataFolder(), "Default Player Settings.yml");
+    		if (!DefaultPlayerSettingsFile.exists())
+    		{
+    			DefaultPlayerSettingsFile.getParentFile().mkdirs();
+    			saveResource("Default Player Settings.yml", false);
+    		}
+    		
+    		DefaultPlayerSettingsConfig = YamlConfiguration.loadConfiguration(DefaultPlayerSettingsFile);
     	}
     	if (con.equalsIgnoreCase("loaded items"))
     	{
@@ -325,29 +349,49 @@ public class Rebug extends JavaPlugin implements Listener
             anticheatConfig = YamlConfiguration.loadConfiguration(LoadedAntiCheatsConfigFile);
     	}
     }
-    public static final Map<String, String> anticheats = new HashMap<>();
-    public static final Map<Plugin, String> anticheatsloaded = new HashMap<>();
-
+    public static final Map<Plugin, String> anticheats = new HashMap<>();
+    private final String TickMark = "✔️";
+    public final String getTickMark ()
+    {
+    	final String New = TickMark.substring(0, 1);
+    	return New;
+    }
    	public void addToScoreBoard (Player player)
    	{
-   		User user = getUser(player);
-   		if (user == null) return;
+   		if (!Config.RebugScoreBoard()) return;
    		
-   		BPlayerBoard board = Netherboard.instance().createBoard(player, ChatColor.translateAlternateColorCodes('&', ChatColor.DARK_GRAY + "| " + Config.ScoreboardTitle() + " " + ChatColor.DARK_GRAY + "|"));
-   		board.setAll(
-   				ChatColor.DARK_GRAY + "| §cTest §2Server " + ChatColor.DARK_GRAY + "|", ChatColor.RESET + " ", ChatColor.DARK_RED + Rebug.PluginName() + ChatColor.GRAY + " v" +
-   				   	    Rebug.PluginVersion(), ChatColor.DARK_RED + "Server " + ChatColor.GRAY + PT.getServerVersion (), ChatColor.DARK_RED + "Map " + ChatColor.GRAY + Config.getMapVersion(), " ",
-   				   	ChatColor.DARK_RED + "AC " + user.getColoredAntiCheat(), ChatColor.DARK_RED + "Client " + ChatColor.GRAY + user.getVersion_() + " (" + user.getVersion() + ")"
-   		);
+   		User user = getUser(player);
+   		if (user == null || Netherboard.instance().getBoard(player) != null) return;
+   		
+   		final String color = ChatColor.DARK_RED.toString();
+   		String AC = user.getColoredAntiCheat(), strip = ChatColor.stripColor(AC).toLowerCase();
+   		if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + strip + ".has-short-name"))
+			AC = AC.replace(AC, ChatColor.translateAlternateColorCodes('&', Rebug.GetMain().getLoadedAntiCheatsFile().getString("loaded-anticheats." + strip + ".short-name")) + ChatColor.RESET);
+   		
+   		BPlayerBoard board = Netherboard.instance().createBoard(user.getPlayer(), ChatColor.translateAlternateColorCodes('&', ChatColor.DARK_GRAY + "| " + Config.ScoreboardTitle() + " " + ChatColor.DARK_GRAY + "|"));
+   		board.set("  " + ChatColor.DARK_GRAY + "| §cTest §2Server   " + ChatColor.DARK_GRAY + "|", 11);
+   		board.set(ChatColor.RESET + " ", 10);
+   		board.set(color + "AC " + AC, 9);
+   		board.set(color + "Client " + ChatColor.WHITE + user.getVersion_Short(), 8);
+   		board.set(color + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 7);
+   		board.set(color + "BPS (XZ) " + ChatColor.WHITE + "0", 6);
+   		board.set(color + "BPS (Y) " + ChatColor.WHITE + "0", 5);
+   		board.set(color + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 4);
+   		board.set(color + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
+   		board.set(color + "Sprinting " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 2);
+   		board.set(color + "Sneaking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 1);
+   		board.set(color + "OnGround " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 0);
+   		
    		user.getPlayer().setScoreboard(board.getScoreboard());
    	}
-   	public static void UpdateScoreBoard (User user, int line, String text)
+   	public void UpdateScoreBoard (User user, int line, String text)
    	{
+   		if (!Config.RebugScoreBoard() || user == null || line < 0) return;
+   		
    		BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
    		if (board == null) return;
-   		
-   		
-		board.set(text, line);
+	   		
+   		board.set(text, line);
    	}
    	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin (PlayerJoinEvent e) 
@@ -357,9 +401,10 @@ public class Rebug extends JavaPlugin implements Listener
 		User user = Rebug.getUser(player);
 		user.setJoinTime(user.getPlayer().getUniqueId(), System.currentTimeMillis());
 		restorePlayer(user.getPlayer());
-		final String command = Rebug.getGetMain().getConfig().getString("user-update-perms-command").replace("%user%", user.getPlayer().getName()).replace("%anticheat%", ChatColor.stripColor(user.AntiCheat));
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-		EventMenus.ShowFlags(user);
+		for (String s : Config.getOnJoinCommands())
+   			Bukkit.dispatchCommand(user.getPlayer(), s);
+		
+		UpdateUserPerms(user, user.AntiCheat);
 		addToScoreBoard(user.getPlayer());
 		if (user.Fire_Resistance)
 			user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, false));
@@ -370,7 +415,6 @@ public class Rebug extends JavaPlugin implements Listener
 			user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 3, true, false));
 		else
 			user.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-		
 		
 		if (Config.ShouldForceGameMode() && !user.getPlayer().isOp() && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
 			user.getPlayer().setGameMode(GameMode.SURVIVAL);
@@ -403,10 +447,12 @@ public class Rebug extends JavaPlugin implements Listener
 		if (user != null)
 		{
 			user.joinTimeMap.clear();
+			user.BlockPlaced.clear();
 			Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
 		}
 		e.setQuitMessage(ChatColor.GRAY + "[" + ChatColor.RED + "-" + ChatColor.GRAY + "] " + e.getPlayer().getName());
 	}
+	/*
 	public static GrimAbstractAPI getGrimAC ()
 	{
 		RegisteredServiceProvider<GrimAbstractAPI> provider = Bukkit.getServicesManager().getRegistration(GrimAbstractAPI.class);
@@ -418,6 +464,7 @@ public class Rebug extends JavaPlugin implements Listener
 		
 		return null;
 	}
+	*/
 	@Override
 	public void onEnable ()
 	{
@@ -428,7 +475,7 @@ public class Rebug extends JavaPlugin implements Listener
 		
 		try
 		{
-			Version = Rebug.getGetMain().getDescription().getVersion();
+			Version = getDescription().getVersion();
 		}
 		catch (Exception e) {e.printStackTrace();}
 		
@@ -446,12 +493,13 @@ public class Rebug extends JavaPlugin implements Listener
 		getCommand("getuuid").setExecutor(new ShortCutBasic());
 		getCommand("healandfeed").setExecutor(new ShortCutBasic());
 		getCommand("nobreak").setExecutor(new ShortCutBasic());
-		getCommand("anticheatslist").setExecutor(new ShortCutBasic());
 		getCommand("ac").setExecutor(new ShortCutBasic());
 		getCommand("health").setExecutor(new ShortCutBasic());
 		getCommand("credits").setExecutor(new ShortCutBasic());
 		getCommand("player").setExecutor(new ShortCutBasic());
 		getCommand("invsee").setExecutor(new ShortCutBasic());
+		getCommand("potions").setExecutor(new ShortCutBasic());
+		getCommand("potion").setExecutor(new ShortCutBasic());
 		
 		if (commands.isEmpty())
 		{
@@ -479,9 +527,9 @@ public class Rebug extends JavaPlugin implements Listener
 			commands.add(new ResetUserMenus());
 			commands.add(new PlayerInfoCMD());
 			commands.add(new Enchant());
-			commands.add(new AntiCheatsCMD());
 			commands.add(new ConsoleMessage());
 			commands.add(new InvSeeCMD());
+			commands.add(new PotionCommand());
 			commands.add(new Help());
 			
 			for (me.killstorm103.Rebug.Main.Command cmds : commands)
@@ -499,47 +547,41 @@ public class Rebug extends JavaPlugin implements Listener
         
         pm.registerEvents(new EventCommandPreProcess(),  this);
         
-        MainTask = MainTask == null ? getServer().getScheduler().runTaskTimer(this, MainTaskClass.getMainTask(), 0, 30) : MainTask;
         RestScaffoldTask = RestScaffoldTask == null ? getServer().getScheduler().runTaskTimer(this, ResetScaffoldTestArea.getMainTask(), 0, 10000) : RestScaffoldTask; // 6000
-        RunCheckForUpdatesToACs = RunCheckForUpdatesToACs == null ? getServer().getScheduler().runTask(this, CheckForUpdatesToACs.getMainTask()) : RunCheckForUpdatesToACs;
+        EverySecondUpdaterTask = EverySecondUpdaterTask == null ? getServer().getScheduler().runTaskTimer(this, OneSecondUpdater_Task.getMainTask(), 0, 20) : EverySecondUpdaterTask;
         
         
         getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
         PacketEvents.IDENTIFIER = "REBUG - Test Server Plugin - killstorm103";
-        PacketEvents.getAPI().getEventManager().registerListener(new EventCustomPayLoadPacket(), PacketListenerPriority.HIGHEST);
         PacketEvents.getAPI().getEventManager().registerListener(new EventTestPacket(), PacketListenerPriority.NORMAL);
-        PacketEvents.getAPI().getEventManager().registerListener(new EventAntiCancelBrandPacket(), PacketListenerPriority.HIGHEST);
-        PacketEvents.getAPI().getEventManager().registerListener(new EventPlayer(), PacketListenerPriority.HIGHEST);
-        PacketEvents.getAPI().getEventManager().registerListener(new EventChatHandlerPacket(), PacketListenerPriority.HIGHEST);
+        PacketEvents.getAPI().getEventManager().registerListener(new EventPackets(), PacketListenerPriority.HIGHEST);
+       // PacketEvents.getAPI().getEventManager().registerListener(new EventAntiCheatFixerPacket(), PacketListenerPriority.HIGHEST);
         PacketEvents.getAPI().init();
-        @SuppressWarnings("unused")
-		Metrics metrics = new Metrics(this, this.pluginID);
-        
+		
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null)
         	PlaceholderapiHook.registerHook();
+        
+        INSTANCE = this;
 	}
 	
 	@Override
 	public void onDisable ()
 	{
 		Bukkit.getOnlinePlayers().forEach(this::savePlayer);
-		if (MainTask != null)
-			MainTask.cancel();
-		
 		if (RestScaffoldTask != null)
 			RestScaffoldTask.cancel();
 		
-		if (RunCheckForUpdatesToACs != null)
-			RunCheckForUpdatesToACs.cancel();
+		if (EverySecondUpdaterTask != null)
+			EverySecondUpdaterTask.cancel();
 		
 		PacketEvents.getAPI().terminate();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onLoad () 
 	{
 		anticheats.clear();
-		anticheatsloaded.clear();
 		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).reEncodeByDefault(false).bStats(false);
         PacketEvents.getAPI().load();
@@ -550,7 +592,7 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		return commands;
 	}
-	public static Rebug getGetMain ()
+	public static Rebug GetMain ()
 	{
 		return getMain;
 	}
@@ -611,6 +653,12 @@ public class Rebug extends JavaPlugin implements Listener
 		}
 		
 		return super.onTabComplete(sender, command, alias, args);
+	}
+	public static boolean hasAdminPerms (Player player)
+	{
+		if (player == null) return false;
+		
+ 		return player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin") || player.isOp();
 	}
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
@@ -700,5 +748,18 @@ public class Rebug extends JavaPlugin implements Listener
 		}
 		
 		return true;
+	}
+	public static void UpdateUserPerms(User user, String itemName) 
+	{
+		if (user == null) return;
+		
+		String command = Rebug.GetMain().getConfig().getString("user-update-perms-command").replace("%user%", user.getPlayer().getName()).replace("%anticheat%", itemName);
+		for (int i = 0; i < 3; i ++) // looping is a test for fixing a bug
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+	}
+	public static Rebug getINSTANCE () 
+	{ 
+		if (INSTANCE == null) return getMain;
+		return INSTANCE;
 	}
 }

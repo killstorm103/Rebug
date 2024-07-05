@@ -9,6 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -20,45 +21,15 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import com.github.retrooper.packetevents.event.PacketListener;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import org.bukkit.inventory.ItemStack;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
 import me.killstorm103.Rebug.Utils.TeleportUtils;
 import me.killstorm103.Rebug.Utils.User;
 
-public class EventPlayer implements Listener, PacketListener
+public class EventPlayer implements Listener
 {
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onPacketSend (PacketSendEvent e)
-	{
-		if (e.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT)
-		{
-			Player player = Bukkit.getServer().getPlayer(e.getUser().getUUID());
-			if (player == null) return;
-			
-			User user = Rebug.getUser(player);
-			if (user == null || user.PotionEffects) return;
-			
-			
-			for (PotionEffect effect : user.getPlayer().getActivePotionEffects())
-			{
-				if (effect != null)
-				{
-					if (effect.getType() == PotionEffectType.DAMAGE_RESISTANCE && user.Damage_Resistance || effect.getType() == PotionEffectType.FIRE_RESISTANCE && user.Fire_Resistance) return;
-					
-					user.getPlayer().removePotionEffect(PotionEffectType.getById(effect.getType().getId()));
-				}
-				
-			}
-			e.setCancelled(true);
-		}
-	}
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onProjectileHit (ProjectileHitEvent e)
 	{
 		if (e.getEntityType() == EntityType.ARROW && e.getEntity().getShooter() instanceof Player)
@@ -76,12 +47,14 @@ public class EventPlayer implements Listener, PacketListener
 		}
 	}
 	
-	@EventHandler // TODO Fix teleport bow's arrows not being removed if the player dcs/gets kicked/banned!
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	// TODO Fix teleport bow's arrows not being removed if the player dcs/gets kicked/banned!
 	public void onShot (EntityShootBowEvent e)
 	{
 		if (e.getEntity() instanceof HumanEntity)
 		{
-			if (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasDisplayName() || !e.getBow().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) return;
+			ItemStack Bow = e.getBow();
+			if (!Bow.hasItemMeta() || !Bow.getItemMeta().hasDisplayName() || !Bow.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) return;
 			
 			User user = Rebug.getUser(PT.getPlayerFromHumanEntity(e.getEntity()));
 			if (user == null) return;
@@ -92,25 +65,29 @@ public class EventPlayer implements Listener, PacketListener
 	}
 	private final double nether_minX =- 100, nether_minY = 54, nether_minZ =- 83, nether_maxX = 96, nether_maxY = 120, nether_maxZ = 122;
 	
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMove (PlayerMoveEvent e)
 	{
 		Player player = e.getPlayer();
+		Location getTo = e.getTo();
 		if (player.getWorld().getName().equalsIgnoreCase("world"))
 		{
-			Location loc = e.getTo();
-			if (loc.getBlockX() >= 58 && loc.getBlockX() <= 59 && loc.getBlockZ() >= 328 && loc.getBlockZ() <= 329 && loc.getBlockY() > 57 && loc.getBlockY() < 61)
+			if (getTo.getBlockX() >= 58 && getTo.getBlockX() <= 59 && getTo.getBlockZ() >= 328 && getTo.getBlockZ() <= 329 && getTo.getBlockY() > 57 && getTo.getBlockY() < 61)
 			{
 				player.teleport(new Location(Bukkit.getWorld("world_nether"), 21, 55, 49));
 				return;
 			}
 		}
 		if (!isAllowedInArea(player, e.getTo()))
+		{
 			player.teleport(e.getFrom());
+			return;
+		}
+		
 	}
 	private boolean isAllowedInArea (Player player, Location GoingTo) 
 	{
-		if (!player.getWorld().getName().contains("nether") && (player.isOp() || player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin")))
+		if (!player.getWorld().getName().contains("nether") && Rebug.hasAdminPerms(player))
 			return true;
 		
 		if (player.getWorld().getName().contains("nether") && (GoingTo.getY() < 55 || GoingTo.getY() > 120 || GoingTo.getX() < nether_minX || GoingTo.getY() < nether_minY || GoingTo.getZ() < nether_minZ || GoingTo.getX() > nether_maxX || GoingTo.getY() > nether_maxY || GoingTo.getZ() > nether_maxZ))
@@ -118,7 +95,7 @@ public class EventPlayer implements Listener, PacketListener
 			
 		return true;
 	}
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onEnchantItem (EnchantItemEvent e)
 	{
 		Player player = e.getEnchanter();
@@ -135,7 +112,7 @@ public class EventPlayer implements Listener, PacketListener
 			e.setExpLevelCost(0);
 	}
 	
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onPlayerDeath (PlayerDeathEvent e)
 	{
 		User user = Rebug.getUser(e.getEntity());
@@ -145,7 +122,7 @@ public class EventPlayer implements Listener, PacketListener
 			user.getPlayer().sendMessage(Rebug.RebugMessage + "Use /back to teleport to where you died!");
 		}
 	}
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onHunger (FoodLevelChangeEvent e)
 	{
 		User user = Rebug.getUser((Player) e.getEntity());
@@ -168,7 +145,7 @@ public class EventPlayer implements Listener, PacketListener
 		
 		return false;
 	}
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onWorldChange (PlayerChangedWorldEvent e)
 	{
 		Player player = e.getPlayer();
@@ -188,7 +165,7 @@ public class EventPlayer implements Listener, PacketListener
 		player.sendMessage(Rebug.RebugMessage + "User= " + player.getName() + " msg= " + message);
 	}
 	*/
-	@EventHandler (ignoreCancelled = true)
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onDamage (EntityDamageEvent e)
 	{
 		if (e.getEntity() instanceof Player)

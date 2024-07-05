@@ -25,6 +25,7 @@ public class Menu extends Command
 			t.add("crashers");
 			t.add("exploits");
 			t.add("items");
+			t.add("potions");
 			t.add("settings");
 			t.add("ac");
 			
@@ -52,7 +53,7 @@ public class Menu extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/crashers", "/exploits", "/items", "/settings", "/ac"};
+		String[] s = {"/crashers", "/exploits", "/items", "/settings", "/ac", "/potions"};
 		
 		return s;
 	}
@@ -102,13 +103,14 @@ public class Menu extends Command
 			}
 			String menu = args[1].replace("%", " ").replace("_", " ").replace("-", " ");
 			
-			if (menu.equalsIgnoreCase("ac") || menu.equalsIgnoreCase("items") || menu.equalsIgnoreCase("settings") || menu.equalsIgnoreCase("Rebug Settings") || menu.equalsIgnoreCase("Vanilla Fly Checks")) {}
+			if (menu.equalsIgnoreCase("ac") || menu.equalsIgnoreCase("potions") || menu.equalsIgnoreCase("items") || menu.equalsIgnoreCase("settings") || menu.equalsIgnoreCase("Rebug Settings") || menu.equalsIgnoreCase("Vanilla Fly Checks")) {}
 			else
 			{
 				if (args.length >= 3)
 				{
-					if (user.CommandTarget == null)
+					if (user.CommandTarget == null || !user.CommandTarget.getName().equals(args[2]))
 					{
+						user.CommandTarget = null;
 						user.CommandTarget = Bukkit.getPlayer(args[2]);
 						if (user.CommandTarget == null)
 						{
@@ -123,17 +125,24 @@ public class Menu extends Command
 			}
 			switch (menu.toLowerCase())
 			{
+			case "potions":
+				if (Rebug.hasAdminPerms(user.getPlayer()) || user.hasPermission("me.killstorm103.rebug.user.select_potions"))
+					user.getPlayer().openInventory(user.getPotionsMenu());
+				else
+					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
+					
+				break;
 			case "ac":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.select_anticheat") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.select_anticheat") || Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getAntiCheats());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
 				break;
 				
 			case "crashers":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_crashers") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_crashers") || Rebug.hasAdminPerms(user.getPlayer()))
 				{
-					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || user.hasPermission("me.killstorm103.rebug.server_owner") || user.hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp()))
+					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getCrashers());
 					else
 						user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use this on other players!");
@@ -143,9 +152,9 @@ public class Menu extends Command
 				break;
 				
 			case "exploits":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_exploits") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_exploits") || Rebug.hasAdminPerms(user.getPlayer()))
 				{
-					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") || user.hasPermission("me.killstorm103.rebug.server_owner") || user.hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp()))
+					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getExploits());
 					else
 						user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use this on other players!");
@@ -155,28 +164,28 @@ public class Menu extends Command
 				break;
 				
 			case "vanilla fly checks":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.player_settings") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.player_settings") || Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(user.getVanillaFlyChecks());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
 				break;
 				
 			case "settings":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.player_settings") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.player_settings") || Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(user.getSettings());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
 				break;
 				
 			case "items":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.menu.items") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.menu.items") || Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getItemPickerMenu());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
 				break;
 				
 			case "rebug settings":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin") || user.getPlayer().isOp())
+				if (Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(user.getRebugSettingsMenu());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to do that!");

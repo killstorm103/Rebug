@@ -23,7 +23,8 @@ public class BackCMD extends Command
 		return "back";
 	}
 	@Override
-	public boolean hasCommandCoolDown() {
+	public boolean hasCommandCoolDown () 
+	{
 		return false;
 	}
 	@Override
@@ -42,13 +43,15 @@ public class BackCMD extends Command
 		if (sender instanceof Player)
 		{
 			User user = Rebug.getUser((Player) sender);
-			if (user != null)
+			if (user == null) return;
+			
+			if (user.death_location != null)
 			{
-				if (user.death_location != null)
-					user.getPlayer().teleport(user.death_location);
-				else
-					user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.GRAY + "You don't have a last death location!");
+				user.getPlayer().teleport(user.death_location);
+				user.death_location = null;
 			}
+			else
+				user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.GRAY + "You don't have a last death location!");
 		}
 	}
 
