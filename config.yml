@@ -1,8 +1,15 @@
+on-join-commands:
+- horizon verbose
+- grim verbose
+experimental-features: true
 join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
 delete-player-config-after-loading: false
 allow-sub-commands: true
+potion-settings-max-timer: 3600
+potion-settings-max-level: 127
 rebug-scoreboard: true
 scoreboard-title: '&l&7killstorm103''s&r'
+proximity-player-hider: 5.1
 client-info-grab-fail: warn
 allow-overriding-client-brand: true
 antiexploit-override-client-brand: warn
@@ -23,61 +30,3 @@ server-rules:
 - Don't be an uptight prick
 - Niggers a nigger a whore's whore a faggots a faggot women don't have dicks there's only 2 genders etc i COULDN'T GiVE A FUCK if someone states a fact so don't come to me over this stuff wanting me to mute/kick/ban them!
 user-update-perms-command: lp user %user% parent set %anticheat%
-items-menu:
-  items:
-    delete-item-item: true
-    list-of-items:
-      '1':
-        material: COOKED_BEEF
-        amount: 64
-        displayname: Cooked beef
-      '2':
-        material: STONE
-        amount: 64
-        displayname: Stone
-      '3':
-        material: DIAMOND_AXE
-        amount: 1
-        displayname: Diamond Axe
-      '4':
-        material: DIAMOND_SWORD
-        amount: 1
-        displayname: Diamond Sword
-      '5':
-        material: GOLDEN_APPLE
-        amount: 64
-        displayname: Golden Apple
-      '6':
-        material: GOLDEN_APPLE
-        amount: 64
-        data: 1
-        displayname: Golden Apple
-      '7':
-        material: WOOD_STEP
-        amount: 64
-        displayname: Wooden Slab
-      '8':
-        material: BOW
-        amount: 1
-        displayname: Bow
-        enchant: 51
-      '9':
-        material: ARROW
-        amount: 64
-        displayname: Arrow
-      '10':
-        material: ENDER_PEARL
-        amount: 16
-        displayname: Ender Pearl
-      '11':
-        material: BOW
-        amount: 1
-        displayname: teleport_bow
-      '12':
-        material: FIREBALL
-        amount: 64
-        displayname: Fire Ball
-      '13':
-        material: TNT
-        amount: 64
-        displayname: specical tnt
