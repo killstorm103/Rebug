@@ -1,3 +1,4 @@
+default-anticheat: 'Vanilla'
 loaded-anticheats:
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
@@ -11,12 +12,16 @@ loaded-anticheats:
   - '&1NoCheatPlus'
   - '&8GrimAC'
   - '&2Spartan'
-  - '&cAntiCheat'
+  - '&1Horizon'
+  - '&bWave'
+  - '&dKauri'
+  - '&cPAC'
+  - '&3LightAntiCheat'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
   ## item is the item number ID
-  ## fix-description use this and offset-description to fix the AntiCheats description if it's going off of the screen!
+  ## fix-description: Boolean, use this and , offset-description: Number, to fix the AntiCheats description if it's going off of the screen!
   ## unbreakable: Boolean
   ## enable_enchantment: Boolean, enchantments:
   ## - 'ID:Level'
@@ -27,7 +32,63 @@ loaded-anticheats:
   ## has_extra_lore: Boolean, lore:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
+  
+  lightanticheat:
+    display-name: '&3LightAntiCheat'
+    has-short-name: true
+    short-name: '&3LightAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 339
+    fix-description: true
+    offset-description: 30
+    alert-message: 'lightac'
+  wave:
+    display-name: '&bWave'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 326
+    fix-description: false
+    offset-description: 49
+    alert-message: 'wave'
+  pac:
+    display-name: '&cPAC'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 6
+    item: 35
+    fix-description: false
+    offset-description: 49
+    alert-message: 'pac'
+  kauri:
+    display-name: '&dKauri'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 5
+    item: 175
+    fix-description: false
+    offset-description: 49
+    alert-message: 'kauri'
   spartan:
+    display-name: '&2Spartan'
+    has-short-name: false
+    short-name: Spar
     unbreakable: false
     enable_enchantment: true
     enchantments:
@@ -44,7 +105,11 @@ loaded-anticheats:
     item: 314
     fix-description: false
     offset-description: 0
+    alert-message: 'spartan'
   grimac:
+    display-name: '&8GrimAC'
+    has-short-name: true
+    short-name: '&8Grim'
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
@@ -53,25 +118,37 @@ loaded-anticheats:
     item: 397
     fix-description: true
     offset-description: 49
-  anticheat:
+    alert-message: 'grim'
+  horizon:
+    display-name: '&1Horizon'
+    has-short-name: false
+    short-name: Hori
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
     has-data: false
     data: 2
-    item: 260
+    item: 173
     fix-description: false
     offset-description: 49
+    alert-message: 'horizon'
   nocheatplus:
+    display-name: '&1NoCheatPlus'
+    has-short-name: true
+    short-name: '&o&1NC&cP'
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
     has-data: false
     data: 2
-    item: 1
+    item: 5
     fix-description: true
     offset-description: 44
+    alert-message: 'ncp'
   warden:
+    display-name: '&1Warden'
+    has-short-name: false
+    short-name: NCP
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
@@ -80,7 +157,11 @@ loaded-anticheats:
     item: 7
     fix-description: false
     offset-description: 28
+    alert-message: 'warden'
   vulcan:
+    display-name: '&4Vulcan'
+    has-short-name: false
+    short-name: NCP
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
@@ -89,7 +170,11 @@ loaded-anticheats:
     item: 327
     fix-description: false
     offset-description: 49
+    alert-message: 'vulcan'
   hawk:
+    display-name: '&cHawk'
+    has-short-name: false
+    short-name: NCP
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
@@ -98,3 +183,4 @@ loaded-anticheats:
     item: 288
     fix-description: false
     offset-description: 49
+    alert-message: 'hawk'
