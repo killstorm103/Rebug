@@ -237,6 +237,8 @@ public class EventPackets implements PacketListener
 	@Override 
 	public void onPacketSend (PacketSendEvent e)
 	{
+		if (Bukkit.getOnlinePlayers().isEmpty()) return;
+		
 		Player player = Bukkit.getPlayer(e.getUser().getUUID());
 		if (player == null || !player.isOnline()) return;
 		
@@ -262,11 +264,32 @@ public class EventPackets implements PacketListener
 		}
 		if (e.getPacketType() == PacketType.Play.Server.CHAT_MESSAGE)
 		{
-			if (!Rebug.PrivatePerPlayerAlerts || Bukkit.getOnlinePlayers().isEmpty()) return;
-			
 			WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(e);
 			if (packet.getMessage().getType().equals(ChatTypes.CHAT) || packet.getMessage().getType().equals(ChatTypes.SYSTEM))
 			{
+				String message = ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(packet.getMessage().getChatContent()));
+				message = ChatColor.stripColor(message);
+				message = message.trim();
+				String[] inChat = StringUtils.split(message);
+				// TODO: Test
+				/*
+				if (inChat.length > 0 && Bukkit.getOnlinePlayers().size() > 1)
+				{
+					for (Player p : Bukkit.getOnlinePlayers())
+					{
+						User used = Rebug.getUser(p);
+						if (used != null && used.LastSentMessage != null)
+						{
+							if (message.toLowerCase().contains(user.getName().toLowerCase()) && !user.AllowAT)
+								e.setCancelled(true);
+							
+							used.LastSentMessage = null;
+						}
+					}
+				}
+				*/
+				if (!Rebug.PrivatePerPlayerAlerts) return;
+				
 				if (Rebug.anticheats.isEmpty())
 				{
 					Bukkit.getConsoleSender().sendMessage("Rebug.anticheats was Empty, trying to add ACs!");
@@ -282,59 +305,53 @@ public class EventPackets implements PacketListener
 					return;
 				}
 				
-				String message = ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(packet.getMessage().getChatContent()));
-				message = ChatColor.stripColor(message).
-				replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace(">>", "").replace("<<", "").replace(">", "")
+				message = message.replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace(">>", "").replace("<<", "").replace(">", "")
 			    .replace("<", "").replace("/", "").replace("//", "").replace("Â", "").replace("ÂÂ", "").replace("ÂÂÂ", "").replace("(", "").replace(")", "");
-				message = message.trim();
-				String[] Split = StringUtils.split(message.toLowerCase());
-				// TODO Make Check for DMs
 				
+				String[] Alert_Related = StringUtils.split(message);
 				
-				if (Split.length < 4) return;
+				if (Alert_Related.length < 4) return;
 				
 				for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
 				{
-					String alert = map.getValue().toLowerCase(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert + ".alert-message")).toLowerCase();
-					alert_message = ChatColor.stripColor(alert_message).toLowerCase();
+					String alert = map.getValue(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert.toLowerCase() + ".alert-message"));
+					alert_message = ChatColor.stripColor(alert_message);
 					alert_message = alert_message.trim();
 					alert = alert.trim();
 					
 					// Flags
-					if (Split[0].equalsIgnoreCase(alert_message) && Split[2].equalsIgnoreCase("failed"))
+					if (Alert_Related[0].equalsIgnoreCase(alert_message) && Alert_Related[2].equalsIgnoreCase("failed"))
 					{
-						if (!Split[1].equalsIgnoreCase(user.getName()))
+						if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
 						{
 							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Flag");
 							user.preReceive --;
 							e.setCancelled(true);
-							break;
 						}
-						if (Split[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+						if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
 						{
 							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Flag - AC isn't the same as the User's tho or ShowFlags was off!");
 							user.preReceive --;
 							e.setCancelled(true);
-							break;
 						}
+						break;
 					}
 					// Punished
-					if (Split[0].equalsIgnoreCase(alert_message) && Split[2].equalsIgnoreCase("was") && Split[3].equalsIgnoreCase("punished"))
+					if (Alert_Related[0].equalsIgnoreCase(alert_message) && Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("punished"))
 					{
-						if (!Split[1].equalsIgnoreCase(user.getName()))
+						if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
 						{
 							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished");
 							user.preReceive --;
 							e.setCancelled(true);
-							break;
 						}
-						if (Split[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+						if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
 						{
 							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowFlags was off!");
 							user.preReceive --;
 							e.setCancelled(true);
-							break;
 						}
+						break;
 					}
 				}
 			}
