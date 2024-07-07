@@ -12,6 +12,7 @@ Fall Damage: true
 Auto Close AntiCheat Menu: true
 AntiCheat Kick: false
 Show Flags: true
+Show Punishes: true
 Allow Direct Messages: true
 Allow Potion Effects: true
 Auto Refill Blocks Placed: false

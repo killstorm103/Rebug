@@ -1,3 +1,4 @@
+## for Private Per Player Alerts to work set the Alert message of the anticheats to be <AntiCheat> <player> <failed>
 on-join-commands:
 - horizon verbose
 - grim verbose
@@ -5,7 +6,9 @@ experimental-features: true
 join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
 delete-player-config-after-loading: false
 allow-sub-commands: true
+## this in seconds (3600 = 1 hour)
 potion-settings-max-timer: 3600
+## has to be 1 or higher!
 potion-settings-max-level: 127
 rebug-scoreboard: true
 scoreboard-title: '&l&7killstorm103''s&r'
