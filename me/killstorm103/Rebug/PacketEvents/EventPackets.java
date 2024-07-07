@@ -26,7 +26,6 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPl
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerRotation;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientResourcePackStatus;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientUseItem;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
@@ -52,12 +51,6 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.ANIMATION)
 			user.preCPS ++;
 		
-		if (e.getPacketType() == PacketType.Play.Client.USE_ITEM)
-		{
-			WrapperPlayClientUseItem clientUseItem = new WrapperPlayClientUseItem(e);
-			user.sendMessage("hand= " + clientUseItem.getHand().name());
-		}
-		
 		if (e.getPacketType() == PacketType.Play.Client.RESOURCE_PACK_STATUS)
 		{
 			WrapperPlayClientResourcePackStatus rs = new WrapperPlayClientResourcePackStatus(e);
@@ -66,21 +59,36 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.HELD_ITEM_CHANGE)
 		{
 			user.getPlayer().updateInventory();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 3, ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X");
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT)
 		{
 			item = user.getPlayer().getItemInHand();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 3, ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X");
-			if (PT.isHoldingSword(item))
-				Rebug.getINSTANCE().UpdateScoreBoard(user, 3, ChatColor.DARK_RED + "Blocking " + ChatColor.GREEN + Rebug.GetMain().getTickMark());
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
+				if (PT.isHoldingSword(item))
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.GREEN + Rebug.GetMain().getTickMark(), 3);
+				
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING)
 		{
 			WrapperPlayClientPlayerDigging packet = new WrapperPlayClientPlayerDigging(e);
 			if (packet.getAction() == DiggingAction.RELEASE_USE_ITEM || packet.getAction() == DiggingAction.SWAP_ITEM_WITH_OFFHAND)
-				Rebug.getINSTANCE().UpdateScoreBoard(user, 3, ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X");
+			{
+				if (user.ScoreBoard != null)
+				{
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
+					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+				}
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.ENTITY_ACTION)
 		{
@@ -88,12 +96,20 @@ public class EventPackets implements PacketListener
 			if (packet.getAction() == Action.STOP_SPRINTING || packet.getAction() == Action.START_SPRINTING)
 			{
 				boolean start = packet.getAction() == Action.START_SPRINTING;
-				Rebug.getINSTANCE().UpdateScoreBoard(user, 2, ChatColor.DARK_RED + "Sprinting " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+				if (user.ScoreBoard != null)
+				{
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Sprinting " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 2);
+					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+				}
 			}
 			if (packet.getAction() == Action.STOP_SNEAKING || packet.getAction() == Action.START_SNEAKING)
 			{
 				boolean start = packet.getAction() == Action.START_SNEAKING;
-				Rebug.getINSTANCE().UpdateScoreBoard(user, 1, ChatColor.DARK_RED + "Sneaking " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+				if (user.ScoreBoard != null)
+				{
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Sneaking " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 1);
+					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+				}
 			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_FLYING)
@@ -102,7 +118,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 0, ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION)
 		{
@@ -110,7 +130,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 0, ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION)
 		{
@@ -118,7 +142,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 0, ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION)
 		{
@@ -126,7 +154,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
-			Rebug.getINSTANCE().UpdateScoreBoard(user, 0, ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"));
+			if (user.ScoreBoard != null)
+			{
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE)
 		{
@@ -233,7 +265,7 @@ public class EventPackets implements PacketListener
 		}
 		Rebug.Debug(user.getPlayer(), "UnReceivedBrand= " + user.UnReceivedBrand);
 	}
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings ({ "deprecation"})
 	@Override 
 	public void onPacketSend (PacketSendEvent e)
 	{
@@ -270,24 +302,8 @@ public class EventPackets implements PacketListener
 				String message = ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(packet.getMessage().getChatContent()));
 				message = ChatColor.stripColor(message);
 				message = message.trim();
-				String[] inChat = StringUtils.split(message);
-				// TODO: Test
-				/*
-				if (inChat.length > 0 && Bukkit.getOnlinePlayers().size() > 1)
-				{
-					for (Player p : Bukkit.getOnlinePlayers())
-					{
-						User used = Rebug.getUser(p);
-						if (used != null && used.LastSentMessage != null)
-						{
-							if (message.toLowerCase().contains(user.getName().toLowerCase()) && !user.AllowAT)
-								e.setCancelled(true);
-							
-							used.LastSentMessage = null;
-						}
-					}
-				}
-				*/
+				
+				
 				if (!Rebug.PrivatePerPlayerAlerts) return;
 				
 				if (Rebug.anticheats.isEmpty())
@@ -319,37 +335,65 @@ public class EventPackets implements PacketListener
 					alert_message = alert_message.trim();
 					alert = alert.trim();
 					
-					// Flags
-					if (Alert_Related[0].equalsIgnoreCase(alert_message) && Alert_Related[2].equalsIgnoreCase("failed"))
+					if (Alert_Related[0].equalsIgnoreCase(alert_message))
 					{
-						if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+						// Flags
+						if (Alert_Related[2].equalsIgnoreCase("failed") || Alert_Related[2].equalsIgnoreCase("flagged"))
 						{
-							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Flag");
-							user.preReceive --;
-							e.setCancelled(true);
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Flag (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Flag - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
 						}
-						if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("flagged"))
 						{
-							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Flag - AC isn't the same as the User's tho or ShowFlags was off!");
-							user.preReceive --;
-							e.setCancelled(true);
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
 						}
-						break;
-					}
-					// Punished
-					if (Alert_Related[0].equalsIgnoreCase(alert_message) && Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("punished"))
-					{
-						if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+						
+						// Punished
+						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("punished"))
 						{
-							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished");
-							user.preReceive --;
-							e.setCancelled(true);
-						}
-						if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
-						{
-							Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowFlags was off!");
-							user.preReceive --;
-							e.setCancelled(true);
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowPunishes))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowPunishes was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
 						}
 						break;
 					}

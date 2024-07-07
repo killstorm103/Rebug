@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
+import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
 import me.killstorm103.Rebug.Utils.User;
 
 public class ResetUserMenus extends Command
@@ -55,7 +56,7 @@ public class ResetUserMenus extends Command
 			sender.sendMessage(Rebug.RebugMessage + "Unknown User!");
 			return;
 		}
-		user.OldInventory = user.CrashersMenu = user.ExploitsMenu = user.SettingsMenu = user.VanillaFlyChecksMenu = user.getRebugSettingsMenu = user.SpawnEntityCrashersMenu = null;
+		user.OldInventory = user.CrashersMenu = user.ExploitsMenu = user.SettingsMenu = user.VanillaFlyChecksMenu = ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu = user.SpawnEntityCrashersMenu = null;
 		sender.sendMessage(Rebug.RebugMessage + "Successfully Reset " + user.getPlayer().getName() + "'s Menus!");
 	}
 

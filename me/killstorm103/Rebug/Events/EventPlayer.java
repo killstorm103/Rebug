@@ -1,6 +1,7 @@
 package me.killstorm103.Rebug.Events;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,6 +20,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -37,14 +39,36 @@ public class EventPlayer implements Listener
 			User user = Rebug.getUser((Player) e.getEntity().getShooter());
 			if (user == null || user.ShouldTeleportByBow < 1) return;
 			
-			
-			Location loc = e.getEntity().getLocation();
-			loc.setYaw(user.getPlayer().getLocation().getYaw());
-			loc.setPitch(user.getPlayer().getLocation().getPitch());
-			user.getPlayer().teleport(loc);
+			e.getEntity().getLocation().setYaw(user.getPlayer().getLocation().getYaw());
+			e.getEntity().getLocation().setPitch(user.getPlayer().getLocation().getPitch());
+			user.getPlayer().teleport(e.getEntity().getLocation());
 			e.getEntity().remove();
 			user.ShouldTeleportByBow = user.ShouldTeleportByBow < 0 ? 0 : user.ShouldTeleportByBow --;
 		}
+	}
+	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onChat (AsyncPlayerChatEvent e)
+	{
+		Player player = e.getPlayer();
+		String[] inChat = StringUtils.split(e.getMessage());
+		for (int i = 0; i < inChat.length; i ++)
+		{
+			User used = Rebug.getUser(Bukkit.getPlayer(inChat[i]));
+			if (used != null)
+			{
+				if (!used.AllowAT && used.getPlayer() != player)
+				{
+					player.sendMessage(Rebug.RebugMessage + used.getName() + " Has Mentions Disabled (they won't see your message)!");
+					e.getRecipients().remove(used.getPlayer());
+				}
+				break;
+			}
+		}
+		
+		User user = Rebug.getUser(player);
+		if (user == null) return;
+		
+		user.Yapper_Message_Count ++;
 	}
 	
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -156,15 +180,6 @@ public class EventPlayer implements Listener
 				player.teleport(loc);
 		}
 	}
-	/*
-	@EventHandler
-	public void onChat (AsyncPlayerChatEvent e)
-	{
-		Player player = e.getPlayer();
-		String message = e.getMessage();
-		player.sendMessage(Rebug.RebugMessage + "User= " + player.getName() + " msg= " + message);
-	}
-	*/
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onDamage (EntityDamageEvent e)
 	{
@@ -180,23 +195,21 @@ public class EventPlayer implements Listener
 				return;
 			}
 			User user = Rebug.getUser(player);
-			if (user != null)
+			if (user == null) return;
+			
+			Rebug.Debug(user.getPlayer(), user.getDebugLocation() + " Cause= " + e.getCause().name());
+			
+			if (e.getCause() == DamageCause.ENTITY_EXPLOSION)
 			{
-				Rebug.Debug(user.getPlayer(), user.getDebugLocation() + " Cause= " + e.getCause().name());
+				if (AllowedIn(world.getName(), user.getLocation())) {}
+				else
+					e.setDamage(e.getDamage(DamageModifier.ABSORPTION));
 				
-				if (e.getCause() == DamageCause.ENTITY_EXPLOSION)
-				{
-					if (AllowedIn(world.getName(), user.getLocation())) {}
-					else
-						e.setDamage(e.getDamage(DamageModifier.ABSORPTION));
-					
-					return;
-				}
-				
-				if (e.getCause() == DamageCause.FALL && !user.FallDamage || e.getCause() != DamageCause.FALL && !user.Exterranl_Damage)
-					e.setCancelled(true);
-				
+				return;
 			}
+			
+			if (e.getCause() == DamageCause.FALL && !user.FallDamage || e.getCause() != DamageCause.FALL && !user.Exterranl_Damage)
+				e.setCancelled(true);
 		}
 	}
 }

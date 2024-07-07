@@ -90,6 +90,8 @@ public class Rebug extends JavaPlugin implements Listener
 	
 	public static User getUser(Player player) 
 	{
+		if (player == null) return null;
+		
         for (User user : USERS.values()) 
         {
         	if (user.getPlayer() != player && !user.getPlayer().getUniqueId().equals(player.getUniqueId())) continue;
@@ -106,6 +108,10 @@ public class Rebug extends JavaPlugin implements Listener
     		player.sendMessage(RebugMessage + msg); 
     	
     	Bukkit.getServer().getConsoleSender().sendMessage(RebugMessage + msg);
+    }
+    public static void Debug (User user, String msg)
+    {
+    	Debug (user == null ? null : user.getPlayer(), msg);
     }
 	public static String StartOfPermission ()
 	{
@@ -206,7 +212,6 @@ public class Rebug extends JavaPlugin implements Listener
         if (user == null)
         	return;
         
-        
         user.FallDamage = playerConfig.getBoolean("Fall Damage");
         user.Exterranl_Damage = playerConfig.getBoolean("Exterranl Damage");
         user.Damage_Resistance = playerConfig.getBoolean("Damage Resistance");
@@ -219,19 +224,22 @@ public class Rebug extends JavaPlugin implements Listener
         user.ProximityPlayerHider = playerConfig.getBoolean("Proximity Player Hider");
         user.AutoCloseAntiCheatMenu = playerConfig.getBoolean("Auto Close AntiCheat Menu");
         user.AllowDirectMessages = playerConfig.getBoolean("Allow Direct Messages");
-        user.AllowAT = playerConfig.getBoolean("AllowAT");
+        user.AllowAT = playerConfig.getBoolean("Allow Mentions");
     	user.AntiCheat = playerConfig.getString("AntiCheat");
     	user.ShowFlags = playerConfig.getBoolean("Show Flags");
+    	user.ShowPunishes = playerConfig.getBoolean("Show Punishes");
     	user.AntiCheatKick = playerConfig.getBoolean("AC Kick");
     	user.Vanilla1_8FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_8_Plus");
     	user.Vanilla1_9FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_9Plus");
-    	user.NotifyFlyingKick1_8 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1.8.x");
-    	user.NotifyFlyingKick1_9 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1.9");
+    	user.NotifyFlyingKick1_8 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1_8");
+    	user.NotifyFlyingKick1_9 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1_9");
     	user.potionlevel = playerConfig.getInt("Potion Setting Level");
     	user.potion_effect_seconds = playerConfig.getInt("Potion Setting Timer");
     	int max_timer = getConfig().getInt("potion-settings-max-timer"), max_level = getConfig().getInt("potion-settings-max-level");
     	user.potion_effect_seconds = user.potion_effect_seconds < 1 ? 1 : user.potion_effect_seconds > max_timer ? max_timer : user.potion_effect_seconds;
     	user.potionlevel = user.potionlevel < 1 ? 1 : user.potionlevel > max_level ? max_level : user.potionlevel;
+    	user.Yapper_Message_Count = playerConfig.getInt("Yapper");
+    	
     	removeConfigs(p);
     }
     public void savePlayer (Player p) 
@@ -253,17 +261,19 @@ public class Rebug extends JavaPlugin implements Listener
 		playerConfig.set("Proximity Player Hider", user.ProximityPlayerHider);
 		playerConfig.set("Auto Close AntiCheat Menu", user.AutoCloseAntiCheatMenu);
 		playerConfig.set("Allow Direct Messages", user.AllowDirectMessages);
-		playerConfig.set("AllowAT", user.AllowAT);
+		playerConfig.set("Allow Mentions", user.AllowAT);
 		String AntiCheat = ChatColor.translateAlternateColorCodes('&', user.AntiCheat);
 		playerConfig.set("AntiCheat", ChatColor.stripColor(AntiCheat));
 		playerConfig.set("Show Flags", user.ShowFlags);
+		playerConfig.set("Show Punishes", user.ShowPunishes);
 		playerConfig.set("AC Kick", user.AntiCheatKick);
 		playerConfig.set("Vanilla Fly 1_8_Plus", user.Vanilla1_8FlyCheck);
 		playerConfig.set("Vanilla Fly 1_9Plus", user.Vanilla1_9FlyCheck);
-		playerConfig.set("Notify Vanilla Fly Kick 1.8.x", user.NotifyFlyingKick1_8);
-		playerConfig.set("Notify Vanilla Fly Kick 1.9", user.NotifyFlyingKick1_9);
+		playerConfig.set("Notify Vanilla Fly Kick 1_8", user.NotifyFlyingKick1_8);
+		playerConfig.set("Notify Vanilla Fly Kick 1_9", user.NotifyFlyingKick1_9);
 		playerConfig.set("Potion Setting Level", user.potionlevel);
 		playerConfig.set("Potion Setting Timer", user.potion_effect_seconds);
+		playerConfig.set("Yapper", user.Yapper_Message_Count);
         save(p, playerConfig);
     }
     private final static List<String> list_configs = new ArrayList<>();
@@ -295,11 +305,13 @@ public class Rebug extends JavaPlugin implements Listener
 		{
     		getConfig().load(getConfigFile());
     		getConfig().save(getConfigFile());
-    		user.getPlayer().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
-    		Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Successfully Reloaded Config!");
+    		user.getPlayer().sendMessage(RebugMessage + "Successfully Reloaded Config!");
+    		Bukkit.getConsoleSender().sendMessage(RebugMessage + "Successfully Reloaded Config!");
 		}
 		catch (Exception e) 
 		{
+			user.getPlayer().sendMessage(RebugMessage + "Failed to Reload Config!");
+    		Bukkit.getConsoleSender().sendMessage(RebugMessage + "Failed to Reload Config!");
 			e.printStackTrace();
 		}
     }
@@ -381,8 +393,8 @@ public class Rebug extends JavaPlugin implements Listener
    		board.set(color + "Sprinting " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 2);
    		board.set(color + "Sneaking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 1);
    		board.set(color + "OnGround " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 0);
-   		
-   		user.getPlayer().setScoreboard(board.getScoreboard());
+   		user.ScoreBoard = board;
+   		user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
    	}
    	public void UpdateScoreBoard (User user, int line, String text)
    	{
@@ -393,6 +405,8 @@ public class Rebug extends JavaPlugin implements Listener
 	   		
    		board.set(text, line);
    	}
+   	private final ArrayList<UUID> isAlertsEnabled = new ArrayList<>();
+   	
    	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin (PlayerJoinEvent e) 
 	{
@@ -401,9 +415,6 @@ public class Rebug extends JavaPlugin implements Listener
 		User user = Rebug.getUser(player);
 		user.setJoinTime(user.getPlayer().getUniqueId(), System.currentTimeMillis());
 		restorePlayer(user.getPlayer());
-		for (String s : Config.getOnJoinCommands())
-   			Bukkit.dispatchCommand(user.getPlayer(), s);
-		
 		UpdateUserPerms(user, user.AntiCheat);
 		addToScoreBoard(user.getPlayer());
 		if (user.Fire_Resistance)
@@ -437,6 +448,21 @@ public class Rebug extends JavaPlugin implements Listener
         }
         
    		e.setJoinMessage(ChatColor.GRAY + "[" + ChatColor.GREEN + "+" + ChatColor.GRAY + "] " + user.getPlayer().getName());
+   		if (!isAlertsEnabled.contains(player.getUniqueId())) 
+   		{
+   			Bukkit.getScheduler().runTaskLater(this, new Runnable() 
+   			{
+   				@Override
+   				public void run() 
+   				{
+   					for (String s : Config.getOnJoinCommands())
+   					{
+   						Bukkit.dispatchCommand (player, s);
+   					}
+   					isAlertsEnabled.add(player.getUniqueId());
+   				}
+   			}, 100);
+   		}
 	} 
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onQuit (PlayerQuitEvent e) 
@@ -446,6 +472,7 @@ public class Rebug extends JavaPlugin implements Listener
 		User user = Rebug.getUser(player);
 		if (user != null)
 		{
+			user.ScoreBoard.delete();
 			user.joinTimeMap.clear();
 			user.BlockPlaced.clear();
 			Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
@@ -469,6 +496,7 @@ public class Rebug extends JavaPlugin implements Listener
 	public void onEnable ()
 	{
 		getMain = this;
+		isAlertsEnabled.clear();
 		initFolder();
 		for (int i = 0; i < list_configs.size(); i ++)
 			createCustomConfig(list_configs.get(i));
@@ -760,6 +788,7 @@ public class Rebug extends JavaPlugin implements Listener
 	public static Rebug getINSTANCE () 
 	{ 
 		if (INSTANCE == null) return getMain;
+		
 		return INSTANCE;
 	}
 }

@@ -186,7 +186,7 @@ public class Menu extends Command
 				
 			case "rebug settings":
 				if (Rebug.hasAdminPerms(user.getPlayer()))
-					user.getPlayer().openInventory(user.getRebugSettingsMenu());
+					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to do that!");
 				break;

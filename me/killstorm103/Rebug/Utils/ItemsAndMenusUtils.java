@@ -27,6 +27,97 @@ public class ItemsAndMenusUtils implements InventoryHolder
 	public List<String> lore = new ArrayList<>();// clearing this as a test
 	private ItemMeta itemMeta = null;
 	private ItemStack item = null;
+	public ItemStack getMadeItems(String menuName, String itemName)
+	{
+		switch (menuName.toLowerCase())
+		{
+		case "rebug settings":
+			if (itemName.equalsIgnoreCase("Per Player Alerts"))
+			{
+				item = Reset(Material.DROPPER);
+				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("Debug"))
+			{
+				item = Reset(Material.REDSTONE);
+				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debug ? ChatColor.GREEN : ChatColor.RED).toString()  + "Debug");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("Debug To Ops Only"))
+			{
+				item = Reset(Material.PAPER);
+				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debugOpOnly ? ChatColor.GREEN : ChatColor.RED).toString()+ "Debug To Ops Only");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("Kick on reload config"))
+			{
+				item = Reset(Material.PAPER);
+				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
+			break;
+
+		default:
+			break;
+		}
+		return null;
+	}
+	
+	public Inventory getRebugSettingsMenu ()
+    {
+    	if (getRebugSettingsMenu == null)
+    	{
+    		Inventory inventory = PT.createInventory(this, 18, ChatColor.ITALIC.toString() + ChatColor.BOLD + ChatColor.RED + "REBUG " + ChatColor.RESET + ChatColor.ITALIC + ChatColor.GRAY + "Settings");
+			item = Reset(Material.COMMAND);
+			itemMeta.setDisplayName(ChatColor.ITALIC + ChatColor.RED.toString() + "Back");
+			lore.add(ChatColor.AQUA + "Go back!");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(0, item);
+			
+			item = Reset(Material.REDSTONE);
+			itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debug ? ChatColor.GREEN : ChatColor.RED).toString()  + "Debug");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(1, item);
+			
+			item = Reset(Material.PAPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debugOpOnly ? ChatColor.GREEN : ChatColor.RED).toString()+ "Debug To Ops Only");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(2, item);
+			
+			item = Reset(Material.PAPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + ChatColor.RED.toString() + "Reload Config");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(3, item);
+			
+			item = Reset(Material.PAPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(4, item);
+			
+			
+			item = Reset(Material.DROPPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(5, item);
+			
+			
+			item = Reset(Material.WOOL, 1, (short) 0, (byte) 14);
+			itemMeta.setDisplayName(ChatColor.ITALIC + ChatColor.RED.toString() + "Reset Scaffold Area");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(9, item);
+			
+			getRebugSettingsMenu = inventory;
+    	}
+    	
+    	return getRebugSettingsMenu;
+    }
+	
 	public ItemStack getMadeItems (String ItemName)
     {
     	ItemStack order = null;
@@ -260,7 +351,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 		
 		return AntiCheatMenu;
 	}
-	public Inventory ItemPickerMenu, AntiCheatMenu;
+	public Inventory ItemPickerMenu, AntiCheatMenu, getRebugSettingsMenu;
 	@SuppressWarnings("deprecation")
 	public Inventory getItemPickerMenu ()
 	{

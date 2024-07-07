@@ -20,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
 import me.killstorm103.Rebug.Utils.CrashersAndOtherExploits;
+import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
 import me.killstorm103.Rebug.Utils.PT;
 import me.killstorm103.Rebug.Utils.User;
 
@@ -187,7 +188,6 @@ public class EventMenus implements Listener
 					if (user.AutoCloseAntiCheatMenu)
 						user.getPlayer().closeInventory();
 					
-					
 					Bukkit.getScheduler().runTaskLater(Rebug.GetMain(), new Runnable()
 					{
 						
@@ -201,7 +201,9 @@ public class EventMenus implements Listener
 							{
 					   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', Rebug.GetMain().getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
 							}
-					   		Rebug.getINSTANCE().UpdateScoreBoard(user, 9, ChatColor.DARK_RED + "AC " + NewAC);
+					   		if (user.ScoreBoard != null)
+					   			user.ScoreBoard.set(ChatColor.DARK_RED + "AC " + NewAC, 9);
+					   		
 							PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
 							String AC = ChatColor.stripColor(NewAC);
 							user.getPlayer().sendMessage(Rebug.RebugMessage + "You selected: " + AC + (AC.equalsIgnoreCase("vanilla") ||
@@ -247,7 +249,7 @@ public class EventMenus implements Listener
 						e.setCurrentItem(user.getMadeItems (MenuName, ItemName));
 					}
 				}
-				if (MenuName.equalsIgnoreCase("Rebug Settings") && (Rebug.hasAdminPerms(user.getPlayer())) && e.getClickedInventory() != user.getPlayer().getInventory())
+				if (MenuName.equalsIgnoreCase("Rebug Settings") && Rebug.hasAdminPerms(user.getPlayer()) && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
 					
@@ -290,7 +292,7 @@ public class EventMenus implements Listener
 							}
 						}
 						else
-							user.UpdateItemInMenu(user.getRebugSettingsMenu, slot, user.getMadeItems(MenuName, ItemName));
+							ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Player Settings"))
@@ -302,7 +304,11 @@ public class EventMenus implements Listener
 						{
 							if (ItemName.equalsIgnoreCase("Rebug Settings"))
 							{
-								Refresh(user.getPlayer(), "menu Rebug%Settings");
+								if (Rebug.hasAdminPerms(user.getPlayer()))
+									Refresh(user.getPlayer(), "menu Rebug%Settings");
+								else
+									user.sendMessage("You don't have Permission to access that!");
+								
 								return;
 							}
 							if (ItemName.equalsIgnoreCase("Hunger"))
@@ -360,14 +366,17 @@ public class EventMenus implements Listener
 							{
 								user.ProximityPlayerHider =! user.ProximityPlayerHider;
 							}
-							if (ItemName.equalsIgnoreCase("AllowAT"))
+							if (ItemName.equalsIgnoreCase("Allow Mentions"))
 							{
 								user.AllowAT =! user.AllowAT;
 							}
 							if (ItemName.equalsIgnoreCase("Flags"))
 							{
 								user.ShowFlags =! user.ShowFlags;
-								//ShowFlags(user);
+							}
+							if (ItemName.equalsIgnoreCase("Punishes"))
+							{
+								user.ShowPunishes =! user.ShowPunishes;
 							}
 							if (ItemName.equalsIgnoreCase("Kick"))
 							{
