@@ -46,8 +46,7 @@ public class Credits extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/credits"};
-		return s;
+		return new String[] {"/credits"};
 	}
 
 	@Override

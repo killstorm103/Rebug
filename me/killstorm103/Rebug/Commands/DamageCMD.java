@@ -40,8 +40,7 @@ public class DamageCMD extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/damage"};
-		return s;
+		return new String[] {"/damage"};
 	}
 
 	@Override

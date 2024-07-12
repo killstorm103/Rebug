@@ -40,8 +40,7 @@ public class PlayerInfoCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s= {"/player"};
-		return s;
+		return new String[] {"/player"};
 	}
 	// TODO Improve how much info you get
 

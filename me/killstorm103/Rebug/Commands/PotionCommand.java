@@ -39,8 +39,7 @@ public class PotionCommand extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/potion"};
-		return s;
+		return new String[] {"/potion"};
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class PotionCommand extends Command
 				try
 				{
 					int level = Integer.parseInt(args[2]);
-					int max = Rebug.GetMain().getConfig().getInt("potion-settings-max-level");
+					int max = Rebug.getINSTANCE().getConfig().getInt("potion-settings-max-level");
 					level = level > max ? max : level < 1 ? 1 : level;
 					user.potionlevel = level;
 					user.sendMessage(Rebug.RebugMessage + "Changed the Level of the potions to " + user.potionlevel);
@@ -97,7 +96,7 @@ public class PotionCommand extends Command
 				try
 				{
 					int seconds = Integer.parseInt(args[2]);
-					int max = Rebug.GetMain().getConfig().getInt("potion-settings-max-timer");
+					int max = Rebug.getINSTANCE().getConfig().getInt("potion-settings-max-timer");
 					seconds = seconds > max ? max : seconds < 1 ? 1 : seconds;
 					user.potion_effect_seconds = seconds;
 					user.sendMessage(Rebug.RebugMessage + "Changed the Seconds you have the potion effects for to " + user.potion_effect_seconds);

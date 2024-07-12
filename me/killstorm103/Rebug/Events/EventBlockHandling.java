@@ -81,7 +81,7 @@ public class EventBlockHandling implements Listener
 	                	  
 	                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
 	                }
-	            }.runTaskTimer(Rebug.GetMain(), 0, 1);
+	            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
 			}
 		}
 	}
@@ -124,7 +124,7 @@ public class EventBlockHandling implements Listener
 	                	  
 	                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
 	                }
-	            }.runTaskTimer(Rebug.GetMain(), 0, 1);
+	            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
 	            
 				loc.getBlock().setType(Material.AIR);
 				return;

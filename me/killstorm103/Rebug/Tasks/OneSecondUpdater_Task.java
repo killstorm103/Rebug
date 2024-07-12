@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.User;
@@ -43,10 +44,13 @@ public class OneSecondUpdater_Task implements Runnable
 				final double bpsY = Math.sqrt(distY * distY) * 20.0;  
 				if (Config.RebugScoreBoard() && user.ScoreBoard != null)
 				{
-					user.ScoreBoard.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 4);
-					user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 5);
-		   			user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 6);
-		   			user.ScoreBoard.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 7);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "TB " + user.timer_balance, 4);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
+		   			user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
+		   			user.ScoreBoard.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 8);
+		   			BPlayerBoard b = user.ScoreBoard;
+		   			user.getPlayer().setScoreboard(b.getScoreboard());
 				}
 				if (Bukkit.getOnlinePlayers().size() < 2) return;
 				
@@ -54,7 +58,7 @@ public class OneSecondUpdater_Task implements Runnable
 				{
 					if (user.getPlayer() != target)
 					{
-						if (user.HideOnlinePlayers || user.ProximityPlayerHider && user.getPlayer().getLocation().distance(target.getLocation()) <= Rebug.GetMain().getConfig().getDouble("proximity-player-hider"))
+						if (user.HideOnlinePlayers || user.ProximityPlayerHider && user.getPlayer().getLocation().distance(target.getLocation()) <= Rebug.getINSTANCE().getConfig().getDouble("proximity-player-hider"))
 						{
 							if (user.getPlayer().canSee(target))
 								user.getPlayer().hidePlayer(target);

@@ -38,8 +38,7 @@ public class SetHealthCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/health"};
-		return s;
+		return new String[] {"/health"};
 	}
 
 	@Override

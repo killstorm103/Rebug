@@ -265,9 +265,9 @@ public class ItemsAndMenusUtils implements InventoryHolder
 					else
 						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name.toLowerCase())));
 					
-					if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_enchantment"))
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_enchantment"))
 					{
-						for (String enchant : Rebug.GetMain().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".enchantments"))
+						for (String enchant : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".enchantments"))
 						{
 							int ID = Integer.valueOf(enchant.split(":")[0]), level = Integer.valueOf(enchant.split(":")[1]);
 							Enchantment enchantment = Enchantment.getById(ID);
@@ -281,9 +281,9 @@ public class ItemsAndMenusUtils implements InventoryHolder
 							}
 						}
 					}
-					if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_item_flag"))
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_item_flag"))
 					{
-						for (String itemflag : Rebug.GetMain().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".ItemFlags")) 
+						for (String itemflag : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".ItemFlags")) 
 						{
 							ItemFlag flag = ItemFlag.valueOf(itemflag);
 							if (flag == null)
@@ -329,9 +329,9 @@ public class ItemsAndMenusUtils implements InventoryHolder
 					else
 						lore.add(ChatColor.AQUA + "Description: "+ ChatColor.WHITE + "None");
 					
-					if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has_extra_lore"))
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has_extra_lore"))
 					{
-						for (String lores : Rebug.GetMain().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".lore"))
+						for (String lores : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".lore"))
 							lore.add(ChatColor.translateAlternateColorCodes('&', lores));
 					}
 					
@@ -377,24 +377,24 @@ public class ItemsAndMenusUtils implements InventoryHolder
 		if (ItemPickerMenu == null)
 		{
 			Inventory inventory = PT.createInventory(this, Config.getItemMenuSize(), ChatColor.GREEN + "Items");
-			Rebug.GetMain().getLoadedItemsFile().getConfigurationSection("items").getKeys(false).forEach(key -> 
+			Rebug.getINSTANCE().getLoadedItemsFile().getConfigurationSection("items").getKeys(false).forEach(key -> 
 			{
 				Material material = Material.getMaterial(key);
-				material = material == null || material == Material.AIR ? Material.getMaterial(PT.SubString(key, 0, key.length() - Rebug.GetMain().getLoadedItemsFile().getInt("items." + key + ".numbered"))) : material;
+				material = material == null || material == Material.AIR ? Material.getMaterial(PT.SubString(key, 0, key.length() - Rebug.getINSTANCE().getLoadedItemsFile().getInt("items." + key + ".numbered"))) : material;
 				
-				boolean hasData = Rebug.GetMain().getLoadedItemsFile().getBoolean("items." + key + ".hasData");
+				boolean hasData = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".hasData");
 				if (hasData)
-					item = Reset(material, Rebug.GetMain().getLoadedItemsFile().getInt("items." + key + ".amount"), (short) 0, (byte) Rebug.GetMain().getLoadedItemsFile().getInt("items." + key + ".data"));
+					item = Reset(material, Rebug.getINSTANCE().getLoadedItemsFile().getInt("items." + key + ".amount"), (short) 0, (byte) Rebug.getINSTANCE().getLoadedItemsFile().getInt("items." + key + ".data"));
 				else
-					item = Reset(material, Rebug.GetMain().getLoadedItemsFile().getInt("items." + key + ".amount"));
+					item = Reset(material, Rebug.getINSTANCE().getLoadedItemsFile().getInt("items." + key + ".amount"));
 			
-				if (Rebug.GetMain().getLoadedItemsFile().getString("items." + key + ".display-name") != null)
-					itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Rebug.GetMain().getLoadedItemsFile().getString("items." + key + ".display-name")));
+				if (Rebug.getINSTANCE().getLoadedItemsFile().getString("items." + key + ".display-name") != null)
+					itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedItemsFile().getString("items." + key + ".display-name")));
 
-				boolean hasLore = Rebug.GetMain().getLoadedItemsFile().getBoolean("items." + key + ".hasLore"), isUnbreakable = Rebug.GetMain().getLoadedItemsFile().getBoolean("items." + key + ".unbreakable"), isEnchanted = Rebug.GetMain().getLoadedItemsFile().getBoolean("items." + key + ".enable_enchantment"), hasItemFlag = Rebug.GetMain().getLoadedItemsFile().getBoolean("items." + key + ".enable_item_flag");
+				boolean hasLore = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".hasLore"), isUnbreakable = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".unbreakable"), isEnchanted = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_enchantment"), hasItemFlag = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_item_flag");
 				if (isEnchanted)
 				{
-					for (String enchant : Rebug.GetMain().getLoadedItemsFile().getStringList("items." + key + ".enchantments"))
+					for (String enchant : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".enchantments"))
 					{
 						int ID = Integer.valueOf(enchant.split(":")[0]), level = Integer.valueOf(enchant.split(":")[1]);
 						Enchantment enchantment = Enchantment.getById(ID);
@@ -412,7 +412,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				
 				if (hasItemFlag) 
 				{
-					for (String itemflag : Rebug.GetMain().getLoadedItemsFile().getStringList("items." + key + ".ItemFlag")) 
+					for (String itemflag : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".ItemFlag")) 
 					{
 						ItemFlag flag = ItemFlag.valueOf(itemflag);
 						if (flag == null)
@@ -424,7 +424,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				if (hasLore)
 				{
 					lore.clear();
-					for (String lores : Rebug.GetMain().getLoadedItemsFile().getStringList("items." + key + ".Lore"))
+					for (String lores : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".Lore"))
 					{
 						lore.add(ChatColor.translateAlternateColorCodes('&', lores));
 					}
@@ -432,7 +432,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				}
 					
 				item.setItemMeta(itemMeta);
-				inventory.setItem(Rebug.GetMain().getLoadedItemsFile().getInt("items." + key + ".slot"), item);
+				inventory.setItem(Rebug.getINSTANCE().getLoadedItemsFile().getInt("items." + key + ".slot"), item);
 			});
 
 			if (Config.getItemMenuDeleteItem())

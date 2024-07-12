@@ -147,7 +147,6 @@ public class ClientCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/client"};
-		return s;
+		return new String[] {"/client"};
 	}
 }

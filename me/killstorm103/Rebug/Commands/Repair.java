@@ -39,8 +39,7 @@ public class Repair extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/repair"};
-		return s;
+		return new String[] {"/repair"};
 	}
 
 	@Override

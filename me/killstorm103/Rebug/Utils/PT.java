@@ -199,7 +199,7 @@ public class PT
 	}
 	public static void LogToConsole (String tolog)
 	{
-		Rebug.GetMain().getServer().getConsoleSender().sendMessage(tolog);
+		Rebug.getINSTANCE().getServer().getConsoleSender().sendMessage(tolog);
 	}
 	// Inventory Size can be: 9, 18, 27, 36, 45, 54
 	
@@ -339,7 +339,7 @@ public class PT
                 Packet<?> packet_spawn;
                 packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
                 px.playerConnection.sendPacket(packet_spawn);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.GetMain(), new Runnable()
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
                 {
                     @Override
                     public void run()
@@ -396,7 +396,7 @@ public class PT
 	}
 	public static void RunTaskCommand(CommandSender sender, String command)
 	{
-		Bukkit.getServer().getScheduler().runTask(Rebug.GetMain(), new Runnable()
+		Bukkit.getServer().getScheduler().runTask(Rebug.getINSTANCE(), new Runnable()
 		{
 			@Override
 			public void run() 
@@ -410,7 +410,7 @@ public class PT
 		if (player == null || !player.isOnline())
 			return;
 		
-		Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
+		Bukkit.getScheduler().runTask(Rebug.getINSTANCE(), new Runnable()
 		{
 			
 			@Override
@@ -426,7 +426,7 @@ public class PT
 		if (player == null || !player.isOnline())
 			return;
 		
-		Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
+		Bukkit.getScheduler().runTask(Rebug.getINSTANCE(), new Runnable()
 		{
 			
 			@Override

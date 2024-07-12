@@ -18,6 +18,8 @@ import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientHeldItemChange;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction.Action;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerFlying;
@@ -49,7 +51,11 @@ public class EventPackets implements PacketListener
 		ItemStack item = null;
 		user.preSend ++;
 		if (e.getPacketType() == PacketType.Play.Client.ANIMATION)
+		{
 			user.preCPS ++;
+			if (user.isPacketDebuggerEnabled() && user.ArmAnimationPacket)
+				user.DebuggerChatMessage(e, "N/A");
+		}
 		
 		if (e.getPacketType() == PacketType.Play.Client.RESOURCE_PACK_STATUS)
 		{
@@ -64,6 +70,8 @@ public class EventPackets implements PacketListener
 				user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 			}
+			if (user.isPacketDebuggerEnabled() && user.HeldItemSlotPacket)
+				user.DebuggerChatMessage(e, "Slot= " + new WrapperPlayClientHeldItemChange(e).getSlot());
 		}
 		
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT)
@@ -73,9 +81,14 @@ public class EventPackets implements PacketListener
 			{
 				user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
 				if (PT.isHoldingSword(item))
-					user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.GREEN + Rebug.GetMain().getTickMark(), 3);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Blocking " + ChatColor.GREEN + Rebug.getINSTANCE().getTickMark(), 3);
 				
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+			}
+			if (user.isPacketDebuggerEnabled() && user.BlockPlacePacket)
+			{
+				WrapperPlayClientPlayerBlockPlacement packet = new WrapperPlayClientPlayerBlockPlacement(e);
+				user.DebuggerChatMessage(e, "posX= " + packet.getBlockPosition().getX() + "\nposY= " + packet.getBlockPosition().getY() + "\nposZ= " + packet.getBlockPosition().getZ() + "\nCursorPosX= " + packet.getCursorPosition().getX() + "\nCursorPosY= " + packet.getCursorPosition().getY() + "\nCursorPosZ= " + packet.getCursorPosition().getZ() + "\nFace= " + packet.getFace().name() + "\nItem= " + packet.getItemStack() + "\nHand= " + packet.getHand().name() + "\nInsideBlock= " + packet.getInsideBlock() + "\nSequence= " + packet.getSequence());
 			}
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING)
@@ -89,6 +102,8 @@ public class EventPackets implements PacketListener
 					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 				}
 			}
+			if (user.isPacketDebuggerEnabled() && user.DiggingPacket)
+				user.DebuggerChatMessage(e, "Action= " + packet.getAction().name() + "\nBlockFace= " + packet.getBlockFace() + "\nX= " + packet.getBlockPosition().getX() + "\nY= " + packet.getBlockPosition().getY() + "\nZ= " + packet.getBlockPosition().getZ() + "\nSequence= " + packet.getSequence());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.ENTITY_ACTION)
 		{
@@ -98,7 +113,7 @@ public class EventPackets implements PacketListener
 				boolean start = packet.getAction() == Action.START_SPRINTING;
 				if (user.ScoreBoard != null)
 				{
-					user.ScoreBoard.set(ChatColor.DARK_RED + "Sprinting " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 2);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Sprinting " + (start ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 2);
 					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 				}
 			}
@@ -107,10 +122,12 @@ public class EventPackets implements PacketListener
 				boolean start = packet.getAction() == Action.START_SNEAKING;
 				if (user.ScoreBoard != null)
 				{
-					user.ScoreBoard.set(ChatColor.DARK_RED + "Sneaking " + (start ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 1);
+					user.ScoreBoard.set(ChatColor.DARK_RED + "Sneaking " + (start ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 1);
 					user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 				}
 			}
+			if (user.isPacketDebuggerEnabled() && user.EntityActionPacket)
+				user.DebuggerChatMessage(e, "Action= " + packet.getAction());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_FLYING)
 		{
@@ -120,9 +137,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosZ = user.getLocation().getZ();
 			if (user.ScoreBoard != null)
 			{
-				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 			}
+			if (user.isPacketDebuggerEnabled() && user.FlyingPacket)
+				user.DebuggerChatMessage (e, "Ground= " + packet.isOnGround());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION)
 		{
@@ -130,11 +149,14 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
+			user.timer_balance = System.currentTimeMillis();
 			if (user.ScoreBoard != null)
 			{
-				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 			}
+			if (user.isPacketDebuggerEnabled() && user.PositionPacket)
+				user.DebuggerChatMessage (e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nGround= " + packet.isOnGround());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION)
 		{
@@ -144,9 +166,11 @@ public class EventPackets implements PacketListener
 			user.lastTickPosZ = user.getLocation().getZ();
 			if (user.ScoreBoard != null)
 			{
-				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 			}
+			if (user.isPacketDebuggerEnabled() && user.PositionLookPacket)
+				user.DebuggerChatMessage (e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nYaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION)
 		{
@@ -156,13 +180,18 @@ public class EventPackets implements PacketListener
 			user.lastTickPosZ = user.getLocation().getZ();
 			if (user.ScoreBoard != null)
 			{
-				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.GetMain().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
+				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
 				user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
 			}
+			if (user.isPacketDebuggerEnabled() && user.LookPacket)
+				user.DebuggerChatMessage (e, "Yaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
 		}
 		if (e.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE)
 		{
 			WrapperPlayClientPluginMessage packet = new WrapperPlayClientPluginMessage(e);
+			if (packet.getChannelName().equalsIgnoreCase("ACT|Debugger"))
+				user.AllowedToDebug = false;
+			
 			if (packet.getChannelName().equalsIgnoreCase("Register"))
 			{
 				try
@@ -217,7 +246,7 @@ public class EventPackets implements PacketListener
 				    	}
 						if (user.BrandSetCount < 1)
 						{
-							Bukkit.getScheduler().runTaskLater(Rebug.GetMain(), new Runnable()
+							Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable()
 							{
 								
 								@Override

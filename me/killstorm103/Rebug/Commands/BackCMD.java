@@ -79,9 +79,7 @@ public class BackCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/back"};
-		
-		return s;
+		return new String[] {"/back"};
 	}
 
 }

@@ -38,8 +38,7 @@ public class HealCMD extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/heal"};
-		return s;
+		return new String[] {"/heal"};
 	}
 
 	@Override

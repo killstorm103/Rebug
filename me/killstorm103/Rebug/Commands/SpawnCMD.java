@@ -72,8 +72,7 @@ public class SpawnCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/spawn"};
-		return s;
+		return new String[] {"/spawn"};
 	}
 	
 }

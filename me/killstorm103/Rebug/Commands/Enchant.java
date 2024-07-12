@@ -42,8 +42,7 @@ public class Enchant extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/enchant", "/enchantment"};
-		return s;
+		return new String[] {"/enchant", "/enchantment"};
 	}
 
 	@Override

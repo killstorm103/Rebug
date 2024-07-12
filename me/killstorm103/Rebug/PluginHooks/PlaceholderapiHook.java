@@ -55,7 +55,7 @@ public class PlaceholderapiHook extends PlaceholderExpansion
 				if (strip.equalsIgnoreCase("Vanilla"))
 					return ac;
 				
-				if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + strip + ".has-short-name"))
+				if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + strip + ".has-short-name"))
 					ac = ac.replace(ac, ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + strip + ".short-name")) + ChatColor.RESET);
 				
 				

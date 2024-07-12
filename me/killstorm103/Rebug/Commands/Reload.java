@@ -2,70 +2,53 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
-public class FeedCMD extends Command
+public class Reload extends Command
 {
 
 	@Override
 	public String getName() {
-		return "feed";
+		return "reload";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "feed | feed <player>";
+		return "reload <config or server>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "feed yourself or other players!";
+		return "reload";
 	}
-	@Override
-	public boolean hasCommandCoolDown() {
-		return true;
-	}
+
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "feedcmd";
+		return StartOfPermission() + "reload_command";
 	}
 
 	@Override
 	public String[] SubAliases() 
 	{
-		return new String[] {"/feed"};
+		return null;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		Player player = null;
 		if (args.length < 2)
 		{
-			if (sender instanceof Player)
-			{
-				player = (Player) sender;
-				player.setFoodLevel(20);
-				player.sendMessage(Rebug.RebugMessage + "Fed " + player.getName() + "!");
-			}
-			else
-				sender.sendMessage(Rebug.RebugMessage + "Only players can run this command!: do /feed <player>");
+			sender.sendMessage(Rebug.RebugMessage + getSyntax());
+			return;
 		}
-		else
+		
+		if (args[1].equalsIgnoreCase("config"))
 		{
-			player = Bukkit.getServer().getPlayer(args[1]);
-			if (player == null)
-			{
-				sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
-				return;
-			}
-			player.setFoodLevel(20);
-			sender.sendMessage(Rebug.RebugMessage + "Fed " + player.getName() + "!");
+			Rebug.getINSTANCE().Reload_Configs(sender instanceof Player ? Rebug.getUser((Player) sender) : null);
 		}
 	}
 
@@ -86,6 +69,11 @@ public class FeedCMD extends Command
 
 	@Override
 	public boolean HasToBeConsole() {
+		return false;
+	}
+
+	@Override
+	public boolean hasCommandCoolDown() {
 		return false;
 	}
 	

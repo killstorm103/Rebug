@@ -5,7 +5,6 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,7 +32,7 @@ public class EventMenus implements Listener
 	}
 	private void Refresh (Player player, String menu)
 	{
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.GetMain(), new Runnable()
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
         {
             @Override
             public void run()
@@ -147,7 +146,7 @@ public class EventMenus implements Listener
 				if (MenuName.equalsIgnoreCase("Potions") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
-					Bukkit.getScheduler().runTask(Rebug.GetMain(), new Runnable()
+					Bukkit.getScheduler().runTask(Rebug.getINSTANCE(), new Runnable()
 					{
 						@Override
 						public void run()
@@ -174,43 +173,8 @@ public class EventMenus implements Listener
 							Bukkit.dispatchCommand(user.getPlayer(), "rebug menu Vanilla%Fly%Checks");
 							return;
 						}
-						if (!Rebug.hasAdminPerms(user.getPlayer()) && !user.hasPermission("me.killstorm103.rebug.user.select_vanilla"))
-						{
-							user.sendMessage(Rebug.RebugMessage + "You don't have permission to use Vanilla!");
-							if (user.AutoCloseAntiCheatMenu)
-								user.getPlayer().closeInventory();
-							
-							return;
-						}
 					}
-				
-					Rebug.UpdateUserPerms (user, ItemName);
-					if (user.AutoCloseAntiCheatMenu)
-						user.getPlayer().closeInventory();
-					
-					Bukkit.getScheduler().runTaskLater(Rebug.GetMain(), new Runnable()
-					{
-						
-						@Override
-						public void run()
-						{
-							user.AntiCheat = ItemName;
-							//ShowFlags (user);
-							String NewAC = user.getColoredAntiCheat(), striped = ChatColor.stripColor(user.AntiCheat).toLowerCase();
-					   		if (Rebug.GetMain().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))
-							{
-					   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', Rebug.GetMain().getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
-							}
-					   		if (user.ScoreBoard != null)
-					   			user.ScoreBoard.set(ChatColor.DARK_RED + "AC " + NewAC, 9);
-					   		
-							PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
-							String AC = ChatColor.stripColor(NewAC);
-							user.getPlayer().sendMessage(Rebug.RebugMessage + "You selected: " + AC + (AC.equalsIgnoreCase("vanilla") ||
-							AC.equalsIgnoreCase("nocheatplus") || AC.equalsIgnoreCase("NCP") ? "" : " " + ChatColor.stripColor(PT.SubString(item.getItemMeta().getLore().get(3), 10,
-							item.getItemMeta().getLore().get(3).length()).replace(" ", ""))));
-						}
-					}, 10); // 15
+					Rebug.getINSTANCE().UpdateAntiCheat(user, ItemName, item);
 				}
 				if (MenuName.equalsIgnoreCase("Exploits") && e.getClickedInventory() != user.getPlayer().getInventory() && ItemName != null)
 				{
@@ -272,7 +236,7 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("Reset Scaffold Area"))
 						{
-							Rebug.GetMain().RestScaffoldTask.cancel();
+							Rebug.getINSTANCE().RestScaffoldTask.cancel();
 							ResetScaffoldTestArea.getMainTask().run();
 							return;
 						}
@@ -282,7 +246,7 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("Reload Config"))
 						{
-							Rebug.GetMain().Reload_Configs(user);
+							Rebug.getINSTANCE().Reload_Configs(user);
 							if (Rebug.KickOnReloadConfig)
 							{
 								for (Player players : Bukkit.getOnlinePlayers())
@@ -294,6 +258,11 @@ public class EventMenus implements Listener
 						else
 							ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
 					}
+				}
+				if (MenuName.equalsIgnoreCase("Packet Selector") && e.getClickedInventory() != user.getPlayer().getInventory())
+				{
+					e.setCancelled(true);
+					user.UpdateItemInMenu(user.PacketDebuggerMenu, slot, user.getMadeItems(MenuName, ItemName));
 				}
 				if (MenuName.equalsIgnoreCase("Player Settings"))
 				{
@@ -368,7 +337,7 @@ public class EventMenus implements Listener
 							}
 							if (ItemName.equalsIgnoreCase("Allow Mentions"))
 							{
-								user.AllowAT =! user.AllowAT;
+								user.AllowMentions =! user.AllowMentions;
 							}
 							if (ItemName.equalsIgnoreCase("Flags"))
 							{
@@ -453,7 +422,7 @@ public class EventMenus implements Listener
 						{
 							e.setCancelled(true);
 							user.getPlayer().closeInventory();
-							Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.GetMain(), new Runnable()
+							Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
 				            {
 				                @Override
 				                public void run()
@@ -472,30 +441,4 @@ public class EventMenus implements Listener
 			}
 		}
 	}
-	// This is a TEST!
-	/*
-	public static void ShowFlags (User user)
-	{
-		if (user == null) return;
-		
-		String AntiCheat = ChatColor.stripColor(user.AntiCheat).toLowerCase();
-		String message = null;
-		switch (AntiCheat)
-		{
-		case "grimac":
-			Bukkit.dispatchCommand(user.getPlayer(), "grim verbose");
-			//user.AlertsEnabled.put(AntiCheat, true);
-			break;
-			
-		case "horizon":
-			message = "horizon verbose";
-			break;
-		
-		default:
-			break;
-		}
-		if (message != null)
-			user.sendMessage(Rebug.RebugMessage + "use /" + message + " to toggle alerts");
-	}
-	*/
 }

@@ -31,7 +31,7 @@ import me.killstorm103.Rebug.Utils.User;
 
 public class EventPlayer implements Listener
 {
-	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onProjectileHit (ProjectileHitEvent e)
 	{
 		if (e.getEntityType() == EntityType.ARROW && e.getEntity().getShooter() instanceof Player)
@@ -39,9 +39,8 @@ public class EventPlayer implements Listener
 			User user = Rebug.getUser((Player) e.getEntity().getShooter());
 			if (user == null || user.ShouldTeleportByBow < 1) return;
 			
-			e.getEntity().getLocation().setYaw(user.getPlayer().getLocation().getYaw());
-			e.getEntity().getLocation().setPitch(user.getPlayer().getLocation().getPitch());
-			user.getPlayer().teleport(e.getEntity().getLocation());
+			Location loc = e.getEntity().getLocation();
+			user.getPlayer().teleport(new Location(user.getWorld(), loc.getX(), loc.getY(), loc.getZ(), user.getLocation().getYaw(), user.getLocation().getPitch()));
 			e.getEntity().remove();
 			user.ShouldTeleportByBow = user.ShouldTeleportByBow < 0 ? 0 : user.ShouldTeleportByBow --;
 		}
@@ -50,18 +49,24 @@ public class EventPlayer implements Listener
 	public void onChat (AsyncPlayerChatEvent e)
 	{
 		Player player = e.getPlayer();
-		String[] inChat = StringUtils.split(e.getMessage());
-		for (int i = 0; i < inChat.length; i ++)
+		if (Bukkit.getOnlinePlayers().size() > 1)
 		{
-			User used = Rebug.getUser(Bukkit.getPlayer(inChat[i]));
-			if (used != null)
+			String message = e.getMessage();
+			message = message.trim();
+			String[] inChat = StringUtils.split(message);
+			for (int i = 0; i < inChat.length; i ++)
 			{
-				if (!used.AllowAT && used.getPlayer() != player)
+				User used = Rebug.getUser(Bukkit.getPlayer(inChat[i]));
+				if (used != null)
 				{
-					player.sendMessage(Rebug.RebugMessage + used.getName() + " Has Mentions Disabled (they won't see your message)!");
-					e.getRecipients().remove(used.getPlayer());
+					if (!used.AllowMentions && used.getPlayer() != player && e.getRecipients().contains(used.getPlayer()))
+					{
+						player.sendMessage(Rebug.RebugMessage + used.getName() + " Has Mentions Disabled (they won't see your message)!");
+						e.getRecipients().remove(used.getPlayer());
+					}
+					// using this would cause a bug where if the player mentions more than one player they wouldn't be able to stop themselfs from getting the message!
+					//break;
 				}
-				break;
 			}
 		}
 		
@@ -130,7 +135,7 @@ public class EventPlayer implements Listener
 			return;
 		}
 		
-		if (!user.getPlayer().isOp() && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
+		if (!Rebug.hasAdminPerms(user.getPlayer()))
 			e.setCancelled(true);
 		else
 			e.setExpLevelCost(0);

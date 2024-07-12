@@ -42,8 +42,7 @@ public class InvSeeCMD extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/invsee"};
-		return s;
+		return new String[] {"/invsee"};
 	}
 
 	@Override

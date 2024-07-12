@@ -38,9 +38,7 @@ public class HealAndFeedCMD extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String s[] = {"/healandfeed"};
-		
-		return s;
+		return new String[] {"/healandfeed"};
 	}
 
 	@Override

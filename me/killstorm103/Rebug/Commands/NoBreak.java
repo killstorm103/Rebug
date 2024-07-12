@@ -42,8 +42,7 @@ public class NoBreak extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/nobreak"};
-		return s;
+		return new String[] {"/nobreak"};
 	}
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception

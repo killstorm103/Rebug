@@ -18,11 +18,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import me.killstorm103.Rebug.Main.Rebug;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class User 
 {
@@ -30,7 +35,10 @@ public class User
     private static User user;
     private String brand = null, register = null;
     private int protocol;
-    public boolean SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowAT, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, FallDamage;
+    
+    // Player Settings
+    public boolean SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, FallDamage;
+    
     public org.bukkit.Location death_location;
     public final Map<UUID, Long> joinTimeMap = new HashMap<UUID, Long>();
     public final Map<Location, Block> BlockPlaced = new HashMap<Location, Block>();
@@ -41,7 +49,7 @@ public class User
     potionlevel = 1, potion_effect_seconds = 240;
     public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
     public BPlayerBoard ScoreBoard = null;
-    
+    public long timer_balance = 0;
     
     public Player getPlayer ()
     {
@@ -82,7 +90,7 @@ public class User
 		this.AllowDirectMessages = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Direct Messages");
 		this.PotionEffects = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Potion Effects");
 		this.AutoRefillBlocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Auto Refill Blocks Placed");
-		this.AllowAT = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Mentions");
+		this.AllowMentions = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Mentions");
 		this.Infinite_Blocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Infinite Blocks");
 		this.Yapper_Message_Count = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getInt("Yapper");
 	}
@@ -211,7 +219,7 @@ public class User
 					break;
 					
 				case "allow mentions":
-					text = ChatColor.AQUA + "Status: " + (AllowAT ? ChatColor.GREEN : ChatColor.DARK_RED) + AllowAT;
+					text = ChatColor.AQUA + "Status: " + (AllowMentions ? ChatColor.GREEN : ChatColor.DARK_RED) + AllowMentions;
 					break;
 					
 				case "flags":
@@ -342,9 +350,93 @@ public class User
     }
 	
 	// Inventory
-    public Inventory OldInventory, CrashersMenu, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, SpawnEntityCrashersMenu, PotionsMenu;
+    public Inventory OldInventory, CrashersMenu, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, SpawnEntityCrashersMenu, PotionsMenu, PacketDebuggerMenu;
  // Inventory Size can be: 9, 18, 27, 36, 45, 54
+
+    // Packet Debugger
+    public boolean AllowedToDebug = true, DebugEnabled = false;
+    public boolean isPacketDebuggerEnabled ()
+    {
+    	return AllowedToDebug && DebugEnabled;
+    }
+    // Packets
+    public boolean FlyingPacket = true, PositionPacket = true, PositionLookPacket = true, LookPacket = true, ArmAnimationPacket = true, HeldItemSlotPacket = true, DiggingPacket = true, BlockPlacePacket = true, EntityActionPacket = true;
+    public int debuggercounter = 1;
     
+    public Inventory getPacketDebuggerMenu ()
+    {
+    	if (PacketDebuggerMenu == null)
+    	{
+    		Inventory inventory = PT.createInventory(getPlayer(), 36, ChatColor.GREEN + "Packet Selector");
+    		item = Reset(FlyingPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((FlyingPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInFlying");
+    		lore.add(ChatColor.GRAY + "Click to " + (!FlyingPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(0, item);
+    		
+    		item = Reset(PositionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((PositionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInPosition");
+    		lore.add(ChatColor.GRAY + "Click to " + (!PositionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(1, item);
+    		
+    		item = Reset(PositionLookPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((PositionLookPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInPositionLook");
+    		lore.add(ChatColor.GRAY + "Click to " + (!PositionLookPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(2, item);
+    		
+    		item = Reset(LookPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((LookPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInLook");
+    		lore.add(ChatColor.GRAY + "Click to " + (!LookPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(3, item);
+    		
+    		item = Reset(ArmAnimationPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((ArmAnimationPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInArmAnimation");
+    		lore.add(ChatColor.GRAY + "Click to " + (!ArmAnimationPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(4, item);
+    		
+    		item = Reset(HeldItemSlotPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((HeldItemSlotPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInHeldItemSlot");
+    		lore.add(ChatColor.GRAY + "Click to " + (!HeldItemSlotPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(5, item);
+    		
+    		item = Reset(DiggingPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((DiggingPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInBlockDig");
+    		lore.add(ChatColor.GRAY + "Click to " + (!DiggingPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(6, item);
+    		
+    		item = Reset(BlockPlacePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((BlockPlacePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInBlockPlacement");
+    		lore.add(ChatColor.GRAY + "Click to " + (!BlockPlacePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(7, item);
+    		
+    		item = Reset(EntityActionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((EntityActionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInEntityAction");
+    		lore.add(ChatColor.GRAY + "Click to " + (!EntityActionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(8, item);
+    		
+    		
+    		PacketDebuggerMenu = inventory;
+    	}
+    	
+    	return PacketDebuggerMenu;
+    }
     
     public ArrayList<String> lore = new ArrayList<>();// clearing this as a test
 	private ItemMeta itemMeta = null;
@@ -721,7 +813,7 @@ public class User
 			
 			item = Reset(Material.PAPER);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Allow Mentions");
-			lore.add(ChatColor.AQUA + "Status: " + (AllowAT ? ChatColor.GREEN : ChatColor.DARK_RED) + AllowAT);
+			lore.add(ChatColor.AQUA + "Status: " + (AllowMentions ? ChatColor.GREEN : ChatColor.DARK_RED) + AllowMentions);
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Stop's you seeing other players chat messages that mention you");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
@@ -1001,6 +1093,100 @@ public class User
 	{
 		switch (menuName.toLowerCase())
 		{
+		case "packet selector":
+			if (itemName.equalsIgnoreCase("PacketPlayInFlying"))
+			{
+				FlyingPacket =! FlyingPacket;
+				item = Reset(FlyingPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((FlyingPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInFlying");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!FlyingPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+	    		return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInPosition"))
+			{
+				PositionPacket =! PositionPacket;
+				item = Reset(PositionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((PositionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInPosition");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!PositionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+	    		return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInPositionLook"))
+			{
+				PositionLookPacket =! PositionLookPacket;
+				item = Reset(PositionLookPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((PositionLookPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInPositionLook");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!PositionLookPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+	    		return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInLook"))
+			{
+				LookPacket =! LookPacket;
+				item = Reset(LookPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((LookPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInLook");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!LookPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+	    		return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInArmAnimation"))
+			{
+				ArmAnimationPacket =! ArmAnimationPacket;
+				item = Reset(ArmAnimationPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((ArmAnimationPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInArmAnimation");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!ArmAnimationPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInHeldItemSlot"))
+			{
+				HeldItemSlotPacket =! HeldItemSlotPacket;
+				item = Reset(HeldItemSlotPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((HeldItemSlotPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInHeldItemSlot");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!HeldItemSlotPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInBlockDig"))
+			{
+				DiggingPacket =! DiggingPacket;
+				item = Reset(DiggingPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((DiggingPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInBlockDig");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!DiggingPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInBlockPlacement"))
+			{
+				BlockPlacePacket =! BlockPlacePacket;
+				item = Reset(BlockPlacePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((BlockPlacePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInBlockPlacement");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!BlockPlacePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInEntityAction"))
+			{
+				EntityActionPacket =! EntityActionPacket;
+				item = Reset(EntityActionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((EntityActionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInEntityAction");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!EntityActionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+	    		return item;
+			}
+			
+			break;
+		
 		case "vanilla fly checks":
 			if (itemName.equalsIgnoreCase("1.8.x"))
 			{
@@ -1069,5 +1255,15 @@ public class User
 	public boolean isOnLadder() 
 	{
 		return getLocation().getBlock().getType() == Material.LADDER || getLocation().getBlock().getType() == Material.VINE;
+	}
+	@SuppressWarnings("deprecation")
+	public void DebuggerChatMessage (PacketReceiveEvent e, String toDebug)
+	{
+		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());
+		BaseComponent[] baseComponents = new ComponentBuilder(e.getPacketName() + ":\n\n" + toDebug).create();
+		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, baseComponents);
+		component.setHoverEvent(hoverEvent);
+		getPlayer().spigot().sendMessage(component);
+		debuggercounter ++;
 	}
 }

@@ -25,7 +25,7 @@ public abstract class Command
 	
 	public Rebug getRebug ()
 	{
-		return Rebug.GetMain();
+		return Rebug.getINSTANCE();
 	}
 	public static void Log (CommandSender sender, String tolog)
 	{
@@ -33,7 +33,7 @@ public abstract class Command
 	}
 	public static void LogToConsole (String tolog)
 	{
-		Rebug.GetMain().getServer().getConsoleSender().sendMessage(tolog);
+		Rebug.getINSTANCE().getServer().getConsoleSender().sendMessage(tolog);
 	}
 	public String StartOfPermission ()
 	{

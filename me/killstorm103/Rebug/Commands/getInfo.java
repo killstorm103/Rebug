@@ -52,7 +52,7 @@ public class getInfo extends Command
 				Log(sender, ChatColor.GRAY + "/rebug getinfo command <command name> <info>");
 				return;
 			}
-			Command cmd = Rebug.GetMain().getCommandByName(args[2]);
+			Command cmd = Rebug.getINSTANCE().getCommandByName(args[2]);
 			if (cmd == null)
 			{
 				Log(sender, Rebug.RebugMessage + "Unknown command!");

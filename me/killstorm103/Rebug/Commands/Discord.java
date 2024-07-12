@@ -37,8 +37,7 @@ public class Discord extends Command
 	@Override
 	public String[] SubAliases()
 	{
-		String[] s = {"/discord"};
-		return s;
+		return new String[] {"/discord"};
 	}
 
 	@Override

@@ -40,8 +40,7 @@ public class GetUUID extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/getuuid"};
-		return s;
+		return new String[] {"/getuuid"};
 	}
 
 	@SuppressWarnings("deprecation")

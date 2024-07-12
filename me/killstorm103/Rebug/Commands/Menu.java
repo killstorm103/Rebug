@@ -132,11 +132,20 @@ public class Menu extends Command
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
 					
 				break;
+				
 			case "ac":
 				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.select_anticheat") || Rebug.hasAdminPerms(user.getPlayer()))
+				{
+					if (args.length >= 3)
+					{
+						Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null);
+						return;
+					}
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getAntiCheats());
+				}
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
+				
 				break;
 				
 			case "crashers":
