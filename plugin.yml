@@ -26,6 +26,15 @@ commands:
     - me.killstorm103.rebug.server_owner
     - me.killstorm103.rebug.server_admin
     - me.killstorm103.rebug.commands.*
+  packetdebugger:
+    description: Debug Packets
+    usage: /<command>
+    permissions:
+    - me.killstorm103.rebug.user.packetdebugger
+    - me.killstorm103.rebug.*
+    - me.killstorm103.rebug.server_owner
+    - me.killstorm103.rebug.server_admin
+    - me.killstorm103.rebug.commands.*
   credits:
     description: Opens exploits menu!
     usage: /<command>
