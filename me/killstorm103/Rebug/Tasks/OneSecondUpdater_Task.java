@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.User;
@@ -37,20 +36,33 @@ public class OneSecondUpdater_Task implements Runnable
 				user.sendPacketCounts = user.preSend;
 				user.receivePacketCounts = user.preReceive;
 				user.preSend = user.preReceive = user.preCPS = 0;
-				final double distX = user.getLocation().getX() - user.lastTickPosX;
-				final double distY = user.getLocation().getY() - user.lastTickPosY;
-				final double distZ = user.getLocation().getZ() - user.lastTickPosZ;
-				final double bpsXZ = Math.sqrt(distX * distX + distZ * distZ) * 20.0;  
-				final double bpsY = Math.sqrt(distY * distY) * 20.0;  
+				final double
+				distX = user.getLocation().getX() - user.lastTickPosX,
+				distY = user.getLocation().getY() - user.lastTickPosY,
+				distZ = user.getLocation().getZ() - user.lastTickPosZ,
+				bpsXZ = Math.sqrt(distX * distX + distZ * distZ) * 20.0,
+				bpsY = Math.sqrt(distY * distY) * 20.0;  
 				if (Config.RebugScoreBoard() && user.ScoreBoard != null)
 				{
-					user.ScoreBoard.set(ChatColor.DARK_RED + "TB " + user.timer_balance, 4);
-					user.ScoreBoard.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
-					user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
-		   			user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
-		   			user.ScoreBoard.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 8);
-		   			BPlayerBoard b = user.ScoreBoard;
-		   			user.getPlayer().setScoreboard(b.getScoreboard());
+					org.bukkit.ChatColor color = org.bukkit.ChatColor.DARK_RED;
+					String TB = color + "TB " + user.timer_balance, PPS = color + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out",
+					BPSY = color + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), BPSXZ = color + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), CPS = color + "CPS " + ChatColor.WHITE + user.ClicksPerSecond;
+					if (!user.ScoreBoard.get(4).contains(TB))
+						user.ScoreBoard.set(ChatColor.DARK_RED + "TB " + user.timer_balance, 4);
+					
+					if (!user.ScoreBoard.get(5).contains(PPS))
+						user.ScoreBoard.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
+					
+					if (!user.ScoreBoard.get(6).contains(BPSY))
+						user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
+					
+					if (!user.ScoreBoard.get(7).contains(BPSXZ))
+						user.ScoreBoard.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
+					
+					if (!user.ScoreBoard.get(8).contains(CPS))
+						user.ScoreBoard.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 8);
+		   			
+		   			user.timer_balance = 0;
 				}
 				if (Bukkit.getOnlinePlayers().size() < 2) return;
 				

@@ -34,6 +34,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 		case "rebug settings":
 			if (itemName.equalsIgnoreCase("Per Player Alerts"))
 			{
+				Rebug.PrivatePerPlayerAlerts =! Rebug.PrivatePerPlayerAlerts;
 				item = Reset(Material.DROPPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
 				item.setItemMeta(itemMeta);
@@ -41,6 +42,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			}
 			if (itemName.equalsIgnoreCase("Debug"))
 			{
+				Rebug.debug =! Rebug.debug;
 				item = Reset(Material.REDSTONE);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debug ? ChatColor.GREEN : ChatColor.RED).toString()  + "Debug");
 				item.setItemMeta(itemMeta);
@@ -48,6 +50,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			}
 			if (itemName.equalsIgnoreCase("Debug To Ops Only"))
 			{
+				Rebug.debugOpOnly =! Rebug.debugOpOnly;
 				item = Reset(Material.PAPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debugOpOnly ? ChatColor.GREEN : ChatColor.RED).toString()+ "Debug To Ops Only");
 				item.setItemMeta(itemMeta);
@@ -55,6 +58,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			}
 			if (itemName.equalsIgnoreCase("Kick on reload config"))
 			{
+				Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
 				item = Reset(Material.PAPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
 				item.setItemMeta(itemMeta);

@@ -45,11 +45,10 @@ public class User
     public String AntiCheat;
     public Player CommandTarget; // TODO: Fix this not setting to null when it should or maybe should leave it!?
     public Map<String, Boolean> AlertsEnabled = new HashMap<>();
-    public int UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
+    public int timer_balance = 0, UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
     potionlevel = 1, potion_effect_seconds = 240;
     public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
     public BPlayerBoard ScoreBoard = null;
-    public long timer_balance = 0;
     
     public Player getPlayer ()
     {
@@ -65,13 +64,14 @@ public class User
         AlertsEnabled.clear();
         BlockPlaced.clear();
         this.AntiCheat = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("default-anticheat");
-        this.AntiCheat = this.AntiCheat == null || this.AntiCheat.length() < 1 ? "Vanilla" : this.AntiCheat;
+        this.AntiCheat = PT.isStringNull(this.AntiCheat) ? "Vanilla" : this.AntiCheat;
         this.player = player;
         LoadDefault();
         this.protocol = getNumber ();
     }
 	private void LoadDefault ()
 	{
+		// Player Settings
 		this.HideOnlinePlayers = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Hide Online Players");
 		this.ProximityPlayerHider = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Proximity Player Hider");
 		this.NotifyFlyingKick1_8 = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Notify Flying Kick 1.8.x");
@@ -93,6 +93,27 @@ public class User
 		this.AllowMentions = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Mentions");
 		this.Infinite_Blocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Infinite Blocks");
 		this.Yapper_Message_Count = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getInt("Yapper");
+		
+		// PacketDebugger Settings
+		this.FlyingPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Flying");
+        this.PositionPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Position");
+        this.PositionLookPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("PositionLook");
+        this.LookPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Look");
+        this.ArmAnimationPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Arm Animation");
+        this.HeldItemSlotPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Held Item Slot");
+        this.DiggingPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Digging");
+        this.BlockPlacePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Block Place");
+        this.EntityActionPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Entity Action");
+        this.CloseWindowPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Close Window");
+        this.ClickWindowPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Click Window");
+        this.SettingsPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Client Settings");
+        this.StatusPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Client Status");
+        this.AbilitiesPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Abilities");
+        this.KeepAlivePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Keep Alive");
+        this.TransactionPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Transaction");
+        this.SpectatePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Spectate");
+        this.SteerVehiclePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Steer Vehicle");
+        this.CustomPayLoadPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Custom PayLoad");
 	}
 	
 	public Inventory getPotionsMenu ()
@@ -354,13 +375,16 @@ public class User
  // Inventory Size can be: 9, 18, 27, 36, 45, 54
 
     // Packet Debugger
-    public boolean AllowedToDebug = true, DebugEnabled = false;
+    public boolean AllowedToDebug = true;
     public boolean isPacketDebuggerEnabled ()
     {
-    	return AllowedToDebug && DebugEnabled;
+    	return AllowedToDebug && Rebug.PacketDebuggerPlayers.contains(getPlayer().getUniqueId());
     }
     // Packets
-    public boolean FlyingPacket = true, PositionPacket = true, PositionLookPacket = true, LookPacket = true, ArmAnimationPacket = true, HeldItemSlotPacket = true, DiggingPacket = true, BlockPlacePacket = true, EntityActionPacket = true;
+    public boolean FlyingPacket = true, PositionPacket = true, PositionLookPacket = true, LookPacket = true, ArmAnimationPacket = true, HeldItemSlotPacket = true, DiggingPacket = true,
+    BlockPlacePacket = true, EntityActionPacket = true, CloseWindowPacket = true, ClickWindowPacket = true, SettingsPacket = true, AbilitiesPacket = true, KeepAlivePacket = true, TransactionPacket = true
+    , StatusPacket = true,
+    SpectatePacket = true, SteerVehiclePacket = true, CustomPayLoadPacket = true;
     public int debuggercounter = 1;
     
     public Inventory getPacketDebuggerMenu ()
@@ -431,6 +455,76 @@ public class User
     		item.setItemMeta(itemMeta);
     		inventory.setItem(8, item);
     		
+    		item = Reset(CloseWindowPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((CloseWindowPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInCloseWindow");
+    		lore.add(ChatColor.GRAY + "Click to " + (!CloseWindowPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(9, item);
+    		
+    		item = Reset(ClickWindowPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((ClickWindowPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInClickWindow");
+    		lore.add(ChatColor.GRAY + "Click to " + (!ClickWindowPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(10, item);
+    		
+    		item = Reset(SettingsPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((SettingsPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSettings");
+    		lore.add(ChatColor.GRAY + "Click to " + (!SettingsPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(11, item);
+    		
+    		item = Reset(StatusPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((StatusPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInClientStatus");
+    		lore.add(ChatColor.GRAY + "Click to " + (!StatusPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(12, item);
+    		
+    		
+    		item = Reset(AbilitiesPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((AbilitiesPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInAbilities");
+    		lore.add(ChatColor.GRAY + "Click to " + (!AbilitiesPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(13, item);
+    		
+    		item = Reset(KeepAlivePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((KeepAlivePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInKeepAlive");
+    		lore.add(ChatColor.GRAY + "Click to " + (!KeepAlivePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(14, item);
+    		
+    		item = Reset(TransactionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((TransactionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInTransaction");
+    		lore.add(ChatColor.GRAY + "Click to " + (!TransactionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(15, item);
+    		
+    		item = Reset(SpectatePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((SpectatePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSpectate");
+    		lore.add(ChatColor.GRAY + "Click to " + (!SpectatePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(16, item);
+    		
+    		item = Reset(SteerVehiclePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((SteerVehiclePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSteerVehicle");
+    		lore.add(ChatColor.GRAY + "Click to " + (!SteerVehiclePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(17, item);
+    		
+    		item = Reset(CustomPayLoadPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((CustomPayLoadPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInCustomPayLoad");
+    		lore.add(ChatColor.GRAY + "Click to " + (!CustomPayLoadPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(17, item);
     		
     		PacketDebuggerMenu = inventory;
     	}
@@ -783,8 +877,6 @@ public class User
 			item.setItemMeta(itemMeta);
 			inventory.setItem(5, item);
 			
-			// TODO was here
-			
 			item = Reset(Material.POTION);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Potions");
 			lore.add(ChatColor.AQUA + "Status: " + (PotionEffects ? ChatColor.GREEN : ChatColor.DARK_RED) + PotionEffects);
@@ -1089,6 +1181,7 @@ public class User
     	
     	return order;
     }
+    // TODO Pre Made Items
 	public ItemStack getMadeItems(String menuName, String itemName)
 	{
 		switch (menuName.toLowerCase())
@@ -1184,12 +1277,113 @@ public class User
 	    		item.setItemMeta(itemMeta);
 	    		return item;
 			}
+			if (itemName.equalsIgnoreCase("PacketPlayInCloseWindow"))
+			{
+				CloseWindowPacket =! CloseWindowPacket;
+				item = Reset(CloseWindowPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((CloseWindowPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInCloseWindow");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!CloseWindowPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInClickWindow"))
+			{
+				ClickWindowPacket =! ClickWindowPacket;
+				item = Reset(ClickWindowPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((ClickWindowPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInClickWindow");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!ClickWindowPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInSettings"))
+			{
+				SettingsPacket =! SettingsPacket;
+				item = Reset(SettingsPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((SettingsPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSettings");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!SettingsPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInClientStatus"))
+			{
+				StatusPacket =! StatusPacket;
+				item = Reset(StatusPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((StatusPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInClientStatus");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!StatusPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInAbilities"))
+			{
+				AbilitiesPacket =! AbilitiesPacket;
+				item = Reset(AbilitiesPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((AbilitiesPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInAbilities");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!AbilitiesPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInKeepAlive"))
+			{
+				KeepAlivePacket =! KeepAlivePacket;
+				item = Reset(KeepAlivePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((KeepAlivePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInKeepAlive");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!KeepAlivePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInTransaction"))
+			{
+				TransactionPacket =! TransactionPacket;
+				item = Reset(TransactionPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((TransactionPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInTransaction");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!TransactionPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInSpectate"))
+			{
+				SpectatePacket =! SpectatePacket;
+				item = Reset(SpectatePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((SpectatePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSpectate");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!SpectatePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInSteerVehicle"))
+			{
+				SteerVehiclePacket =! SteerVehiclePacket;
+				item = Reset(SteerVehiclePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((SteerVehiclePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInSteerVehicle");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!SteerVehiclePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("PacketPlayInCustomPayLoad"))
+			{
+				CustomPayLoadPacket =! CustomPayLoadPacket;
+				item = Reset(CustomPayLoadPacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((CustomPayLoadPacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInCustomPayLoad");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!CustomPayLoadPacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
 			
 			break;
 		
 		case "vanilla fly checks":
 			if (itemName.equalsIgnoreCase("1.8.x"))
 			{
+				Vanilla1_8FlyCheck =! Vanilla1_8FlyCheck;
 				item = Reset(Vanilla1_8FlyCheck ? Material.BAKED_POTATO : Material.POTATO_ITEM);
 				itemMeta.setDisplayName(ChatColor.ITALIC + "1.8.x");
 				lore.add(ChatColor.AQUA + "Status: " + (Vanilla1_8FlyCheck ? ChatColor.GREEN : ChatColor.DARK_RED) + Vanilla1_8FlyCheck);
@@ -1201,6 +1395,7 @@ public class User
 			}
 			if (itemName.equalsIgnoreCase("1.9+"))
 			{
+				Vanilla1_9FlyCheck =! Vanilla1_9FlyCheck;
 				item = Reset(Vanilla1_9FlyCheck ? Material.BAKED_POTATO : Material.POTATO_ITEM);
 				itemMeta.setDisplayName(ChatColor.ITALIC + "1.9+");
 				lore.add(ChatColor.AQUA + "Status: " + (Vanilla1_9FlyCheck ? ChatColor.GREEN : ChatColor.DARK_RED) + Vanilla1_9FlyCheck);
@@ -1215,6 +1410,7 @@ public class User
 		case "rebug settings":
 			if (itemName.equalsIgnoreCase("Per Player Alerts"))
 			{
+				Rebug.PrivatePerPlayerAlerts =! Rebug.PrivatePerPlayerAlerts;
 				item = Reset(Material.DROPPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
 				item.setItemMeta(itemMeta);
@@ -1222,6 +1418,7 @@ public class User
 			}
 			if (itemName.equalsIgnoreCase("Debug"))
 			{
+				Rebug.debug =! Rebug.debug;
 				item = Reset(Material.REDSTONE);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debug ? ChatColor.GREEN : ChatColor.RED).toString()  + "Debug");
 				item.setItemMeta(itemMeta);
@@ -1229,6 +1426,7 @@ public class User
 			}
 			if (itemName.equalsIgnoreCase("Debug To Ops Only"))
 			{
+				Rebug.debugOpOnly =! Rebug.debugOpOnly;
 				item = Reset(Material.PAPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debugOpOnly ? ChatColor.GREEN : ChatColor.RED).toString()+ "Debug To Ops Only");
 				item.setItemMeta(itemMeta);
@@ -1236,6 +1434,7 @@ public class User
 			}
 			if (itemName.equalsIgnoreCase("Kick on reload config"))
 			{
+				Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
 				item = Reset(Material.PAPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
 				item.setItemMeta(itemMeta);
@@ -1259,7 +1458,7 @@ public class User
 	@SuppressWarnings("deprecation")
 	public void DebuggerChatMessage (PacketReceiveEvent e, String toDebug)
 	{
-		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());
+		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());
 		BaseComponent[] baseComponents = new ComponentBuilder(e.getPacketName() + ":\n\n" + toDebug).create();
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, baseComponents);
 		component.setHoverEvent(hoverEvent);

@@ -204,12 +204,6 @@ public class EventMenus implements Listener
 							user.UpdateMenuValueChangeLore(user.VanillaFlyChecksMenu, slot, 0, user.getValues ("Vanilla Fly Checks", ItemName));
 							return;
 						}
-						if (ItemName.equalsIgnoreCase("1.8.x"))
-							user.Vanilla1_8FlyCheck =! user.Vanilla1_8FlyCheck;
-						
-						if (ItemName.equalsIgnoreCase("1.9+"))
-							user.Vanilla1_9FlyCheck =! user.Vanilla1_9FlyCheck;
-						
 						e.setCurrentItem(user.getMadeItems (MenuName, ItemName));
 					}
 				}
@@ -224,25 +218,11 @@ public class EventMenus implements Listener
 							Refresh(user.getPlayer(), "menu settings");
 							return;
 						}
-						if (ItemName.equalsIgnoreCase("Debug"))
-							Rebug.debug =! Rebug.debug;
-						
-						if (ItemName.equalsIgnoreCase("Per Player Alerts"))
-							Rebug.PrivatePerPlayerAlerts =! Rebug.PrivatePerPlayerAlerts;
-						
-						if (ItemName.equalsIgnoreCase("Debug To Ops Only"))
-						{
-							Rebug.debugOpOnly =! Rebug.debugOpOnly;
-						}
 						if (ItemName.equalsIgnoreCase("Reset Scaffold Area"))
 						{
 							Rebug.getINSTANCE().RestScaffoldTask.cancel();
 							ResetScaffoldTestArea.getMainTask().run();
 							return;
-						}
-						if (ItemName.equalsIgnoreCase("Kick on reload config"))
-						{
-							Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
 						}
 						if (ItemName.equalsIgnoreCase("Reload Config"))
 						{
@@ -250,13 +230,11 @@ public class EventMenus implements Listener
 							if (Rebug.KickOnReloadConfig)
 							{
 								for (Player players : Bukkit.getOnlinePlayers())
-								{
 									PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
-								}
 							}
+							return;
 						}
-						else
-							ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
+						ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Packet Selector") && e.getClickedInventory() != user.getPlayer().getInventory())
@@ -310,8 +288,9 @@ public class EventMenus implements Listener
 							}
 							if (ItemName.equalsIgnoreCase("Infinite Blocks"))
 							{
-								if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
+								if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || Rebug.hasAdminPerms(user.getPlayer()))
 									user.Infinite_Blocks =! user.Infinite_Blocks;
+								
 								else
 								{
 									user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have Permission to use this!");
@@ -434,8 +413,8 @@ public class EventMenus implements Listener
 							
 							return;
 						}
-						CrashersAndOtherExploits.INSTANCE.CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 						e.setCancelled(true);
+						CrashersAndOtherExploits.INSTANCE.CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 					}
 				}
 			}

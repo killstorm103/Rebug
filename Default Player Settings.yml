@@ -1,3 +1,4 @@
+## Player Settings
 Hide Online Players: false
 Proximity Player Hider: false
 Notify Flying Kick 1.8.x: true
@@ -18,3 +19,23 @@ Allow Potion Effects: true
 Auto Refill Blocks Placed: false
 Allow Mentions: true
 Infinite Blocks: false
+## PacketDebugger Settings
+Flying: true
+Position: true
+PositionLook: true
+Look: true
+Arm Animation: true
+Held Item Slot: true
+Digging: true
+Block Place: true
+Entity Action: true
+Close Window: true
+Click Window: true
+Client Settings: true
+Client Status: true
+Abilities: true
+Keep Alive: true
+Transaction: true
+Spectate: true
+Steer Vehicle: true
+Custom PayLoad: true

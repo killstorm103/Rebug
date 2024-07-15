@@ -53,9 +53,7 @@ public class Menu extends Command
 	@Override
 	public String[] SubAliases() 
 	{
-		String[] s = {"/crashers", "/exploits", "/items", "/settings", "/ac", "/potions"};
-		
-		return s;
+		return new String[] {"/crashers", "/exploits", "/items", "/settings", "/ac", "/potions"};
 	}
 	
 	@Override

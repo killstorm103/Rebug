@@ -1,5 +1,6 @@
 package me.killstorm103.Rebug.PacketEvents;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,8 +18,13 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.DiggingAction;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClickWindow;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientClientStatus;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCloseWindow;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientHeldItemChange;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientKeepAlive;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerAbilities;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEntityAction.Action;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
@@ -28,6 +34,10 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPl
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerRotation;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientResourcePackStatus;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSettings;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSpectate;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSteerVehicle;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientWindowConfirmation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
@@ -47,7 +57,63 @@ public class EventPackets implements PacketListener
 			return;
 			
 		User user = Rebug.getUser(player);
-		if (user == null) return;
+		if (user == null) 
+		{
+			if (e.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE)
+			{
+				WrapperPlayClientPluginMessage packet = new WrapperPlayClientPluginMessage(e);
+				if (packet.getChannelName().equalsIgnoreCase("ACT|Debugger") && !Rebug.getINSTANCE().isAllowedToDebugPackets.contains(player.getUniqueId()))
+					Rebug.getINSTANCE().isAllowedToDebugPackets.add(player.getUniqueId());
+				
+				if (packet.getChannelName().equalsIgnoreCase("MC|Brand") && !Rebug.getINSTANCE().ClientBranded.containsKey(player.getUniqueId()))
+				{
+					try 
+					{
+						String brand = new String(packet.getData(), "UTF-8").substring(1);
+						if (Config.TellClientBrandOnJoin())
+							player.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(PT.getPlayerVersion(player)) + " (" + PT.getPlayerVersion(player) + ")");
+					
+						Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + player.getName() + "'s " + ChatColor.AQUA + "client brand " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(PT.getPlayerVersion(player)) + " (" + PT.getPlayerVersion(player) + ")");
+						Rebug.getINSTANCE().ClientBranded.put(player.getUniqueId(), brand);
+					} 
+					catch (UnsupportedEncodingException e1) {}
+				}
+				if (packet.getChannelName().equalsIgnoreCase("Register") && !Rebug.getINSTANCE().ClientRegistered.containsKey(player.getUniqueId()))
+				{
+					try
+					{
+						String register = new String(packet.getData(), "UTF-8").substring(0);
+						if (Config.TellClientRegisters())
+							player.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + register);
+						
+						Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + player.getName() + "'s " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + register);
+						Rebug.getINSTANCE().ClientRegistered.put(player.getUniqueId(), register);
+					}
+					catch (Exception ee) 
+					{
+						ee.printStackTrace();
+					}
+				}
+			}
+			return;
+		}
+		else if (Rebug.getINSTANCE().isAllowedToDebugPackets.contains(user.getPlayer().getUniqueId()))
+		{
+			user.AllowedToDebug = Rebug.hasAdminPerms(player);
+			Rebug.getINSTANCE().isAllowedToDebugPackets.remove(user.getPlayer().getUniqueId());
+		}
+		else if (Rebug.getINSTANCE().ClientBranded.containsKey(user.getPlayer().getUniqueId()))
+		{
+			user.UnReceivedBrand = 0;
+			user.BrandSetCount = 1;
+			user.setBrand(Rebug.getINSTANCE().ClientBranded.get(user.getPlayer().getUniqueId()));
+			Rebug.getINSTANCE().ClientBranded.remove(user.getPlayer().getUniqueId());
+		}
+		else if (Rebug.getINSTANCE().ClientRegistered.containsKey(user.getPlayer().getUniqueId()))
+		{
+			user.setRegister(Rebug.getINSTANCE().ClientRegistered.get(user.getPlayer().getUniqueId()));
+			Rebug.getINSTANCE().ClientRegistered.remove(user.getPlayer().getUniqueId());
+		}
 		ItemStack item = null;
 		user.preSend ++;
 		if (e.getPacketType() == PacketType.Play.Client.ANIMATION)
@@ -55,6 +121,49 @@ public class EventPackets implements PacketListener
 			user.preCPS ++;
 			if (user.isPacketDebuggerEnabled() && user.ArmAnimationPacket)
 				user.DebuggerChatMessage(e, "N/A");
+		}
+		if (e.getPacketType() == PacketType.Play.Client.PLAYER_ABILITIES && user.isPacketDebuggerEnabled() && user.AbilitiesPacket)
+		{
+			WrapperPlayClientPlayerAbilities packet = new WrapperPlayClientPlayerAbilities(e);
+			user.DebuggerChatMessage(e, "Invulnerable= " + packet.isInGodMode().get() + "\nFlying= " + packet.isFlying() + "\nAllowedFlight= " + packet.isFlightAllowed().get() 
+			+ "\nCreativeMode= " + packet.isInCreativeMode().get() + "\nFlySpeed= " + packet.getFlySpeed().get() + "\nWalkSpeed= " + packet.getWalkSpeed().get());
+		}
+		if (e.getPacketType() == PacketType.Play.Client.CLIENT_SETTINGS && user.isPacketDebuggerEnabled() && user.SettingsPacket)
+		{
+			WrapperPlayClientSettings packet = new WrapperPlayClientSettings(e);
+			user.DebuggerChatMessage(e, "Locale= " + packet.getLocale() + "\nViewDistance= " + packet.getViewDistance() + "\nChatVisibility= " + packet.getVisibility().name() + 
+			"\nChatColors= " + packet.isChatColorable() + "\nVersion= " + packet.getClientVersion().getProtocolVersion() + 
+		    "\nSkinParts= " + packet.getVisibleSkinSection().getMask() + "\nHand= " + packet.getMainHand().name() + "\nServerListingAllowed= " + packet.isServerListingAllowed());
+		}
+		if (e.getPacketType() == PacketType.Play.Client.CLIENT_STATUS && user.isPacketDebuggerEnabled() && user.StatusPacket)
+		{
+			user.DebuggerChatMessage(e, "Action= " + new WrapperPlayClientClientStatus(e).getAction().name());
+		}
+		
+		if (e.getPacketType() == PacketType.Play.Client.CLOSE_WINDOW && user.isPacketDebuggerEnabled() && user.CloseWindowPacket)
+			user.DebuggerChatMessage(e, "ID= " + new WrapperPlayClientCloseWindow(e).getWindowId());
+		
+		if (e.getPacketType() == PacketType.Play.Client.CLICK_WINDOW && user.isPacketDebuggerEnabled() && user.ClickWindowPacket)
+		{
+			WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(e);
+			user.DebuggerChatMessage(e, "ID= " + packet.getWindowId() + "\nSlot= " + packet.getSlot() + "\nButton= " + packet.getButton() + "\nClickType= " + packet.getWindowClickType().name() + "\nItem= " + packet.getCarriedItemStack() + "\nMode= " + packet.getActionNumber().get());
+		}
+		if (e.getPacketType() == PacketType.Play.Client.KEEP_ALIVE && user.isPacketDebuggerEnabled() && user.KeepAlivePacket)
+			user.DebuggerChatMessage(e, "ID= " + new WrapperPlayClientKeepAlive(e).getId());
+		
+		if (e.getPacketType() == PacketType.Play.Client.SPECTATE && user.isPacketDebuggerEnabled() && user.SpectatePacket)
+		{
+			user.DebuggerChatMessage(e, "UUID= " + new WrapperPlayClientSpectate(e).getTargetUUID());
+		}
+		if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && user.isPacketDebuggerEnabled() && user.SteerVehiclePacket)
+		{
+			WrapperPlayClientSteerVehicle packet = new WrapperPlayClientSteerVehicle(e);
+			user.DebuggerChatMessage(e, "Forwards= " + packet.getForward() + "\nSideWards= " + packet.getSideways() + "\nFlags= " + packet.getFlags());
+		}
+		if (e.getPacketType() == PacketType.Play.Client.WINDOW_CONFIRMATION && user.isPacketDebuggerEnabled() && user.TransactionPacket)
+		{
+			WrapperPlayClientWindowConfirmation packet = new WrapperPlayClientWindowConfirmation(e);
+			user.DebuggerChatMessage(e, "Window= " + packet.getWindowId() + "\nActionID= " + packet.getActionId() + "\nAccepted= " + packet.isAccepted());
 		}
 		
 		if (e.getPacketType() == PacketType.Play.Client.RESOURCE_PACK_STATUS)
@@ -149,7 +258,7 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
-			user.timer_balance = System.currentTimeMillis();
+			user.timer_balance ++;
 			if (user.ScoreBoard != null)
 			{
 				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
@@ -164,6 +273,7 @@ public class EventPackets implements PacketListener
 			user.lastTickPosX = user.getLocation().getX();
 			user.lastTickPosY = user.getLocation().getY();
 			user.lastTickPosZ = user.getLocation().getZ();
+			user.timer_balance ++;
 			if (user.ScoreBoard != null)
 			{
 				user.ScoreBoard.set(ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
@@ -189,6 +299,18 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE)
 		{
 			WrapperPlayClientPluginMessage packet = new WrapperPlayClientPluginMessage(e);
+			if (user.isPacketDebuggerEnabled() && user.CustomPayLoadPacket)
+			{
+				try
+				{
+					user.DebuggerChatMessage(e, "Channel= " + packet.getChannelName() + "\nData= " + new String(packet.getData(), "UTF-8").replace("", ""));
+				}
+				catch (Exception g) 
+				{
+					g.printStackTrace();
+				}
+			}
+				
 			if (packet.getChannelName().equalsIgnoreCase("ACT|Debugger"))
 				user.AllowedToDebug = false;
 			

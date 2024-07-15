@@ -57,18 +57,26 @@ public class PacketDebugger extends Command
 		
 		if (args[1].equalsIgnoreCase("toggle"))
 		{
-			if (!user.AllowedToDebug)
+			if (!Rebug.hasAdminPerms(user.getPlayer()) && !user.hasPermission("me.killstorm103.rebug.user.packet_debugger.use"))
 			{
-				user.sendMessage("This client doesn't allow you to debug it's modules");
+				user.sendMessage("You don't have Permission to use this!");
 				return;
 			}
-			user.DebugEnabled =! user.DebugEnabled;
-			user.sendMessage("PacketDebugger " + (user.DebugEnabled ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled") + ChatColor.GRAY + "!");
+			if (!user.AllowedToDebug)
+			{
+				user.sendMessage("This client doesn't allow you to debug it's modules!");
+				return;
+			}
+			if (Rebug.PacketDebuggerPlayers.contains(user.getPlayer().getUniqueId()))
+				Rebug.PacketDebuggerPlayers.remove(user.getPlayer().getUniqueId());
+			else
+				Rebug.PacketDebuggerPlayers.add(user.getPlayer().getUniqueId());
+			
+			user.sendMessage("PacketDebugger " + (Rebug.PacketDebuggerPlayers.contains(user.getPlayer().getUniqueId()) ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled") + ChatColor.GRAY + "!");
 		}
 		else if (args[1].equalsIgnoreCase("config"))
-		{
 			user.getPlayer().openInventory(user.getPacketDebuggerMenu());
-		}
+		
 		else
 			user.sendMessage(getSyntax());
 	}

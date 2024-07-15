@@ -84,6 +84,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin implements Listener
 {
+	public static ArrayList<UUID> PacketDebuggerPlayers = new ArrayList<>();
 	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true;
 	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
 	private static String Version = "0.0";
@@ -160,7 +161,6 @@ public class Rebug extends JavaPlugin implements Listener
         folder = new File(this.getDataFolder(), "player-data");
         if (!folder.exists())
             folder.mkdirs();
-        
     }
     private File getPlayerFile(Player player) 
     {
@@ -196,10 +196,10 @@ public class Rebug extends JavaPlugin implements Listener
             e.printStackTrace();
         }
     }
-	public void removeConfigs(Player p)
+	public void removeConfigs(Player p, int mode)
     {
         File playerFile = getPlayerFile(p);
-        if (playerFile.exists() && Config.ShouldDeletePlayerConfigAfterLoading())
+        if (mode == 0 && playerFile.exists() && Config.ShouldDeletePlayerConfigAfterLoading())
             playerFile.delete();
     }
     public void restorePlayer(Player p) 
@@ -216,68 +216,113 @@ public class Rebug extends JavaPlugin implements Listener
         if (user == null)
         	return;
         
-        user.FallDamage = playerConfig.getBoolean("Fall Damage");
-        user.Exterranl_Damage = playerConfig.getBoolean("Exterranl Damage");
-        user.Damage_Resistance = playerConfig.getBoolean("Damage Resistance");
-        user.Fire_Resistance = playerConfig.getBoolean("Fire Resistance");
-        user.Hunger = playerConfig.getBoolean("Hunger");
-        user.PotionEffects = playerConfig.getBoolean("Potion Effects");
-        user.AutoRefillBlocks = playerConfig.getBoolean("Auto Refill Blocks");
-        user.Infinite_Blocks = playerConfig.getBoolean("Infinite Blocks");
-        user.HideOnlinePlayers = playerConfig.getBoolean("HideOnlinePlayers");
-        user.ProximityPlayerHider = playerConfig.getBoolean("Proximity Player Hider");
-        user.AutoCloseAntiCheatMenu = playerConfig.getBoolean("Auto Close AntiCheat Menu");
-        user.AllowDirectMessages = playerConfig.getBoolean("Allow Direct Messages");
-        user.AllowMentions = playerConfig.getBoolean("Allow Mentions");
-    	user.AntiCheat = playerConfig.getString("AntiCheat");
-    	user.ShowFlags = playerConfig.getBoolean("Show Flags");
-    	user.ShowPunishes = playerConfig.getBoolean("Show Punishes");
-    	user.AntiCheatKick = playerConfig.getBoolean("AC Kick");
-    	user.Vanilla1_8FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_8_Plus");
-    	user.Vanilla1_9FlyCheck = playerConfig.getBoolean("Vanilla Fly 1_9Plus");
-    	user.NotifyFlyingKick1_8 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1_8");
-    	user.NotifyFlyingKick1_9 = playerConfig.getBoolean("Notify Vanilla Fly Kick 1_9");
-    	user.potionlevel = playerConfig.getInt("Potion Setting Level");
-    	user.potion_effect_seconds = playerConfig.getInt("Potion Setting Timer");
+        // Player Settings
+        user.FallDamage = playerConfig.getConfigurationSection("Player Settings").getBoolean("Fall Damage");
+        user.Exterranl_Damage = playerConfig.getConfigurationSection("Player Settings").getBoolean("Exterranl Damage");
+        user.Damage_Resistance = playerConfig.getConfigurationSection("Player Settings").getBoolean("Damage Resistance");
+        user.Fire_Resistance = playerConfig.getConfigurationSection("Player Settings").getBoolean("Fire Resistance");
+        user.Hunger = playerConfig.getConfigurationSection("Player Settings").getBoolean("Hunger");
+        user.PotionEffects = playerConfig.getConfigurationSection("Player Settings").getBoolean("Potion Effects");
+        user.AutoRefillBlocks = playerConfig.getConfigurationSection("Player Settings").getBoolean("Auto Refill Blocks");
+        user.Infinite_Blocks = playerConfig.getConfigurationSection("Player Settings").getBoolean("Infinite Blocks");
+        user.HideOnlinePlayers = playerConfig.getConfigurationSection("Player Settings").getBoolean("HideOnlinePlayers");
+        user.ProximityPlayerHider = playerConfig.getConfigurationSection("Player Settings").getBoolean("Proximity Player Hider");
+        user.AutoCloseAntiCheatMenu = playerConfig.getConfigurationSection("Player Settings").getBoolean("Auto Close AntiCheat Menu");
+        user.AllowDirectMessages = playerConfig.getConfigurationSection("Player Settings").getBoolean("Allow Direct Messages");
+        user.AllowMentions = playerConfig.getConfigurationSection("Player Settings").getBoolean("Allow Mentions");
+    	user.AntiCheat = playerConfig.getConfigurationSection("Player Settings").getString("AntiCheat");
+    	user.ShowFlags = playerConfig.getConfigurationSection("Player Settings").getBoolean("Show Flags");
+    	user.ShowPunishes = playerConfig.getConfigurationSection("Player Settings").getBoolean("Show Punishes");
+    	user.AntiCheatKick = playerConfig.getConfigurationSection("Player Settings").getBoolean("AC Kick");
+    	user.Vanilla1_8FlyCheck = playerConfig.getConfigurationSection("Player Settings").getBoolean("Vanilla Fly 1_8_Plus");
+    	user.Vanilla1_9FlyCheck = playerConfig.getConfigurationSection("Player Settings").getBoolean("Vanilla Fly 1_9Plus");
+    	user.NotifyFlyingKick1_8 = playerConfig.getConfigurationSection("Player Settings").getBoolean("Notify Vanilla Fly Kick 1_8");
+    	user.NotifyFlyingKick1_9 = playerConfig.getConfigurationSection("Player Settings").getBoolean("Notify Vanilla Fly Kick 1_9");
+    	user.potionlevel = playerConfig.getConfigurationSection("Player Settings").getInt("Potion Setting Level");
+    	user.potion_effect_seconds = playerConfig.getConfigurationSection("Player Settings").getInt("Potion Setting Timer");
     	int max_timer = getConfig().getInt("potion-settings-max-timer"), max_level = getConfig().getInt("potion-settings-max-level");
     	user.potion_effect_seconds = user.potion_effect_seconds < 1 ? 1 : user.potion_effect_seconds > max_timer ? max_timer : user.potion_effect_seconds;
     	user.potionlevel = user.potionlevel < 1 ? 1 : user.potionlevel > max_level ? max_level : user.potionlevel;
-    	user.Yapper_Message_Count = playerConfig.getInt("Yapper");
+    	user.Yapper_Message_Count = playerConfig.getConfigurationSection("Player Settings").getInt("Yapper");
     	
-    	removeConfigs(p);
+    	// PacketDebugger Settings
+    	user.FlyingPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Flying");
+        user.PositionPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Position");
+        user.PositionLookPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("PositionLook");
+        user.LookPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Look");
+        user.ArmAnimationPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Arm Animation");
+        user.HeldItemSlotPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Held Item Slot");
+        user.DiggingPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Digging");
+        user.BlockPlacePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Block Place");
+        user.EntityActionPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Entity Action");
+        user.CloseWindowPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Close Window");
+        user.ClickWindowPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Click Window");
+        user.SettingsPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Client Settings");
+        user.StatusPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Client Status");
+        user.AbilitiesPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Abilities");
+        user.KeepAlivePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Keep Alive");
+        user.TransactionPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Transaction");
+        user.SpectatePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Spectate");
+        user.SteerVehiclePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Steer Vehicle");
+        user.CustomPayLoadPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Custom PayLoad");
+    	
+    	removeConfigs(p, 0);
     }
     public void savePlayer (Player p) 
     {
     	YamlConfiguration playerConfig = new YamlConfiguration();
         User user = getUser(p);
         if (user == null) return;
-        
         playerConfig.set("Player Name", p.getName());
-		playerConfig.set("Fall Damage", user.FallDamage);
-		playerConfig.set("Exterranl Damage", user.Exterranl_Damage);
-		playerConfig.set("Damage Resistance", user.Damage_Resistance);
-		playerConfig.set("Fire Resistance", user.Fire_Resistance);
-		playerConfig.set("Hunger", user.Hunger);
-		playerConfig.set("Potion Effects", user.PotionEffects);
-		playerConfig.set("Auto Refill Blocks", user.AutoRefillBlocks);
-		playerConfig.set("Infinite Blocks", user.Infinite_Blocks);
-		playerConfig.set("HideOnlinePlayers", user.HideOnlinePlayers);
-		playerConfig.set("Proximity Player Hider", user.ProximityPlayerHider);
-		playerConfig.set("Auto Close AntiCheat Menu", user.AutoCloseAntiCheatMenu);
-		playerConfig.set("Allow Direct Messages", user.AllowDirectMessages);
-		playerConfig.set("Allow Mentions", user.AllowMentions);
+        playerConfig.createSection("Player Settings");
+        
+		playerConfig.getConfigurationSection("Player Settings").set("Fall Damage", user.FallDamage);
+		playerConfig.getConfigurationSection("Player Settings").set("Exterranl Damage", user.Exterranl_Damage);
+		playerConfig.getConfigurationSection("Player Settings").set("Damage Resistance", user.Damage_Resistance);
+		playerConfig.getConfigurationSection("Player Settings").set("Fire Resistance", user.Fire_Resistance);
+		playerConfig.getConfigurationSection("Player Settings").set("Hunger", user.Hunger);
+		playerConfig.getConfigurationSection("Player Settings").set("Potion Effects", user.PotionEffects);
+		playerConfig.getConfigurationSection("Player Settings").set("Auto Refill Blocks", user.AutoRefillBlocks);
+		playerConfig.getConfigurationSection("Player Settings").set("Infinite Blocks", user.Infinite_Blocks);
+		playerConfig.getConfigurationSection("Player Settings").set("HideOnlinePlayers", user.HideOnlinePlayers);
+		playerConfig.getConfigurationSection("Player Settings").set("Proximity Player Hider", user.ProximityPlayerHider);
+		playerConfig.getConfigurationSection("Player Settings").set("Auto Close AntiCheat Menu", user.AutoCloseAntiCheatMenu);
+		playerConfig.getConfigurationSection("Player Settings").set("Allow Direct Messages", user.AllowDirectMessages);
+		playerConfig.getConfigurationSection("Player Settings").set("Allow Mentions", user.AllowMentions);
 		String AntiCheat = ChatColor.translateAlternateColorCodes('&', user.AntiCheat);
-		playerConfig.set("AntiCheat", ChatColor.stripColor(AntiCheat));
-		playerConfig.set("Show Flags", user.ShowFlags);
-		playerConfig.set("Show Punishes", user.ShowPunishes);
-		playerConfig.set("AC Kick", user.AntiCheatKick);
-		playerConfig.set("Vanilla Fly 1_8_Plus", user.Vanilla1_8FlyCheck);
-		playerConfig.set("Vanilla Fly 1_9Plus", user.Vanilla1_9FlyCheck);
-		playerConfig.set("Notify Vanilla Fly Kick 1_8", user.NotifyFlyingKick1_8);
-		playerConfig.set("Notify Vanilla Fly Kick 1_9", user.NotifyFlyingKick1_9);
-		playerConfig.set("Potion Setting Level", user.potionlevel);
-		playerConfig.set("Potion Setting Timer", user.potion_effect_seconds);
-		playerConfig.set("Yapper", user.Yapper_Message_Count);
+		playerConfig.getConfigurationSection("Player Settings").set("AntiCheat", ChatColor.stripColor(AntiCheat));
+		playerConfig.getConfigurationSection("Player Settings").set("Show Flags", user.ShowFlags);
+		playerConfig.getConfigurationSection("Player Settings").set("Show Punishes", user.ShowPunishes);
+		playerConfig.getConfigurationSection("Player Settings").set("AC Kick", user.AntiCheatKick);
+		playerConfig.getConfigurationSection("Player Settings").set("Vanilla Fly 1_8_Plus", user.Vanilla1_8FlyCheck);
+		playerConfig.getConfigurationSection("Player Settings").set("Vanilla Fly 1_9Plus", user.Vanilla1_9FlyCheck);
+		playerConfig.getConfigurationSection("Player Settings").set("Notify Vanilla Fly Kick 1_8", user.NotifyFlyingKick1_8);
+		playerConfig.getConfigurationSection("Player Settings").set("Notify Vanilla Fly Kick 1_9", user.NotifyFlyingKick1_9);
+		playerConfig.getConfigurationSection("Player Settings").set("Potion Setting Level", user.potionlevel);
+		playerConfig.getConfigurationSection("Player Settings").set("Potion Setting Timer", user.potion_effect_seconds);
+		playerConfig.getConfigurationSection("Player Settings").set("Yapper", user.Yapper_Message_Count);
+		playerConfig.createSection("Packet Debugger Settings");
+		
+		playerConfig.getConfigurationSection("Packet Debugger Settings").set("Flying", user.FlyingPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Position", user.PositionPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("PositionLook", user.PositionLookPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Look", user.LookPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Arm Animation", user.ArmAnimationPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Held Item Slot", user.HeldItemSlotPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Digging", user.DiggingPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Block Place", user.BlockPlacePacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Entity Action", user.EntityActionPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Close Window", user.CloseWindowPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Click Window", user.ClickWindowPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Client Settings", user.SettingsPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Client Status", user.StatusPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Abilities", user.AbilitiesPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Keep Alive", user.KeepAlivePacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Transaction", user.TransactionPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Spectate", user.SpectatePacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Steer Vehicle", user.SteerVehiclePacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Custom PayLoad", user.CustomPayLoadPacket);
+		
         save(p, playerConfig);
     }
     private final static List<String> list_configs = new ArrayList<>();
@@ -309,19 +354,23 @@ public class Rebug extends JavaPlugin implements Listener
 		{
     		getConfig().load(getConfigFile());
     		getConfig().save(getConfigFile());
-    		user.getPlayer().sendMessage(RebugMessage + "Successfully Reloaded Config!");
+    		if (user != null)
+    			user.getPlayer().sendMessage(RebugMessage + "Successfully Reloaded Config!");
+    		
     		Bukkit.getConsoleSender().sendMessage(RebugMessage + "Successfully Reloaded Config!");
 		}
 		catch (Exception e) 
 		{
-			user.getPlayer().sendMessage(RebugMessage + "Failed to Reload Config!");
+			if (user != null)
+				user.getPlayer().sendMessage(RebugMessage + "Failed to Reload Config!");
+			
     		Bukkit.getConsoleSender().sendMessage(RebugMessage + "Failed to Reload Config!");
 			e.printStackTrace();
 		}
     }
     private void createCustomConfig (String con) 
     {
-    	if (con == null || con.length() < 1) return;
+    	if (PT.isStringNull(con)) return;
     	
     	if (con.equalsIgnoreCase("config"))
     	{
@@ -393,7 +442,7 @@ public class Rebug extends JavaPlugin implements Listener
    		board.set(color + "BPS (XZ) " + ChatColor.WHITE + "0", 7);
    		board.set(color + "BPS (Y) " + ChatColor.WHITE + "0", 6);
    		board.set(color + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
-   		board.set(color + "TB ", 4);
+   		board.set(color + "TB 0", 4);
    		board.set(color + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
    		board.set(color + "Sprinting " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 2);
    		board.set(color + "Sneaking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 1);
@@ -401,16 +450,9 @@ public class Rebug extends JavaPlugin implements Listener
    		user.ScoreBoard = board;
    		user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
    	}
-   	public void UpdateScoreBoard (User user, int line, String text)
-   	{
-   		if (!Config.RebugScoreBoard() || user == null || line < 0) return;
-   		
-   		BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
-   		if (board == null) return;
-	   		
-   		board.set(text, line);
-   	}
    	private final ArrayList<UUID> isAlertsEnabled = new ArrayList<>();
+   	public final ArrayList<UUID> isAllowedToDebugPackets = new ArrayList<>();
+   	public final Map<UUID, String> ClientBranded = new HashMap<>(), ClientRegistered = new HashMap<>();
    	
    	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin (PlayerJoinEvent e) 
@@ -482,26 +524,20 @@ public class Rebug extends JavaPlugin implements Listener
 			user.BlockPlaced.clear();
 			Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
 		}
+		if (PacketDebuggerPlayers.contains(player.getUniqueId()) && !hasAdminPerms(player) && (!player.hasPermission("me.killstorm103.rebug.user.packet_debugger.save") || !player.hasPermission("me.killstorm103.rebug.user.packet_debugger.use")))
+			PacketDebuggerPlayers.remove(player.getUniqueId());
+			
 		e.setQuitMessage(ChatColor.GRAY + "[" + ChatColor.RED + "-" + ChatColor.GRAY + "] " + e.getPlayer().getName());
 	}
-	/*
-	public static GrimAbstractAPI getGrimAC ()
-	{
-		RegisteredServiceProvider<GrimAbstractAPI> provider = Bukkit.getServicesManager().getRegistration(GrimAbstractAPI.class);
-		if (provider != null)
-		{
-			GrimAbstractAPI api = provider.getProvider();
-			return api;
-		}
-		
-		return null;
-	}
-	*/
 	@Override
 	public void onEnable ()
 	{
 		getMain = this;
+		PacketDebuggerPlayers.clear();
 		isAlertsEnabled.clear();
+		isAllowedToDebugPackets.clear();
+		ClientBranded.clear();
+		ClientRegistered.clear ();
 		initFolder();
 		for (int i = 0; i < list_configs.size(); i ++)
 			createCustomConfig(list_configs.get(i));
@@ -828,9 +864,8 @@ public class Rebug extends JavaPlugin implements Listener
 				user.AntiCheat = ItemName;
 				String NewAC = user.getColoredAntiCheat(), striped = ChatColor.stripColor(user.AntiCheat).toLowerCase();
 		   		if (getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))
-				{
 		   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
-				}
+		   		
 		   		if (user.ScoreBoard != null)
 		   			user.ScoreBoard.set(ChatColor.DARK_RED + "AC " + NewAC, 10);
 		   		
