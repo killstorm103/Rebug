@@ -12,3 +12,6 @@ it's a AntiCheat Switcher with other things like crashers and other exploits for
 Info:
 - JavaSE: 1.8
 - Rebug will not support any plugin that requires ProtocolLib as ProtocolLib causes isuess for Rebug!
+
+Known Bugs:
+- None
