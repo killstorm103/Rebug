@@ -12,6 +12,7 @@ it's a AntiCheat Switcher with other things like crashers and other exploits for
 Info:
 - JavaSE: 1.8
 - Main branch (Main_PacketEvents) will not support any plugin that requires ProtocolLib as ProtocolLib causes isuess for Rebug!
+- if you want to see what i've added to rebug live you can join my discord server: https://invite.gg/mhecommunity
 
 Known Bugs:
 - None
