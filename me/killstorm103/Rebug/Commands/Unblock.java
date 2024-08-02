@@ -66,7 +66,7 @@ public class Unblock extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) 
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
 	{
 		if (args.length > 2 && args.length == 3)
 		{
@@ -100,6 +100,11 @@ public class Unblock extends Command
 	@Override
 	public String[] SubAliases() {
 		return null;
+	}
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
 	}
 
 }

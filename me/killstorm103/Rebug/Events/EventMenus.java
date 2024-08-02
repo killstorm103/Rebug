@@ -18,7 +18,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
-import me.killstorm103.Rebug.Utils.CrashersAndOtherExploits;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
 import me.killstorm103.Rebug.Utils.PT;
 import me.killstorm103.Rebug.Utils.User;
@@ -86,22 +85,26 @@ public class EventMenus implements Listener
 		}
 		if (MenuName != null)
 		{
-			if (e.getClickedInventory() != e.getWhoClicked().getInventory() && item != null && MenuName.equalsIgnoreCase("Items") && item.getType() == Material.WOOL && getCursor != null)
+			if (e.getClickedInventory() != e.getWhoClicked().getInventory() && item != null && MenuName.equalsIgnoreCase("Items") && item.getType() == Material.WOOL)
 			{
 				if (item.hasItemMeta() && item.getItemMeta().hasDisplayName())
 				{
-					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("delete item!") && getCursor.getType() != Material.AIR)
+					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("delete item!"))
 					{
-						e.setCursor(null);
+						if (getCursor != null && getCursor.getType() != Material.AIR)
+							e.setCursor(null);
+						
 						e.setCancelled(true);
 						return;
 					}
-					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Debug item!") && getCursor.getType() != Material.AIR)
+					if (ChatColor.stripColor(item.getItemMeta().getDisplayName()).equalsIgnoreCase("Debug item!"))
 					{
-						player.sendMessage(Rebug.RebugMessage + "Debug= " + getCursor + " ID= " + getCursor.getType().getId());
-						if (getCursor.getData() != null)
-							player.sendMessage(Rebug.RebugMessage + "Data= " + getCursor.getData().getData());
-						
+						if (getCursor != null && getCursor.getType() != Material.AIR)
+						{
+							player.sendMessage(Rebug.RebugMessage + "Debug= " + getCursor + " ID= " + getCursor.getType().getId());
+							if (getCursor.getData() != null)
+								player.sendMessage(Rebug.RebugMessage + "Data= " + getCursor.getData().getData());
+						}
 						e.setCancelled(true);
 						return;
 					}
@@ -115,13 +118,12 @@ public class EventMenus implements Listener
 		}
 		if (MenuName != null)
 		{
-			User user = Rebug.getUser((Player) e.getView().getPlayer()), BackUser;
+			User user = Rebug.getUser((Player) e.getView().getPlayer());
 			if (user == null)
 			{
 				PT.KickPlayer((Player) e.getView().getPlayer(), PT.RebugsUserWasNullErrorMessage("in " + MenuName));
 				return;
 			}
-			BackUser = user;
 			if (item != null && item.getItemMeta() != null)
 			{
 				meta = item.getItemMeta();
@@ -180,7 +182,7 @@ public class EventMenus implements Listener
 				{
 					e.setCancelled(true);
 					if (!ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
-						CrashersAndOtherExploits.INSTANCE.ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName);
+						user.ExploitSendPacket(user.CommandTarget, ItemName);
 				}
 				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
@@ -227,13 +229,12 @@ public class EventMenus implements Listener
 						if (ItemName.equalsIgnoreCase("Reload Config"))
 						{
 							Rebug.getINSTANCE().Reload_Configs(user);
-							if (Rebug.KickOnReloadConfig)
-							{
-								for (Player players : Bukkit.getOnlinePlayers())
-									PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
-							}
 							return;
 						}
+						if (ItemName.equalsIgnoreCase("Builder Mode"))
+						{
+						}
+						
 						ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
 					}
 				}
@@ -289,8 +290,14 @@ public class EventMenus implements Listener
 							if (ItemName.equalsIgnoreCase("Infinite Blocks"))
 							{
 								if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || Rebug.hasAdminPerms(user.getPlayer()))
+								{
+									if (!Rebug.getINSTANCE().getConfig().getBoolean("infinite-blocks-enabled"))
+									{
+										user.sendMessage("Sorry but Infinite Blocks is Disabled!");
+										return;
+									}
 									user.Infinite_Blocks =! user.Infinite_Blocks;
-								
+								}
 								else
 								{
 									user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have Permission to use this!");
@@ -338,6 +345,9 @@ public class EventMenus implements Listener
 							{
 								user.AllowDirectMessages =! user.AllowDirectMessages;
 							}
+							if (ItemName.equalsIgnoreCase("Setbacks"))
+								user.ShowSetbacks =! user.ShowSetbacks;
+								
 							if (ItemName.equalsIgnoreCase("Auto Close AntiCheats Menu"))
 							{
 								user.AutoCloseAntiCheatMenu =! user.AutoCloseAntiCheatMenu;
@@ -356,6 +366,11 @@ public class EventMenus implements Listener
 							user.getPlayer().sendMessage(Rebug.RebugMessage + "Your Inventory's full make some space!");
 							return;
 						}
+						if (item.getType() == Material.TNT && !Rebug.getINSTANCE().getConfig().getBoolean("special-tnt-enabled"))
+						{
+							user.sendMessage("Sorry but Special TNT is Disabled!");
+							return;
+						}
 						for (int i = 0; i < user.getPlayer().getInventory().getSize(); i ++)
 						{
 							ItemStack InventoryItem = user.getPlayer().getInventory().getItem(i);
@@ -371,25 +386,24 @@ public class EventMenus implements Listener
 				{
 					if (ItemName != null)
 					{
-						if (ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
+						if (ItemName.equalsIgnoreCase("User " + user.CommandTarget.getName()))
 						{
 							e.setCancelled(true);
 							return;
 						}
 						if (!Rebug.hasAdminPerms(user.getPlayer()) && ItemName.equalsIgnoreCase("illegal Effect"))
 						{
-							user.getPlayer().sendMessage("because this crashes the server to you have to be Opped to use it!");
+							user.sendMessage("because this crashes the server to you have to be Opped to use it!");
 							e.setCancelled(true);
 							return;
 						}
-						// TODO Move this
 						if (ItemName.equalsIgnoreCase("spawn entity crashers"))
 						{
 							user.getPlayer().openInventory(user.getSpawnEntityCrashers());
 							e.setCancelled(true);
 							return;
 						}
-						CrashersAndOtherExploits.INSTANCE.CrashSendPacket(user.getPlayer(), user.CommandTarget, ItemName, null);
+						user.CrashSendPacket(user.CommandTarget, ItemName, null);
 						e.setCancelled(true);
 					}
 				}
@@ -397,24 +411,28 @@ public class EventMenus implements Listener
 				{
 					if (ItemName != null && e.getClickedInventory() != user.getPlayer().getInventory())
 					{
-						if (ItemName.equalsIgnoreCase("Back"))
+						if (ItemName.equalsIgnoreCase("User " + user.CommandTarget.getName()))
 						{
 							e.setCancelled(true);
-							user.getPlayer().closeInventory();
+							return;
+						}
+						if (ItemName.equalsIgnoreCase("Back"))
+						{
 							Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
 				            {
 				                @Override
 				                public void run()
 				                {
-				                	Command(BackUser.getPlayer(), "menu crashers " + BackUser.CommandTarget);
+				                	Command(user.getPlayer(), "menu crashers " + user.CommandTarget.getName());
 				                }
 				                
 				            }, 1L);
-							
+							e.setCancelled(true);
+							user.getPlayer().closeInventory();
 							return;
 						}
+						user.CrashSendPacket(user.CommandTarget, "SpawnEntity", ItemName);
 						e.setCancelled(true);
-						CrashersAndOtherExploits.INSTANCE.CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 					}
 				}
 			}

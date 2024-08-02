@@ -3,12 +3,9 @@ package me.killstorm103.Rebug.Main;
 import java.util.List;
 
 
+
 public class Config
 {
-	public static final boolean AllowSubCommands ()
-	{
-		return Rebug.getINSTANCE().getConfig().getBoolean("allow-sub-commands");
-	}
 	public static final List<String> getOnJoinCommands ()
 	{
 		return Rebug.getINSTANCE().getConfig().getStringList("on-join-commands");
@@ -26,21 +23,25 @@ public class Config
 		}
 		return ID;
 	}
-	public static final List<String> getItems_Menu ()
+	public static boolean Experimental_Features (String ex)
 	{
-		return Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items-menu.items.list");
+		boolean found = false;
+		for (String s : Rebug.getINSTANCE().getConfig().getStringList("experimental-features"))
+		{
+			if (s.equalsIgnoreCase(ex)) 
+			{
+				found = true;
+				break;
+			}
+		}
+		if (found && Rebug.getINSTANCE().getConfig().getBoolean("experimental-feature-warning"))
+			System.err.println(Rebug.RebugMessage + "Experimental Feature: " + ex);
+		
+		return found;
 	}
 	public static final int getItemMenuSize ()
 	{
 		return Rebug.getINSTANCE().getLoadedItemsFile().getInt("Inventory-size");
-	}
-	public static final boolean hasData (String ac)
-	{
-		return Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + ac + ".has-data");
-	}
-	public static final int getInventory_size ()
-	{
-		return Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats.Inventory-size");
 	}
 	public static final int getItemData (String ac)
 	{
@@ -52,10 +53,6 @@ public class Config
 		catch (Exception e) {}
 		
 		return data;
-	}
-	public static final boolean hasFixedDescription (String ac)
-	{
-		return Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + ac + ".fix-description");
 	}
 	public static final int LoadDescriptionFix (String ac)
 	{

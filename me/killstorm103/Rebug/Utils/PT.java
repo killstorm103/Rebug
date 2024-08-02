@@ -1,6 +1,5 @@
 package me.killstorm103.Rebug.Utils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,28 +17,44 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import me.killstorm103.Rebug.Main.Rebug;
 import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.DataWatcher;
-import net.minecraft.server.v1_8_R3.EntityCreeper;
 import net.minecraft.server.v1_8_R3.EntityHuman;
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.EnumDirection;
 import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_8_R3.World;
 
 public class PT
 {
 	public static final PT INSTANCE = new PT();
+	
+	
+	@SuppressWarnings("deprecation")
+	public void DebuggerChatMessage (Player player, PacketReceiveEvent e, String toDebug)
+	{
+		if (player == null || PT.isStringNull(toDebug)) return;
+		
+		int debuggercounter = Rebug.PacketDebuggerPlayers.get(player.getUniqueId());
+		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());
+		BaseComponent[] baseComponents = new ComponentBuilder(e.getPacketName() + ":\n\n" + toDebug).create();
+		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, baseComponents);
+		component.setHoverEvent(hoverEvent);
+		player.spigot().sendMessage(component);
+		Rebug.PacketDebuggerPlayers.put(player.getUniqueId(), debuggercounter + 1);
+	}
 	public static Class<?> getNMSClass(String name) 
 	{
         try 
@@ -64,7 +79,7 @@ public class PT
 	}
 	public static boolean isStringNull_loop (String... s)
     {
-		if (s.length < 1) return false;
+		if (s.length < 1) return true;
 		
     	for (int i = 0; i < s.length; i ++)
     	{
@@ -185,14 +200,6 @@ public class PT
 	{
 		//SendPacket(player, packet);
 	}
-	public static void addChannel(Player p, String channel) {
-        try {
-            p.getClass().getMethod("addChannel", String.class).invoke(p, channel);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
-            e.printStackTrace();
-        }
-    }
 	public static void Log (CommandSender sender, String tolog)
 	{
 		sender.sendMessage(tolog);
@@ -231,7 +238,7 @@ public class PT
 	}
 	public static void SendPacket(Player player, Packet<?> packet) 
 	{
-		if (player == null || packet == null)
+		if (player == null || !player.isOnline() || packet == null)
 			return;
 			
         try 
@@ -247,9 +254,10 @@ public class PT
     }
 	public static void SendPacket(Player player, Packet<?> packet, int loop) 
 	{
-		if (player == null || packet == null || loop < 1)
+		if (player == null || !player.isOnline() || packet == null)
 			return;
 		
+		loop = loop < 1 ? 1 : loop;
 		for (int i = 0;i < loop; i ++)
 			SendPacket(player, packet);
     }
@@ -324,36 +332,6 @@ public class PT
         }
         return stringBuilder.toString();
     }
-    private static EntityLiving entity = null;
-    public static void CrashPlayer (CommandSender sender, Player willBeCrashed, String mode)
-    {
-    	entity = null;
-    	if (mode != null && mode.length() > 0)
-    	{
-    		final EntityPlayer px = PT.getEntityPlayer(willBeCrashed);
-    		if (mode.equalsIgnoreCase("creeper"))
-    		{
-    			entity = new EntityCreeper(px.world);
-    			final DataWatcher dw = new DataWatcher((net.minecraft.server.v1_8_R3.Entity) entity);
-                dw.a (18, (Object) Integer.MAX_VALUE);
-                Packet<?> packet_spawn;
-                packet_spawn = new PacketPlayOutSpawnEntityLiving((EntityLiving) entity);
-                px.playerConnection.sendPacket(packet_spawn);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        PacketPlayOutEntityMetadata meta = new PacketPlayOutEntityMetadata(entity.getId(), dw, true);
-                        px.playerConnection.sendPacket(meta);
-                    }
-                }, 5L);
-    		}
-    		if (mode.equalsIgnoreCase("test"))
-    		{
-    		}
-    	}
-    }
     public static int getPlayerVersion (Player player)
     {
     	return Via.getAPI().getPlayerVersion(player.getUniqueId());
@@ -410,6 +388,9 @@ public class PT
 		if (player == null || !player.isOnline())
 			return;
 		
+		if (!Rebug.KickList.contains(player.getUniqueId()))
+			Rebug.KickList.add(player.getUniqueId());
+			
 		Bukkit.getScheduler().runTask(Rebug.getINSTANCE(), new Runnable()
 		{
 			

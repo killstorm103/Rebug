@@ -23,7 +23,8 @@ public class SpawnCMD extends Command
 	}
 
 	@Override
-	public String getDescription() {
+	public String getDescription()
+	{
 		return "Teleports you to spawn";
 	}
 	@Override
@@ -42,12 +43,14 @@ public class SpawnCMD extends Command
 		{
 			Player player = (Player) sender;
 			Location location = new Location(Bukkit.getServer().getWorld("world"), 41, 58, 319, -91.200165F, -0.5999501F);
+			player.setNoDamageTicks(10);
+			player.setFallDistance(0);
 			player.teleport(location);
 		}
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args)
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias)
 	{
 		return null;
 	}
@@ -58,8 +61,9 @@ public class SpawnCMD extends Command
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return true;
+	public boolean HideFromCommandsList() 
+	{
+		return false;
 	}
 
 
@@ -74,5 +78,11 @@ public class SpawnCMD extends Command
 	{
 		return new String[] {"/spawn"};
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() 
+	{
+		return false;
+	}
+
 }

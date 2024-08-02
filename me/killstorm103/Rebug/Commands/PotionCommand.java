@@ -1,5 +1,6 @@
 package me.killstorm103.Rebug.Commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -134,13 +135,24 @@ public class PotionCommand extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias)
+	{
+		if (args.length == (alias.equalsIgnoreCase("rebug") ? 2 : 1))
+		{
+			List<String> l = new ArrayList<>();
+			l.clear();
+			l.add("level");
+			l.add("timer");
+			
+			return l;
+		}
+		
 		return null;
 	}
 
 	@Override
 	public boolean HasCustomTabComplete() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -157,5 +169,10 @@ public class PotionCommand extends Command
 	public boolean hasCommandCoolDown() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
+
 }

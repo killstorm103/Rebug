@@ -68,27 +68,28 @@ public class SetHealthCMD extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
-		// TODO Auto-generated method stub
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) {
 		return null;
 	}
 
 	@Override
 	public boolean HasCustomTabComplete() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean HideFromCommandsList() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean HasToBeConsole() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
+
 }

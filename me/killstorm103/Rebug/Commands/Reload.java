@@ -2,11 +2,14 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
+import me.killstorm103.Rebug.Utils.PT;
+import net.md_5.bungee.api.ChatColor;
 
 public class Reload extends Command
 {
@@ -50,10 +53,24 @@ public class Reload extends Command
 		{
 			Rebug.getINSTANCE().Reload_Configs(sender instanceof Player ? Rebug.getUser((Player) sender) : null);
 		}
+		if (args[1].equalsIgnoreCase("server"))
+		{
+			for (Player p : Bukkit.getOnlinePlayers())
+				PT.KickPlayer(p, ChatColor.DARK_RED + "Reloading server join Back!");
+			
+			Bukkit.getScheduler().runTaskLater(getRebug(), new Runnable()
+			{
+				@Override
+				public void run() 
+				{
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
+				}
+			}, 60);
+		}
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) {
 		return null;
 	}
 
@@ -76,5 +93,10 @@ public class Reload extends Command
 	public boolean hasCommandCoolDown() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
+
 }

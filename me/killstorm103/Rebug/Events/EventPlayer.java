@@ -24,6 +24,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+
+import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
 import me.killstorm103.Rebug.Utils.TeleportUtils;
@@ -49,6 +51,12 @@ public class EventPlayer implements Listener
 	public void onChat (AsyncPlayerChatEvent e)
 	{
 		Player player = e.getPlayer();
+		if (Config.Experimental_Features("ChatPerm") && !Rebug.hasAdminPerms(player) && !player.hasPermission("me.killstorm103.rebug.user.chat"))
+		{
+			e.setCancelled(true);
+			return;
+		}
+			
 		if (Bukkit.getOnlinePlayers().size() > 1)
 		{
 			String message = e.getMessage();
@@ -57,13 +65,10 @@ public class EventPlayer implements Listener
 			for (int i = 0; i < inChat.length; i ++)
 			{
 				User used = Rebug.getUser(Bukkit.getPlayer(inChat[i]));
-				if (used != null)
+				if (used != null && !used.AllowMentions && used.getPlayer() != player && e.getRecipients().contains(used.getPlayer()))
 				{
-					if (!used.AllowMentions && used.getPlayer() != player && e.getRecipients().contains(used.getPlayer()))
-					{
-						player.sendMessage(Rebug.RebugMessage + used.getName() + " Has Mentions Disabled (they won't see your message)!");
-						e.getRecipients().remove(used.getPlayer());
-					}
+					player.sendMessage(Rebug.RebugMessage + used.getName() + " Has Mentions Disabled (they won't see your message)!");
+					e.getRecipients().remove(used.getPlayer());
 					// using this would cause a bug where if the player mentions more than one player they wouldn't be able to stop themselfs from getting the message!
 					//break;
 				}
@@ -107,19 +112,27 @@ public class EventPlayer implements Listener
 				return;
 			}
 		}
-		if (!isAllowedInArea(player, e.getTo()))
+		if (!isAllowedInArea(player, e.getTo(), null, false))
 		{
 			player.teleport(e.getFrom());
 			return;
 		}
 		
 	}
-	private boolean isAllowedInArea (Player player, Location GoingTo) 
+	private boolean isAllowedInArea (Player player, Location GoingTo, User user, boolean BuildCheck) 
 	{
-		if (!player.getWorld().getName().contains("nether") && Rebug.hasAdminPerms(player))
+		String Name = player.getWorld().getName();
+		if (Rebug.hasAdminPerms(player) || BuildCheck && user != null && user.Builder)
+		{
 			return true;
+		}
+		if (BuildCheck && user == null)
+			user = Rebug.getUser(player);
 		
-		if (player.getWorld().getName().contains("nether") && (GoingTo.getY() < 55 || GoingTo.getY() > 120 || GoingTo.getX() < nether_minX || GoingTo.getY() < nether_minY || GoingTo.getZ() < nether_minZ || GoingTo.getX() > nether_maxX || GoingTo.getY() > nether_maxY || GoingTo.getZ() > nether_maxZ))
+		if (BuildCheck && user != null && user.Builder)
+			return true;
+			
+		if (Name.contains("nether") && (GoingTo.getY() < 55 || GoingTo.getY() > 120 || GoingTo.getX() < nether_minX || GoingTo.getY() < nether_minY || GoingTo.getZ() < nether_minZ || GoingTo.getX() > nether_maxX || GoingTo.getY() > nether_maxY || GoingTo.getZ() > nether_maxZ))
 			return false;
 			
 		return true;

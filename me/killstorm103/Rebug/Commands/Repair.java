@@ -66,7 +66,7 @@ public class Repair extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) {
 		return null;
 	}
 
@@ -84,5 +84,10 @@ public class Repair extends Command
 	public boolean HasToBeConsole() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
+
 }

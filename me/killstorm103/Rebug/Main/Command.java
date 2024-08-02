@@ -15,11 +15,12 @@ public abstract class Command
 	public abstract String getPermission();
 	public abstract String[] SubAliases();
 	public abstract void onCommand (CommandSender sender, String command, String[] args) throws Exception;
-	public abstract List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args);
+	public abstract List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
 	public abstract boolean HasCustomTabComplete ();
 	public abstract boolean HideFromCommandsList ();
 	public abstract boolean HasToBeConsole ();
 	public abstract boolean hasCommandCoolDown();
+	public abstract boolean RemoveSlash ();
 	
 	public Map<UUID, Long> CoolDown = new HashMap<>();
 	

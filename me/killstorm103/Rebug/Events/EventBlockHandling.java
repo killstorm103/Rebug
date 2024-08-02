@@ -3,6 +3,7 @@ package me.killstorm103.Rebug.Events;
 
 import java.text.DecimalFormat;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -22,40 +23,43 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.User;
 
 
 public class EventBlockHandling implements Listener
 {
-	//private final String permission_toBlock = "me.killstorm103.rebug.handleblock";
-	private double 
-	
-	minX = 3.0, minY = 52, minZ = 222,
-	
-	maxX = 61, maxY = 256, maxZ = 302;
-	
-	private boolean NotAllowed (Location loc)
+	public boolean isAllowedToBuild (Player player, World world, Location loc, User user, boolean BuilderCheck)
 	{
-		if (loc.getBlockX() >= minX && loc.getBlockY() >= minY && loc.getBlockZ() >= minZ && loc.getBlockX() <= maxX && loc.getBlockY() <= maxY && loc.getBlockZ() <= maxZ)
+		if (player.isOnline()) 
+		{
+			if (Rebug.hasAdminPerms(player) || user != null && user.Builder)
+				return true;
+			
+			if (BuilderCheck && user == null)
+			{
+				user = Rebug.getUser(player);
+				if (user != null && user.Builder) return true;
+			}
+			
+		}
+		
+		if (world.getName().equalsIgnoreCase("world") &&
+		(loc.getBlockX() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minX") &&
+	    loc.getBlockY() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minY") &&
+	    loc.getBlockZ() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minZ") && loc.getBlockX() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxX") && loc.getBlockZ() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxZ")))
 			return true;
 		
 		return false;
 	}
+	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onBreakBlock (BlockBreakEvent e)
 	{
 		Player player = e.getPlayer();
-		Location location = e.getBlock().getLocation();
-		if (!NotAllowed(location) && !Rebug.hasAdminPerms(player))
-		{
+		if (!isAllowedToBuild(player, e.getBlock().getWorld(), e.getBlock().getLocation(), null, true))
 			e.setCancelled(true);
-		}
-		User user = Rebug.getUser(player);
-		if (!e.isCancelled() && user != null && user.getPlayer() != null && user.BlockPlaced.containsKey(e.getBlock().getLocation()))
-		{
-			user.BlockPlaced.remove(e.getBlock(), e.getBlock().getLocation());
-		}
 	}
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInteract (PlayerInteractEvent e) 
@@ -63,6 +67,14 @@ public class EventBlockHandling implements Listener
 		Player player = e.getPlayer();
 		World world = player.getWorld();
 		Block block = e.getClickedBlock();
+		ItemStack item = e.getItem();
+		if (item != null && item.getType() != Material.AIR)
+		{
+			if (item.getType() == Material.WATER_BUCKET && Config.Experimental_Features("nofall water bucket"))
+			{
+			}
+		}
+		
 		if (block != null && block.getType() == Material.STONE_BUTTON)
 		{
 			Location loc = block.getLocation(), PlaceAT = new Location(world, loc.getBlockX(), 58, 225);
@@ -92,52 +104,84 @@ public class EventBlockHandling implements Listener
 	{
 		Player player = e.getPlayer();
 		User user = Rebug.getUser(player);
-		Block block = e.getBlockPlaced();
-		Location location = block.getLocation();
-		ItemStack item = e.getPlayer().getItemInHand().clone();
-		if (item != null)
-		{
-			if (user.Infinite_Blocks &&
-					(user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || Rebug.hasAdminPerms(user.getPlayer())) && user.getPlayer().getGameMode() != GameMode.CREATIVE)
-						user.getPlayer().setItemInHand(item);
-			
-			if (block != null && block.getType().equals(Material.TNT) && item.hasItemMeta() && item.getItemMeta().hasDisplayName() &&
-			item.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Special TNT"))
-			{
-				Location loc = block.getLocation();
-				if (loc.getWorld().getName().equalsIgnoreCase("world_nether"))
-				{
-					e.setCancelled(true);
-					user.getPlayer().sendMessage(Rebug.RebugMessage + "You can't use that here!");
-					return;
-				}
-				Entity tnt = block.getLocation().getWorld().spawn(loc, TNTPrimed.class);
-				tnt.setCustomNameVisible(true);
-				((TNTPrimed) tnt).setFuseTicks(71);
-				new BukkitRunnable() {
-
-	                @Override
-	                public void run()
-	                {
-	                	  if (((TNTPrimed) tnt).getFuseTicks() <= 0) 
-	                          cancel();
-	                	  
-	                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
-	                }
-	            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
-	            
-				loc.getBlock().setType(Material.AIR);
-				return;
-			}
-		}
-		if (!NotAllowed(location) && !Rebug.hasAdminPerms(player))
+		if (user == null)
 		{
 			e.setCancelled(true);
+			return;
 		}
-		if (!e.isCancelled() && user != null && user.getPlayer() != null && !user.BlockPlaced.containsKey(e.getBlockPlaced().getLocation()))
+		
+		Block block = e.getBlockPlaced();
+		Location location = block.getLocation();
+		ItemStack item = user.getPlayer().getItemInHand().clone();
+		World world = e.getPlayer().getWorld();
+		
+		if (item != null)
 		{
-			user.BlockPlaced.put(e.getBlockPlaced().getLocation(), e.getBlockPlaced());
+			if (Rebug.getINSTANCE().getConfig().getBoolean("infinite-blocks-enabled"))
+			{
+				if (user.Infinite_Blocks &&
+						(user.getPlayer().hasPermission("me.killstorm103.rebug.user.infinite_blocks") || Rebug.hasAdminPerms(user.getPlayer())) && user.getPlayer().getGameMode() != GameMode.CREATIVE)
+							user.getPlayer().setItemInHand(item);
+			}
+			if (Rebug.getINSTANCE().getConfig().getBoolean("special-tnt-enabled"))
+			{
+				if (block != null && block.getType().equals(Material.TNT) && item.hasItemMeta() && item.getItemMeta().hasDisplayName() &&
+						item.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Special TNT"))
+						{
+							Location loc = block.getLocation();
+							if (loc.getWorld().getName().equalsIgnoreCase("world_nether"))
+							{
+								user.sendMessage("You can't use that here!");
+								e.setCancelled(true);
+								return;
+							}
+							if (Rebug.getINSTANCE().getConfig().getBoolean("special-tnt-enabled"))
+							{
+								Entity tnt = block.getLocation().getWorld().spawn(loc, TNTPrimed.class);
+								tnt.setCustomNameVisible(true);
+								((TNTPrimed) tnt).setFuseTicks(Rebug.getINSTANCE().getConfig().getInt("special-tnt-fuseticks"));
+								
+								new BukkitRunnable() 
+								{
+					                @Override
+					                public void run()
+					                {
+					                	  if (((TNTPrimed) tnt).getFuseTicks() <= 0) 
+					                          cancel();
+					                	  
+					                    tnt.setCustomName(DECIMAL_FORMAT.format(((TNTPrimed) tnt).getFuseTicks() / 20.0));
+					                }
+					            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
+					            
+								loc.getBlock().setType(Material.AIR);
+								return;
+							}
+							else
+								user.sendMessage("Sorry but Special TNT is Disabled!");
+							
+						}
+			}
 		}
+		if (!isAllowedToBuild(player, world, location, user, true))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		if (!Rebug.AutoRefillBlocks || Rebug.hasAdminPerms(user.getPlayer()) || user.Builder) return;
+		
+		Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				world.getBlockAt(location).setType(Material.AIR);
+				if (!user.Infinite_Blocks && user.AutoRefillBlocks && (user.getPlayer().getGameMode() == GameMode.ADVENTURE || user.getPlayer().getGameMode() == GameMode.SURVIVAL))
+				{
+					item.setAmount(1);
+					user.getPlayer().getInventory().addItem(item);
+				}
+			}
+		}, Rebug.getINSTANCE().getConfig().getLong("auto-refill-blocks-ticks"));
 	}
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onExplosion (EntityExplodeEvent e)

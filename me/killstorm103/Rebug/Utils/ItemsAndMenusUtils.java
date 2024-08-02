@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
+import me.killstorm103.Rebug.Commands.Menu;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 
@@ -61,6 +62,14 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				Rebug.KickOnReloadConfig =! Rebug.KickOnReloadConfig;
 				item = Reset(Material.PAPER);
 				itemMeta.setDisplayName(ChatColor.ITALIC + (Rebug.KickOnReloadConfig ? ChatColor.GREEN : ChatColor.RED).toString() + "Kick on Reload Config");
+				item.setItemMeta(itemMeta);
+				return item;
+			}
+			if (itemName.equalsIgnoreCase("Auto Clear scaffold after place"))
+			{
+				Rebug.AutoRefillBlocks =! Rebug.AutoRefillBlocks;
+				item = Reset(Material.RECORD_12);
+				itemMeta.setDisplayName(ChatColor.ITALIC.toString() + (Rebug.AutoRefillBlocks ? ChatColor.GREEN : ChatColor.DARK_RED) + "Auto Clear scaffold after place");
 				item.setItemMeta(itemMeta);
 				return item;
 			}
@@ -115,6 +124,11 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			itemMeta.setDisplayName(ChatColor.ITALIC + ChatColor.RED.toString() + "Reset Scaffold Area");
 			item.setItemMeta(itemMeta);
 			inventory.setItem(9, item);
+			
+			item = Reset(Material.RECORD_12);
+			itemMeta.setDisplayName(ChatColor.ITALIC.toString() + (Rebug.AutoRefillBlocks ? ChatColor.GREEN : ChatColor.DARK_RED) + "Auto Clear scaffold after place");
+			item.setItemMeta(itemMeta);
+			inventory.setItem(10, item);
 			
 			getRebugSettingsMenu = inventory;
     	}
@@ -202,7 +216,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 	{
 		if (AntiCheatMenu == null)
 		{
-			Inventory inventory = PT.createInventory(this, Config.getInventory_size(), ChatColor.RED + "AntiCheats");
+			Inventory inventory = PT.createInventory(this, Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats.Inventory-size"), ChatColor.RED + "AntiCheats");
 			final int size = Config.getLoadedAntiCheats().size();
 			item = Reset(Material.DIRT);
 			itemMeta.setDisplayName(ChatColor.WHITE + "Vanilla");
@@ -221,6 +235,8 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			
 			else
 			{
+				Menu.TabAntiCheats.clear();
+				Menu.TabAntiCheats.add("Vanilla");
 				for (Plugin AC : Bukkit.getPluginManager().getPlugins())
 				{
 					for (int i = 0; i < size; i ++)
@@ -232,6 +248,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 							if (Rebug.debug)
 								Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Adding AntiCheat to list= " + AC.getName());
 							
+							Menu.TabAntiCheats.add(name);
 							Rebug.anticheats.put(AC, name);
 						}
 					}
@@ -264,10 +281,10 @@ public class ItemsAndMenusUtils implements InventoryHolder
 						else
 							author = AntiCheat.getDescription().getAuthors().get(0);
 					}
-					if (Config.hasData(name.toLowerCase()))
-						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name.toLowerCase())), 1, (short) 0, (byte) Config.getItemData(name.toLowerCase()));
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has-data"))
+						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)), 1, (short) 0, (byte) Config.getItemData(name));
 					else
-						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name.toLowerCase())));
+						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)));
 					
 					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_enchantment"))
 					{
@@ -314,9 +331,9 @@ public class ItemsAndMenusUtils implements InventoryHolder
 
 					if (description != null)
 					{
-						if (Config.hasFixedDescription(name.toLowerCase()))
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".fix-description"))
 						{
-							int fix = Config.LoadDescriptionFix(name.toLowerCase());
+							int fix = Config.LoadDescriptionFix(name);
 							if (fix > 0)
 							{
 								Iterable<String> result = Splitter.fixedLength(fix).split(description);

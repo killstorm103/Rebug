@@ -2,13 +2,11 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
 
 public class ConsoleMessage extends Command
 {
@@ -47,15 +45,14 @@ public class ConsoleMessage extends Command
 				sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
 				return;
 			}
-			String msg = PT.SubString(command, player.getName().length() + 1, command.length());
-			Bukkit.dispatchCommand(Rebug.getINSTANCE().getServer().getConsoleSender(), "tell " + player.getName() + " " + msg);
+			//Bukkit.dispatchCommand(Rebug.getINSTANCE().getServer().getConsoleSender(), "tell " + player.getName() + " " + );
 		}
 		else
 			sender.sendMessage(getSyntax());
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) {
 		return null;
 	}
 
@@ -80,4 +77,8 @@ public class ConsoleMessage extends Command
 		return null;
 	}
 
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
 }

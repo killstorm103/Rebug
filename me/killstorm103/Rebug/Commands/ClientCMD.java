@@ -123,7 +123,7 @@ public class ClientCMD extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) 
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
 	{
 		return null;
 	}
@@ -149,4 +149,10 @@ public class ClientCMD extends Command
 	{
 		return new String[] {"/client"};
 	}
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
+
 }

@@ -56,7 +56,7 @@ public class BackCMD extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args) 
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
 	{
 		return null;
 	}
@@ -82,4 +82,8 @@ public class BackCMD extends Command
 		return new String[] {"/back"};
 	}
 
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
 }

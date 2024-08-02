@@ -15,12 +15,22 @@ import me.killstorm103.Rebug.Utils.User;
 
 public class Menu extends Command
 {
+	public static final List<String> TabAntiCheats = new ArrayList<>();
+	
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args)
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias)
 	{
-		final List<String> t = new ArrayList<>();
+		List<String> t = new ArrayList<>();
 		t.clear();
-		if (args.length == 2)
+		boolean rebug = alias.equalsIgnoreCase("rebug");
+		if (alias.equalsIgnoreCase("ac") || rebug && args.length > 1 && args[1].equalsIgnoreCase("ac"))
+		{
+			if (TabAntiCheats.isEmpty()) return null;
+			
+			return TabAntiCheats;
+		}
+		
+		if (args.length == 2 && rebug)
 		{
 			t.add("crashers");
 			t.add("exploits");
@@ -31,10 +41,8 @@ public class Menu extends Command
 			
 			return t;
 		}
-		if (args.length == 3)
-			return PT.getPlayerNames ();
 		
-		return null;
+		return PT.getPlayerNames ();
 	}
 
 	@Override
@@ -119,7 +127,6 @@ public class Menu extends Command
 				}
 				else
 					user.CommandTarget = user.getPlayer();
-				
 			}
 			switch (menu.toLowerCase())
 			{
@@ -132,7 +139,7 @@ public class Menu extends Command
 				break;
 				
 			case "ac":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.select_anticheat") || Rebug.hasAdminPerms(user.getPlayer()))
+				if (user.hasPermission("me.killstorm103.rebug.user.select_anticheat") || Rebug.hasAdminPerms(user.getPlayer()))
 				{
 					if (args.length >= 3)
 					{
@@ -147,7 +154,7 @@ public class Menu extends Command
 				break;
 				
 			case "crashers":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_crashers") || Rebug.hasAdminPerms(user.getPlayer()))
+				if (user.hasPermission("me.killstorm103.rebug.user.use_crashers") || Rebug.hasAdminPerms(user.getPlayer()))
 				{
 					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getCrashers());
@@ -159,7 +166,7 @@ public class Menu extends Command
 				break;
 				
 			case "exploits":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.use_exploits") || Rebug.hasAdminPerms(user.getPlayer()))
+				if (user.hasPermission("me.killstorm103.rebug.user.use_exploits") || Rebug.hasAdminPerms(user.getPlayer()))
 				{
 					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getExploits());
@@ -171,7 +178,7 @@ public class Menu extends Command
 				break;
 				
 			case "vanilla fly checks":
-				if (user.getPlayer().hasPermission("me.killstorm103.rebug.user.player_settings") || Rebug.hasAdminPerms(user.getPlayer()))
+				if (user.hasPermission("me.killstorm103.rebug.user.player_settings") || Rebug.hasAdminPerms(user.getPlayer()))
 					user.getPlayer().openInventory(user.getVanillaFlyChecks());
 				else
 					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
@@ -206,4 +213,10 @@ public class Menu extends Command
 		else
 			Log(sender, Rebug.RebugMessage + "Only player's can run this command!");
 	}
+
+	@Override
+	public boolean RemoveSlash() {
+		return true;
+	}
+
 }

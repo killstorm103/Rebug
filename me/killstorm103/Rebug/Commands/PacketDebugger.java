@@ -67,12 +67,12 @@ public class PacketDebugger extends Command
 				user.sendMessage("This client doesn't allow you to debug it's modules!");
 				return;
 			}
-			if (Rebug.PacketDebuggerPlayers.contains(user.getPlayer().getUniqueId()))
-				Rebug.PacketDebuggerPlayers.remove(user.getPlayer().getUniqueId());
+			if (Rebug.PacketDebuggerPlayers.containsKey(user.getPlayer().getUniqueId()))
+				Rebug.PacketDebuggerPlayers.remove(user.getPlayer().getUniqueId(), Rebug.PacketDebuggerPlayers.get(user.getPlayer().getUniqueId()));
 			else
-				Rebug.PacketDebuggerPlayers.add(user.getPlayer().getUniqueId());
+				Rebug.PacketDebuggerPlayers.put(user.getPlayer().getUniqueId(), 1);
 			
-			user.sendMessage("PacketDebugger " + (Rebug.PacketDebuggerPlayers.contains(user.getPlayer().getUniqueId()) ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled") + ChatColor.GRAY + "!");
+			user.sendMessage("PacketDebugger " + (Rebug.PacketDebuggerPlayers.containsKey(user.getPlayer().getUniqueId()) ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled") + ChatColor.GRAY + "!");
 		}
 		else if (args[1].equalsIgnoreCase("config"))
 			user.getPlayer().openInventory(user.getPacketDebuggerMenu());
@@ -82,9 +82,9 @@ public class PacketDebugger extends Command
 	}
 
 	@Override
-	public List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args)
+	public List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias)
 	{
-		if (args.length == 2)
+		if (args.length == (alias.equalsIgnoreCase("rebug") ? 2 : 1))
 		{
 			final List<String> s = new ArrayList<>();
 			s.add("toggle");
@@ -115,5 +115,9 @@ public class PacketDebugger extends Command
 	public boolean hasCommandCoolDown() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean RemoveSlash() {
+		return false;
+	}
 }

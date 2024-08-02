@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -84,10 +85,9 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Rebug extends JavaPlugin implements Listener
 {
-	public static ArrayList<UUID> PacketDebuggerPlayers = new ArrayList<>();
-	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true;
+	public static Map<UUID, Integer> PacketDebuggerPlayers = new HashMap<>();
+	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true, AutoRefillBlocks = true;
 	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
-	private static String Version = "0.0";
 	private static Rebug getMain, INSTANCE;
 	private final ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
 	public static final HashMap<UUID, User> USERS = new HashMap<>();
@@ -105,13 +105,16 @@ public class Rebug extends JavaPlugin implements Listener
         }
         return null;
     }
-    public static void Debug (Player player, String msg)
+    public static void Debug (CommandSender sender, String msg)
     {
     	if (!debug || PT.isStringNull(msg)) return;
     	
-    	if (player != null && (hasAdminPerms(player) || !debugOpOnly))
-    		player.sendMessage(RebugMessage + msg); 
-    	
+    	if (sender != null && sender instanceof Player)
+    	{
+    		Player player = (Player) sender;
+    		if (hasAdminPerms(player) || !debugOpOnly)
+        		player.sendMessage(RebugMessage + msg); 
+    	}
     	Bukkit.getServer().getConsoleSender().sendMessage(RebugMessage + msg);
     }
     public static void Debug (User user, String msg)
@@ -130,13 +133,9 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		return "killstorm103";
 	}
-	public static final double PluginVersion ()
+	public static final String PluginVersion ()
 	{
-		if (Version.contains("0.0"))
-			getINSTANCE().getServer().getConsoleSender().sendMessage("Please restart the server, there was a error when you enabled/loaded Rebug");
-		
-		
-		return Double.parseDouble(Version);
+		return getINSTANCE().getDescription().getVersion();
 	}
 	public boolean DevMode ()
 	{
@@ -202,6 +201,17 @@ public class Rebug extends JavaPlugin implements Listener
         if (mode == 0 && playerFile.exists() && Config.ShouldDeletePlayerConfigAfterLoading())
             playerFile.delete();
     }
+	public FileConfiguration getPlayerConfigFile (Player p)
+	{
+		if (Bukkit.getPlayerExact(p.getName()) == null)
+            return null;
+
+        FileConfiguration playerConfig = getPlayerConfig(p);
+        if (playerConfig != null)
+        	return playerConfig;
+		
+		return null;
+	}
     public void restorePlayer(Player p) 
     {
     	if (Bukkit.getPlayerExact(p.getName()) == null)
@@ -230,9 +240,16 @@ public class Rebug extends JavaPlugin implements Listener
         user.AutoCloseAntiCheatMenu = playerConfig.getConfigurationSection("Player Settings").getBoolean("Auto Close AntiCheat Menu");
         user.AllowDirectMessages = playerConfig.getConfigurationSection("Player Settings").getBoolean("Allow Direct Messages");
         user.AllowMentions = playerConfig.getConfigurationSection("Player Settings").getBoolean("Allow Mentions");
-    	user.AntiCheat = playerConfig.getConfigurationSection("Player Settings").getString("AntiCheat");
+        
+    	user.AntiCheat = hasAdminPerms(user) || getLoadedAntiCheatsFile().getBoolean("bypass-permission-enabled") && user.hasPermission("me.killstorm103.rebug.user.bypass_force_default_anticheat") ?
+    	playerConfig.getConfigurationSection("Player Settings").getString("AntiCheat") : 
+    	getLoadedAntiCheatsFile().getBoolean("force-default-anticheat") ? user.AntiCheat : 
+    	playerConfig.getConfigurationSection("Player Settings").getString("AntiCheat");
+    	
+    	
     	user.ShowFlags = playerConfig.getConfigurationSection("Player Settings").getBoolean("Show Flags");
     	user.ShowPunishes = playerConfig.getConfigurationSection("Player Settings").getBoolean("Show Punishes");
+    	user.ShowSetbacks = playerConfig.getConfigurationSection("Player Settings").getBoolean("Show Setbacks");
     	user.AntiCheatKick = playerConfig.getConfigurationSection("Player Settings").getBoolean("AC Kick");
     	user.Vanilla1_8FlyCheck = playerConfig.getConfigurationSection("Player Settings").getBoolean("Vanilla Fly 1_8_Plus");
     	user.Vanilla1_9FlyCheck = playerConfig.getConfigurationSection("Player Settings").getBoolean("Vanilla Fly 1_9Plus");
@@ -265,6 +282,7 @@ public class Rebug extends JavaPlugin implements Listener
         user.SpectatePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Spectate");
         user.SteerVehiclePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Steer Vehicle");
         user.CustomPayLoadPacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Custom PayLoad");
+        user.TabCompletePacket = playerConfig.getConfigurationSection("Packet Debugger Settings").getBoolean("Tab Complete");
     	
     	removeConfigs(p, 0);
     }
@@ -293,6 +311,7 @@ public class Rebug extends JavaPlugin implements Listener
 		playerConfig.getConfigurationSection("Player Settings").set("AntiCheat", ChatColor.stripColor(AntiCheat));
 		playerConfig.getConfigurationSection("Player Settings").set("Show Flags", user.ShowFlags);
 		playerConfig.getConfigurationSection("Player Settings").set("Show Punishes", user.ShowPunishes);
+		playerConfig.getConfigurationSection("Player Settings").set("Show Setbacks", user.ShowSetbacks);
 		playerConfig.getConfigurationSection("Player Settings").set("AC Kick", user.AntiCheatKick);
 		playerConfig.getConfigurationSection("Player Settings").set("Vanilla Fly 1_8_Plus", user.Vanilla1_8FlyCheck);
 		playerConfig.getConfigurationSection("Player Settings").set("Vanilla Fly 1_9Plus", user.Vanilla1_9FlyCheck);
@@ -322,6 +341,7 @@ public class Rebug extends JavaPlugin implements Listener
         playerConfig.getConfigurationSection("Packet Debugger Settings").set("Spectate", user.SpectatePacket);
         playerConfig.getConfigurationSection("Packet Debugger Settings").set("Steer Vehicle", user.SteerVehiclePacket);
         playerConfig.getConfigurationSection("Packet Debugger Settings").set("Custom PayLoad", user.CustomPayLoadPacket);
+        playerConfig.getConfigurationSection("Packet Debugger Settings").set("Tab Complete", user.TabCompletePacket);
 		
         save(p, playerConfig);
     }
@@ -344,16 +364,28 @@ public class Rebug extends JavaPlugin implements Listener
     }
     public void Reload_Configs (User user)
     {
-    	anticheatConfig = YamlConfiguration.loadConfiguration(LoadedAntiCheatsConfigFile);
-    	ItemsConfig = YamlConfiguration.loadConfiguration(LoadedItemsConfigFile);
-    	DefaultPlayerSettingsConfig = YamlConfiguration.loadConfiguration(DefaultPlayerSettingsFile);
-    	anticheats.clear();
-    	ItemsAndMenusUtils.INSTANCE.lore.clear();
-    	ItemsAndMenusUtils.INSTANCE.AntiCheatMenu = ItemsAndMenusUtils.INSTANCE.ItemPickerMenu = null;
+    	if (Rebug.KickOnReloadConfig)
+		{
+			for (Player players : Bukkit.getOnlinePlayers())
+				PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
+		}
+    	
     	try
 		{
+    		if (RestScaffoldTask != null)
+    			RestScaffoldTask.cancel();
+    		
+    		if (EverySecondUpdaterTask != null)
+    			EverySecondUpdaterTask.cancel();
+    		
     		getConfig().load(getConfigFile());
     		getConfig().save(getConfigFile());
+    		anticheatConfig = YamlConfiguration.loadConfiguration(LoadedAntiCheatsConfigFile);
+        	ItemsConfig = YamlConfiguration.loadConfiguration(LoadedItemsConfigFile);
+        	DefaultPlayerSettingsConfig = YamlConfiguration.loadConfiguration(DefaultPlayerSettingsFile);
+        	anticheats.clear();
+        	ItemsAndMenusUtils.INSTANCE.lore.clear();
+        	ItemsAndMenusUtils.INSTANCE.AntiCheatMenu = ItemsAndMenusUtils.INSTANCE.ItemPickerMenu = null;
     		if (user != null)
     			user.getPlayer().sendMessage(RebugMessage + "Successfully Reloaded Config!");
     		
@@ -425,6 +457,7 @@ public class Rebug extends JavaPlugin implements Listener
    	{
    		if (!Config.RebugScoreBoard()) return;
    		
+   		
    		User user = getUser(player);
    		if (user == null || Netherboard.instance().getBoard(player) != null) return;
    		
@@ -442,25 +475,59 @@ public class Rebug extends JavaPlugin implements Listener
    		board.set(color + "BPS (XZ) " + ChatColor.WHITE + "0", 7);
    		board.set(color + "BPS (Y) " + ChatColor.WHITE + "0", 6);
    		board.set(color + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
-   		board.set(color + "TB 0", 4);
+   		board.set(color + "TB InDev", 4);
    		board.set(color + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
    		board.set(color + "Sprinting " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 2);
    		board.set(color + "Sneaking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 1);
    		board.set(color + "OnGround " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 0);
-   		user.ScoreBoard = board;
-   		user.getPlayer().setScoreboard(user.ScoreBoard.getScoreboard());
+   		user.getPlayer().setScoreboard(board.getScoreboard());
+   	}
+   	public void UpdateScoreBoard (User user, String text, int score)
+   	{
+   		if (!Config.RebugScoreBoard() || user == null) return;
+   		
+   		BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
+   		if (board == null) return;
+   		
+   		board.remove(score);
+   		board.set(text, score);
    	}
    	private final ArrayList<UUID> isAlertsEnabled = new ArrayList<>();
    	public final ArrayList<UUID> isAllowedToDebugPackets = new ArrayList<>();
+   	public static final ArrayList<UUID> KickList = new ArrayList<>();
    	public final Map<UUID, String> ClientBranded = new HashMap<>(), ClientRegistered = new HashMap<>();
    	
+   	@EventHandler (priority = EventPriority.HIGHEST)
+   	public void onKick (PlayerKickEvent e)
+   	{
+   		String reason = e.getReason();
+   		Player player = e.getPlayer();
+   		if (reason.equalsIgnoreCase("Kicked by an operator.") && !KickList.contains(player.getUniqueId()))
+   			KickList.add(player.getUniqueId());
+   			
+   		if (KickList.contains(player.getUniqueId()))
+   		{
+   			isAlertsEnabled.remove(player.getUniqueId());
+   			KickList.remove(player.getUniqueId());
+   			return;
+   		}
+   		
+   		User user = getUser(player);
+   		if (user == null) return;
+	   		
+   		if (!KickList.contains(user.getPlayer().getUniqueId()) && !user.AntiCheatKick)
+   		{
+   			e.setReason("");
+   			e.setLeaveMessage("");
+   			e.setCancelled(true);
+   		}
+   	}
    	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin (PlayerJoinEvent e) 
 	{
    		Player player = e.getPlayer();
 		Rebug.USERS.put(player.getUniqueId(), new User(player));
 		User user = Rebug.getUser(player);
-		user.setJoinTime(user.getPlayer().getUniqueId(), System.currentTimeMillis());
 		restorePlayer(user.getPlayer());
 		UpdateUserPerms(user, user.AntiCheat);
 		addToScoreBoard(user.getPlayer());
@@ -474,7 +541,7 @@ public class Rebug extends JavaPlugin implements Listener
 		else
 			user.getPlayer().removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 		
-		if (Config.ShouldForceGameMode() && !user.getPlayer().isOp() && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
+		if (Config.ShouldForceGameMode() && !hasAdminPerms(user))
 			user.getPlayer().setGameMode(GameMode.SURVIVAL);
 		
 		final String message = getConfig().getString("join-message");
@@ -515,17 +582,35 @@ public class Rebug extends JavaPlugin implements Listener
 	public void onQuit (PlayerQuitEvent e) 
 	{
 		Player player = e.getPlayer();
-		savePlayer(player);
+		for (Player p : Bukkit.getOnlinePlayers())
+		{
+			if (p != player)
+			{
+				User user = getUser(p);
+				if (user.CommandTarget != null && user.CommandTarget == player)
+				{
+					user.getPlayer().closeInventory();
+					user.sendMessage("CommandTarget <" + player.getName() + "> Left so closing the Inventory!");
+					user.CommandTarget = null;
+				}
+			}
+		}
+		
+		BPlayerBoard board = Netherboard.instance().getBoard(player);
+		if (board != null)
+		{
+			board.clear();
+			board.delete();
+		}
 		User user = Rebug.getUser(player);
 		if (user != null)
 		{
-			user.ScoreBoard.delete();
-			user.joinTimeMap.clear();
-			user.BlockPlaced.clear();
+			user.Builder = false;
+			savePlayer(player);
 			Rebug.USERS.remove(user.getPlayer().getUniqueId(), user);
 		}
-		if (PacketDebuggerPlayers.contains(player.getUniqueId()) && !hasAdminPerms(player) && (!player.hasPermission("me.killstorm103.rebug.user.packet_debugger.save") || !player.hasPermission("me.killstorm103.rebug.user.packet_debugger.use")))
-			PacketDebuggerPlayers.remove(player.getUniqueId());
+		if (PacketDebuggerPlayers.containsKey(player.getUniqueId()) && !hasAdminPerms(player) && (!player.hasPermission("me.killstorm103.rebug.user.packet_debugger.save") || !player.hasPermission("me.killstorm103.rebug.user.packet_debugger.use")))
+			PacketDebuggerPlayers.remove(player.getUniqueId(), PacketDebuggerPlayers.get(player.getUniqueId()));
 			
 		e.setQuitMessage(ChatColor.GRAY + "[" + ChatColor.RED + "-" + ChatColor.GRAY + "] " + e.getPlayer().getName());
 	}
@@ -542,12 +627,6 @@ public class Rebug extends JavaPlugin implements Listener
 		for (int i = 0; i < list_configs.size(); i ++)
 			createCustomConfig(list_configs.get(i));
 		
-		try
-		{
-			Version = getDescription().getVersion();
-		}
-		catch (Exception e) {e.printStackTrace();}
-		
 		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
 		// ShortCuts
 		getCommand("client").setExecutor(new ShortCutBasic());
@@ -563,13 +642,18 @@ public class Rebug extends JavaPlugin implements Listener
 		getCommand("healandfeed").setExecutor(new ShortCutBasic());
 		getCommand("nobreak").setExecutor(new ShortCutBasic());
 		getCommand("ac").setExecutor(new ShortCutBasic());
+		getCommand("ac").setTabCompleter(new ShortCutBasic());
 		getCommand("health").setExecutor(new ShortCutBasic());
 		getCommand("credits").setExecutor(new ShortCutBasic());
 		getCommand("player").setExecutor(new ShortCutBasic());
+		getCommand("player").setTabCompleter(new ShortCutBasic());
 		getCommand("invsee").setExecutor(new ShortCutBasic());
 		getCommand("potions").setExecutor(new ShortCutBasic());
+		getCommand("potions").setTabCompleter(new ShortCutBasic());
 		getCommand("potion").setExecutor(new ShortCutBasic());
+		getCommand("potion").setTabCompleter(new ShortCutBasic());
 		getCommand("packetdebugger").setExecutor(new ShortCutBasic());
+		getCommand("packetdebugger").setTabCompleter(new ShortCutBasic());
 		
 		if (commands.isEmpty())
 		{
@@ -670,9 +754,7 @@ public class Rebug extends JavaPlugin implements Listener
 		{
 			me.killstorm103.Rebug.Main.Command mod = iter.next();
 			if (mod.getName().equalsIgnoreCase(name))
-			{
 				return mod;
-			}
 		}
 		return null;
 	}
@@ -700,21 +782,14 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		if (alias.equalsIgnoreCase("rebug"))
 		{
-			for (me.killstorm103.Rebug.Main.Command c : commands)
+			if (args.length == 1)
+				return cmd;
+			
+			if (args.length > 1)
 			{
-				if (args.length == 1)
-				{
-					if (!args[0].isEmpty()) // TODO: Make a search
-					{
-						
-					}
-					return cmd;
-				}
-				
-				if (args.length > 1 && args[0].equalsIgnoreCase(c.getName()) && c.HasCustomTabComplete())
-				{
-					return c.onTabComplete(sender, command, args);
-				}
+				me.killstorm103.Rebug.Main.Command c = getCommandByName(args[0]);
+				if (c != null && c.HasCustomTabComplete())
+					return c.onTabComplete(sender, command, args, alias);
 			}
 		}
 		
@@ -724,13 +799,18 @@ public class Rebug extends JavaPlugin implements Listener
 	{
 		if (player == null) return false;
 		
- 		return player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin") || player.isOp();
+ 		return player.isOp() || player.hasPermission("me.killstorm103.rebug.server_owner") || player.hasPermission("me.killstorm103.rebug.server_admin");
+	}
+	public static boolean hasAdminPerms (User user)
+	{
+		if (user == null) return false;
+		
+		return hasAdminPerms(user.getPlayer());
 	}
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String command, String[] args)
 	{
-		if (debug)
-			Rebug.Debug((Player) sender, "args.length= " + args.length + " command= " + command);
+		Debug(sender, "args.length= " + args.length + " command= " + command);
 		
 		if (command.toLowerCase().equals(PluginName().toLowerCase()))
 		{
@@ -750,66 +830,63 @@ public class Rebug extends JavaPlugin implements Listener
 					return true;
 				}
 			}
-			try
+			me.killstorm103.Rebug.Main.Command commands = getCommandByName(args[0]);
+			if (commands != null)
 			{
-				for (me.killstorm103.Rebug.Main.Command commands : commands)
+				try
 				{
-					if (args[0].equalsIgnoreCase(commands.getName()))
+					if (user == null)
 					{
-						if (user == null || user.getPlayer() != null && (user.getPlayer().hasPermission(commands.getPermission()) || user.getPlayer().hasPermission(AllCommands_Permission) || user.getPlayer().isOp() || user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") || user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin")))
+						commands.onCommand(sender, command, args);
+						return true;
+					}
+					if ((user.hasPermission(commands.getPermission()) || user.hasPermission(AllCommands_Permission) || hasAdminPerms(user)))
+					{
+						if (commands.hasCommandCoolDown() && !hasAdminPerms(user) && !user.hasPermission("me.killstorm103.rebug.command_bypass_delay"))
 						{
-							if (user == null)
-								commands.onCommand(sender, command, args);
-							
-							else
+							if (commands.CoolDown.containsKey(user.getPlayer().getUniqueId())) 
 							{
-								if (!user.getPlayer().isOp() && !user.getPlayer().hasPermission("me.killstorm103.rebug.command_bypass_delay") && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_owner") && !user.getPlayer().hasPermission("me.killstorm103.rebug.server_admin"))
+								if (commands.CoolDown.get(user.getPlayer().getUniqueId()) > System.currentTimeMillis())
 								{
-									if (commands.CoolDown.containsKey(user.getPlayer().getUniqueId())) 
-									{
-										if (commands.hasCommandCoolDown() && commands.CoolDown.get(user.getPlayer().getUniqueId()) > System.currentTimeMillis())
-										{
-											long time = (commands.CoolDown.get(user.getPlayer().getUniqueId()) - System.currentTimeMillis()) / 1000;
-											user.getPlayer().sendMessage(RebugMessage + "Command is on CoolDown for " + time + " second(s)!");
-											return true;
-										}
-										else
-										{
-											if (commands.hasCommandCoolDown())
-												commands.CoolDown.put(user.getPlayer().getUniqueId(), System.currentTimeMillis() + (5 * 1000));
-											
-											commands.onCommand(sender, command, args);
-											return true;
-										}
-									}
-									else
-									{
-										if (commands.hasCommandCoolDown())
-											commands.CoolDown.put(user.getPlayer().getUniqueId(), System.currentTimeMillis() + (5 * 1000));
-										
-										commands.onCommand(sender, command, args);
-										return true;
-									}
+									long time = (commands.CoolDown.get(user.getPlayer().getUniqueId()) - System.currentTimeMillis()) / 1000;
+									user.sendMessage("Command is on CoolDown for " + time + " second" + (time > 1 ? "s" : "") + "!");
+									return true;
 								}
 								else
 								{
 									commands.onCommand(sender, command, args);
+									commands.CoolDown.put(user.getPlayer().getUniqueId(), System.currentTimeMillis() + (5 * 1000));
 									return true;
 								}
+							}
+							else
+							{
+								commands.onCommand(sender, command, args);
+								commands.CoolDown.put(user.getPlayer().getUniqueId(), System.currentTimeMillis() + (5 * 1000));
+								return true;
 							}
 						}
 						else
 						{
-							if (user.getPlayer() != null)
-								user.getPlayer().sendMessage(RebugMessage + "You don't have Permission to use this Command!");
+							commands.onCommand(sender, command, args);
+							return true;
 						}
+					}
+					else
+					{
+						user.sendMessage("You don't have Permission to use this command!");
 						return true;
 					}
 				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
 			}
-			catch (Exception e) 
+			else
 			{
-				e.printStackTrace();
+				sender.sendMessage(RebugMessage + "Unknown Command!");
+				return true;
 			}
 		}
 		
@@ -820,14 +897,12 @@ public class Rebug extends JavaPlugin implements Listener
 		if (user == null) return;
 		
 		String command = getINSTANCE().getConfig().getString("user-update-perms-command").replace("%user%", user.getPlayer().getName()).replace("%anticheat%", itemName);
-		for (int i = 0; i < 3; i ++) // looping is a test for fixing a bug
+		for (int i = 0; i < 3; i ++)
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 	public static Rebug getINSTANCE () 
 	{ 
-		if (INSTANCE == null) return getMain;
-		
-		return INSTANCE;
+		return INSTANCE == null ? getMain : INSTANCE;
 	}
 	public void UpdateAntiCheat (User user, String ItemName, ItemStack item)
 	{
@@ -866,8 +941,7 @@ public class Rebug extends JavaPlugin implements Listener
 		   		if (getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))
 		   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
 		   		
-		   		if (user.ScoreBoard != null)
-		   			user.ScoreBoard.set(ChatColor.DARK_RED + "AC " + NewAC, 10);
+		   		UpdateScoreBoard(user, ChatColor.DARK_RED + "AC " + NewAC, 10);
 		   		
 				PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
 				String AC = ChatColor.stripColor(NewAC);
