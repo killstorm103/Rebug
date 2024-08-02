@@ -1,14 +1,17 @@
-## for Private Per Player Alerts to work set the Alert message of the anticheats to be <AntiCheat> <player> <failed>
 on-join-commands:
 - horizon verbose
 - grim verbose
-experimental-features: true
+experimental-features:
+- show title
+- nofall water bucket
+experimental-feature-warning: true
+infinite-blocks-enabled: true
+special-tnt-enabled: false
+special-tnt-fuseticks: 71
 join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
 delete-player-config-after-loading: false
 allow-sub-commands: true
-## this in seconds (3600 = 1 hour)
 potion-settings-max-timer: 3600
-## has to be 1 or higher!
 potion-settings-max-level: 127
 rebug-scoreboard: true
 scoreboard-title: '&l&7killstorm103''s&r'
@@ -33,3 +36,10 @@ server-rules:
 - Don't be an uptight prick
 - Niggers a nigger a whore's whore a faggots a faggot women don't have dicks there's only 2 genders etc i COULDN'T GiVE A FUCK if someone states a fact so don't come to me over this stuff wanting me to mute/kick/ban them!
 user-update-perms-command: lp user %user% parent set %anticheat%
+auto-refill-blocks-ticks: 200
+scaffold-test-area:
+  minX: 3
+  minY: 52
+  minZ: 222
+  maxX: 61
+  maxZ: 302

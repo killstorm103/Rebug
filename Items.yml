@@ -18,6 +18,13 @@ items:
   ## hasLore: Boolean, Lore:
   ## - 'string'
   ## - 'string' (color codes supported using &(code)string)
+  SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
   STONE:
       unbreakable: false
       enable_item_flag: false

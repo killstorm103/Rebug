@@ -1,4 +1,7 @@
 default-anticheat: 'Vanilla'
+force-default-anticheat: false
+## me.killstorm103.rebug.user.bypass_force_default_anticheat
+bypass-permission-enabled: true
 loaded-anticheats:
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
@@ -17,6 +20,8 @@ loaded-anticheats:
   - '&dKauri'
   - '&cPAC'
   - '&3LightAntiCheat'
+  - '&cAntiHaxerman'
+  - '&bNess'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -33,6 +38,19 @@ loaded-anticheats:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
   
+  ness:
+    display-name: '&bNess Reloaded'
+    has-short-name: false
+    short-name: '&bNess'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 10
+    item: 276
+    fix-description: true
+    offset-description: 45
+    alert-message: 'ness'
   lightanticheat:
     display-name: '&3LightAntiCheat'
     has-short-name: true
@@ -46,6 +64,19 @@ loaded-anticheats:
     fix-description: true
     offset-description: 30
     alert-message: 'lightac'
+  antihaxerman:
+    display-name: '&cAntiHaxerMan'
+    has-short-name: false
+    short-name: '&cAHM'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 166
+    fix-description: false
+    offset-description: 30
+    alert-message: 'ahm'
   wave:
     display-name: '&bWave'
     has-short-name: false

@@ -14,6 +14,7 @@ Auto Close AntiCheat Menu: true
 AntiCheat Kick: false
 Show Flags: true
 Show Punishes: true
+Show Setbacks: true
 Allow Direct Messages: true
 Allow Potion Effects: true
 Auto Refill Blocks Placed: false
@@ -39,3 +40,4 @@ Transaction: true
 Spectate: true
 Steer Vehicle: true
 Custom PayLoad: true
+Tab Complete: true
