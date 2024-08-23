@@ -42,15 +42,24 @@ public class Menu extends Command
 			return t;
 		}
 		
-		return PT.getPlayerNames ();
+		return null;
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
-		return true;
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) 
+	{
+		boolean rebug = alias.equalsIgnoreCase("rebug");
+		if (alias.equalsIgnoreCase("ac") || rebug && args.length > 1 && args[1].equalsIgnoreCase("ac")) return true;
+		
+		if (args.length == 2 && rebug)
+			return true;
+		
+		return false;
 	}
 	@Override
-	public boolean HideFromCommandsList() {
+	public boolean HideFromCommandsList (CommandSender sender)
+	{
 		return false;
 	}
 	@Override
@@ -143,7 +152,7 @@ public class Menu extends Command
 				{
 					if (args.length >= 3)
 					{
-						Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null);
+						Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null, null);
 						return;
 					}
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getAntiCheats());

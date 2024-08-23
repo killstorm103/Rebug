@@ -64,7 +64,7 @@ public class User
     private int protocol;
     
     // Player Settings
-    public boolean Builder = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
+    public boolean ShowS08Alert = true, Builder = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
     
     public org.bukkit.Location death_location;
     public String AntiCheat;
@@ -119,6 +119,7 @@ public class User
 		this.AllowMentions = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Allow Mentions");
 		this.Infinite_Blocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Infinite Blocks");
 		this.Yapper_Message_Count = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getInt("Yapper");
+		this.ShowS08Alert = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("S08 Alerts");
 		
 		// PacketDebugger Settings
 		this.FlyingPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Flying");
@@ -296,6 +297,10 @@ public class User
 					
 				case "fire resistance":
 					text = ChatColor.AQUA + "Status: " + (Fire_Resistance ? ChatColor.GREEN : ChatColor.DARK_RED) + Fire_Resistance;
+					break;
+					
+				case "s08 alerts":
+					text = ChatColor.AQUA + "Status: " + (ShowS08Alert ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowS08Alert;
 					break;
 					
 				default:
@@ -972,7 +977,6 @@ public class User
 			itemMeta.setDisplayName(ChatColor.ITALIC + "Kick");
 			lore.add(ChatColor.AQUA + "Status: " + (AntiCheatKick ? ChatColor.GREEN : ChatColor.DARK_RED) + AntiCheatKick);
 			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable anticheat kicks");
-			lore.add(ChatColor.AQUA + "In Development!");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
 			inventory.setItem(13, item);
@@ -1010,6 +1014,15 @@ public class User
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
 			inventory.setItem(17, item);
+			
+			
+			item = Reset(Material.PAPER);
+			itemMeta.setDisplayName(ChatColor.ITALIC + "S08 Alerts");
+			lore.add(ChatColor.AQUA + "Status: " + (ShowS08Alert ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowS08Alert);
+			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Alerts for S08");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(18, item);
 			
 			
 			item = Reset(Material.TNT);
@@ -1137,7 +1150,6 @@ public class User
     
     public Inventory getSpawnEntityCrashers ()
     {
-    	this.player.closeInventory();
     	if (SpawnEntityCrashersMenu != null)
     	{
     		User user = Rebug.getUser(CommandTarget);

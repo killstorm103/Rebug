@@ -83,14 +83,21 @@ public class Unblock extends Command
 		return null;
 	}
 
-	@Override
-	public boolean HasCustomTabComplete() {
-		return false;
-	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return false;
+	public boolean HideFromCommandsList(CommandSender sender)
+	{
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		else
+			s = false;
+		
+		return s;
 	}
 	@Override
 	public boolean HasToBeConsole() {
@@ -104,6 +111,12 @@ public class Unblock extends Command
 
 	@Override
 	public boolean RemoveSlash() {
+		return false;
+	}
+
+	@Override
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 

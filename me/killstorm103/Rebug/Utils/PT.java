@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -40,7 +41,14 @@ import net.minecraft.server.v1_8_R3.World;
 public class PT
 {
 	public static final PT INSTANCE = new PT();
-	
+	public final Location getSpawn ()
+	{
+		final Location loc = new Location(Bukkit.getWorld("world"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posX"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posY"),
+	    Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posZ"),
+		(float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Yaw"), (float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Pitch"));
+		
+		return loc;
+	}
 	
 	@SuppressWarnings("deprecation")
 	public void DebuggerChatMessage (Player player, PacketReceiveEvent e, String toDebug)
@@ -73,7 +81,7 @@ public class PT
 	}
 	public static boolean isHoldingSword (ItemStack item)
 	{
-		if (item == null) return false;
+		if (item == null || item.getType() == Material.AIR) return false;
 		
 		return item.getType() == Material.DIAMOND_SWORD || item.getType() == Material.GOLD_SWORD || item.getType() == Material.IRON_SWORD || item.getType() == Material.STONE_SWORD || item.getType() == Material.WOOD_SWORD;
 	}

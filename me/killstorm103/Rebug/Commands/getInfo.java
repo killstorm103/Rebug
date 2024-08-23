@@ -2,6 +2,7 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -44,7 +45,7 @@ public class getInfo extends Command
 			Log(sender, Rebug.RebugMessage + getSyntax());
 			return;
 		}
-		Server server = getRebug().getServer();
+		Server server = Bukkit.getServer();
 		if (args[1].equalsIgnoreCase("command"))
 		{
 			if (args.length < 4)
@@ -66,21 +67,21 @@ public class getInfo extends Command
 			
 			if (args[3].equalsIgnoreCase("Description"))
 			{
-				Log(sender, cmd.getName() + "'s Description: " + cmd.getDescription());
+				Log(sender, cmd.getName() + "'s Description: " + cmd.getDescription(), false);
 			}
 			if (args[3].equalsIgnoreCase("Permission"))
 			{
-				Log(sender, cmd.getName() + "'s Permission: " + cmd.getPermission());
+				Log(sender, cmd.getName() + "'s Permission: " + cmd.getPermission(), false);
 			}
 			if (args[3].equalsIgnoreCase("Syntax"))
 			{
-				Log(sender, cmd.getName() + "'s Syntax: " + cmd.getSyntax());
+				Log(sender, cmd.getName() + "'s Syntax: " + cmd.getSyntax(), false);
 			}
 		}
 		if (args[1].equalsIgnoreCase("server"))
 		{
-			Log(sender, Rebug.RebugMessage + "BukkitVersion: " + server.getBukkitVersion());
-			Log(sender, Rebug.RebugMessage + "Version: " + server.getVersion());
+			Log(sender, Rebug.RebugMessage + "BukkitVersion: " + server.getBukkitVersion(), false);
+			Log(sender, Rebug.RebugMessage + "Version: " + server.getVersion(), false);
 		}
 		if (args[1].equalsIgnoreCase("player"))
 		{
@@ -121,13 +122,25 @@ public class getInfo extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return false;
+	public boolean HideFromCommandsList(CommandSender sender) 
+	{
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		else
+			s = false;
+		
+		return s;
 	}
 	@Override
 	public boolean HasToBeConsole() {

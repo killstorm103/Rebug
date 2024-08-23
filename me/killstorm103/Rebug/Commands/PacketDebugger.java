@@ -44,7 +44,10 @@ public class PacketDebugger extends Command
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
 		if (!(sender instanceof Player))
+		{
+			Log(sender, "Only Players can use this Command!");
 			return;
+		}
 		
 		if (args.length < 2) 
 		{
@@ -97,13 +100,23 @@ public class PacketDebugger extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
-		return true;
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
+		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return false;
+	public boolean HideFromCommandsList(CommandSender sender)
+	{
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		
+		return s;
 	}
 
 	@Override

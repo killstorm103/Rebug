@@ -172,11 +172,12 @@ public class EventMenus implements Listener
 					{
 						if (clickType == ClickType.RIGHT)
 						{
+							user.getPlayer().closeInventory();
 							Bukkit.dispatchCommand(user.getPlayer(), "rebug menu Vanilla%Fly%Checks");
 							return;
 						}
 					}
-					Rebug.getINSTANCE().UpdateAntiCheat(user, ItemName, item);
+					Rebug.getINSTANCE().UpdateAntiCheat(user, ItemName, item, null);
 				}
 				if (MenuName.equalsIgnoreCase("Exploits") && e.getClickedInventory() != user.getPlayer().getInventory() && ItemName != null)
 				{
@@ -191,6 +192,7 @@ public class EventMenus implements Listener
 					{
 						if (ItemName.equalsIgnoreCase("Back"))
 						{
+							user.getPlayer().closeInventory();
 							Refresh(user.getPlayer(), "menu settings");
 							return;
 						}
@@ -217,6 +219,7 @@ public class EventMenus implements Listener
 					{
 						if (ItemName.equalsIgnoreCase("back"))
 						{
+							user.getPlayer().closeInventory();
 							Refresh(user.getPlayer(), "menu settings");
 							return;
 						}
@@ -228,11 +231,8 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("Reload Config"))
 						{
-							Rebug.getINSTANCE().Reload_Configs(user);
+							Rebug.getINSTANCE().Reload_Configs(user.getPlayer());
 							return;
-						}
-						if (ItemName.equalsIgnoreCase("Builder Mode"))
-						{
 						}
 						
 						ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
@@ -253,7 +253,10 @@ public class EventMenus implements Listener
 							if (ItemName.equalsIgnoreCase("Rebug Settings"))
 							{
 								if (Rebug.hasAdminPerms(user.getPlayer()))
+								{
+									user.getPlayer().closeInventory();
 									Refresh(user.getPlayer(), "menu Rebug%Settings");
+								}
 								else
 									user.sendMessage("You don't have Permission to access that!");
 								
@@ -335,8 +338,19 @@ public class EventMenus implements Listener
 							}
 							if (ItemName.equalsIgnoreCase("Kick"))
 							{
+								if (!Rebug.hasAdminPerms(user) && !user.hasPermission("me.killstorm103.rebug.user.anticheat-kicks"))
+								{
+									user.sendMessage("You don't have Permission to use this!");
+									return;
+								}
+								if (!Rebug.getINSTANCE().getConfig().getBoolean("are-users-allowed-to-disable-kicks"))
+									user.sendMessage("Kicks is Disabled so changing this Setting won't do anything!");
+								
 								user.AntiCheatKick =! user.AntiCheatKick;
 							}
+							if (ItemName.equalsIgnoreCase("S08 Alerts"))
+								user.ShowS08Alert =! user.ShowS08Alert;
+							
 							if (ItemName.equalsIgnoreCase("Hide All Online Players"))
 							{
 								user.HideOnlinePlayers =! user.HideOnlinePlayers;
@@ -399,6 +413,7 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("spawn entity crashers"))
 						{
+							user.getPlayer().closeInventory();
 							user.getPlayer().openInventory(user.getSpawnEntityCrashers());
 							e.setCancelled(true);
 							return;
@@ -418,6 +433,7 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("Back"))
 						{
+							user.getPlayer().closeInventory();
 							Bukkit.getScheduler().scheduleSyncDelayedTask(Rebug.getINSTANCE(), new Runnable()
 				            {
 				                @Override
@@ -428,7 +444,6 @@ public class EventMenus implements Listener
 				                
 				            }, 1L);
 							e.setCancelled(true);
-							user.getPlayer().closeInventory();
 							return;
 						}
 						user.CrashSendPacket(user.CommandTarget, "SpawnEntity", ItemName);

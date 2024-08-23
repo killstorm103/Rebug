@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 public abstract class Command 
@@ -16,27 +17,34 @@ public abstract class Command
 	public abstract String[] SubAliases();
 	public abstract void onCommand (CommandSender sender, String command, String[] args) throws Exception;
 	public abstract List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
-	public abstract boolean HasCustomTabComplete ();
-	public abstract boolean HideFromCommandsList ();
+	public abstract boolean HasCustomTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
+	public abstract boolean HideFromCommandsList (CommandSender sender);
 	public abstract boolean HasToBeConsole ();
 	public abstract boolean hasCommandCoolDown();
 	public abstract boolean RemoveSlash ();
 	
 	public Map<UUID, Long> CoolDown = new HashMap<>();
 	
-	public Rebug getRebug ()
+	public void Log (CommandSender sender, String tolog)
 	{
-		return Rebug.getINSTANCE();
+		Log(sender, tolog, true);
 	}
-	public static void Log (CommandSender sender, String tolog)
+	public void Log (CommandSender sender, String tolog, boolean addRebugMessage)
 	{
-		sender.sendMessage(tolog);
+		if (addRebugMessage)
+		{
+			tolog = tolog.replace(Rebug.RebugMessage, "");
+			sender.sendMessage(Rebug.RebugMessage + tolog);
+		}
+		else
+			sender.sendMessage(tolog);
 	}
-	public static void LogToConsole (String tolog)
+	public void LogToConsole (String tolog)
 	{
-		Rebug.getINSTANCE().getServer().getConsoleSender().sendMessage(tolog);
+		tolog = tolog.replace(Rebug.RebugMessage, "");
+		Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + tolog);
 	}
-	public String StartOfPermission ()
+	public final String StartOfPermission ()
 	{
 		return "me.killstorm103.rebug.command.";
 	}

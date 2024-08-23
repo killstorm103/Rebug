@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
+import me.killstorm103.Rebug.Main.Rebug;
 
 public class SpawnCMD extends Command
 {
@@ -42,11 +43,12 @@ public class SpawnCMD extends Command
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			Location location = new Location(Bukkit.getServer().getWorld("world"), 41, 58, 319, -91.200165F, -0.5999501F);
-			player.setNoDamageTicks(10);
+			player.setNoDamageTicks(50);
 			player.setFallDistance(0);
-			player.teleport(location);
+			player.teleport(new Location(Bukkit.getServer().getWorld("world"), 41, 58, 319, -91.200165F, -0.5999501F));
 		}
+		else
+			sender.sendMessage(Rebug.RebugMessage + "Only Players can use this command!");
 	}
 
 	@Override
@@ -56,14 +58,23 @@ public class SpawnCMD extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() 
+	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		return false;
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		
+		return s;
 	}
 
 

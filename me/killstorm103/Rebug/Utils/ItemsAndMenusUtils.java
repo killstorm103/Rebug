@@ -25,9 +25,10 @@ import me.killstorm103.Rebug.Main.Rebug;
 public class ItemsAndMenusUtils implements InventoryHolder
 {
 	public static final ItemsAndMenusUtils INSTANCE = new ItemsAndMenusUtils();
-	public List<String> lore = new ArrayList<>();// clearing this as a test
+	public List<String> lore = new ArrayList<>();
 	private ItemMeta itemMeta = null;
 	private ItemStack item = null;
+	
 	public ItemStack getMadeItems(String menuName, String itemName)
 	{
 		switch (menuName.toLowerCase())
@@ -217,18 +218,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 		if (AntiCheatMenu == null)
 		{
 			Inventory inventory = PT.createInventory(this, Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats.Inventory-size"), ChatColor.RED + "AntiCheats");
-			final int size = Config.getLoadedAntiCheats().size();
-			item = Reset(Material.DIRT);
-			itemMeta.setDisplayName(ChatColor.WHITE + "Vanilla");
-			lore.add("");
-			lore.add(ChatColor.AQUA + "Version: " + ChatColor.WHITE + Bukkit.getServer().getBukkitVersion());
-			lore.add(ChatColor.AQUA + "Author: " + ChatColor.WHITE + "Mojang");
-			lore.add("");
-			lore.add(ChatColor.AQUA + "Info: " + ChatColor.WHITE + "You can adjust vanilla");
-			lore.add(ChatColor.WHITE + "fly checks by using /settings");
-			itemMeta.setLore(lore);
-			item.setItemMeta(itemMeta);
-			inventory.setItem(0, item);
+			int size = Config.getLoadedAntiCheats().size();
 			
 			if (size < 1)
 				Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Add the AntiCheats to: loaded-anticheats in the config file!");
@@ -256,7 +246,18 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			}
 			if (!Rebug.anticheats.isEmpty())
 			{
+				item = Reset(Material.DIRT);
+				itemMeta.setDisplayName(ChatColor.WHITE + "Vanilla");
+				lore.add("");
+				lore.add(ChatColor.AQUA + "Status: " + (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("is-vanilla-enabled") ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled"));
+				lore.add("");
+				lore.add(ChatColor.AQUA + "Version: " + ChatColor.WHITE + Bukkit.getServer().getBukkitVersion());
+				lore.add(ChatColor.AQUA + "Author: " + ChatColor.WHITE + "Mojang");
+				itemMeta.setLore(lore);
+				item.setItemMeta(itemMeta);
+				inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot") : 0, item);
 				int adding = 1;
+				final boolean CustomSlots = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("Custom Slots");
 				for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
 				{
 					Plugin AntiCheat = map.getKey();
@@ -318,9 +319,11 @@ public class ItemsAndMenusUtils implements InventoryHolder
 					
 					itemMeta.setDisplayName(ChatColor.WHITE + AntiCheat.getName());
 					lore.add("");
-					lore.add(ChatColor.AQUA + "Status: " + (AntiCheat.isEnabled() ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled"));
+					lore.add(ChatColor.AQUA + "Status: " + (AntiCheat.isEnabled() && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enabled") ? 
+				    ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled"));
 					lore.add("");
 					lore.add(ChatColor.AQUA + "Version: "+ ChatColor.WHITE + version);
+					
 					if (author_size > 0)
 						lore.add(ChatColor.AQUA + "Author" + (author_size > 1 ? "(s)" : "") + ": "+ ChatColor.WHITE + author);
 					else
@@ -358,7 +361,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 					
 					itemMeta.setLore(lore);
 					item.setItemMeta(itemMeta);
-					inventory.setItem(adding++, item);
+					inventory.setItem(CustomSlots ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + name + ".menu-slot") : adding++, item);
 				}
 			}
 			else
@@ -412,8 +415,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				if (Rebug.getINSTANCE().getLoadedItemsFile().getString("items." + key + ".display-name") != null)
 					itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedItemsFile().getString("items." + key + ".display-name")));
 
-				boolean hasLore = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".hasLore"), isUnbreakable = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".unbreakable"), isEnchanted = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_enchantment"), hasItemFlag = Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_item_flag");
-				if (isEnchanted)
+				if (Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_enchantment"))
 				{
 					for (String enchant : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".enchantments"))
 					{
@@ -429,9 +431,9 @@ public class ItemsAndMenusUtils implements InventoryHolder
 						}
 					}
 				}
-				itemMeta.spigot().setUnbreakable(isUnbreakable);
+				itemMeta.spigot().setUnbreakable(Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".unbreakable"));
 				
-				if (hasItemFlag) 
+				if (Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".enable_item_flag")) 
 				{
 					for (String itemflag : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".ItemFlag")) 
 					{
@@ -442,7 +444,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 							itemMeta.addItemFlags(flag);
 					}
 				}
-				if (hasLore)
+				if (Rebug.getINSTANCE().getLoadedItemsFile().getBoolean("items." + key + ".hasLore"))
 				{
 					lore.clear();
 					for (String lores : Rebug.getINSTANCE().getLoadedItemsFile().getStringList("items." + key + ".Lore"))

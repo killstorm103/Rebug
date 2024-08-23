@@ -102,13 +102,25 @@ public class InvSeeCMD extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return false;
+	public boolean HideFromCommandsList(CommandSender sender)
+	{
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		else
+			s = false;
+		
+		return s;
 	}
 
 	@Override

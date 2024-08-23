@@ -63,12 +63,14 @@ public class Credits extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
+	public boolean HideFromCommandsList(CommandSender sender) 
+	{
 		return false;
 	}
 

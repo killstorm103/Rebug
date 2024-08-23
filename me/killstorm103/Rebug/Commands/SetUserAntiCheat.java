@@ -1,6 +1,5 @@
 package me.killstorm103.Rebug.Commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -9,84 +8,86 @@ import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
-import net.md_5.bungee.api.ChatColor;
+import me.killstorm103.Rebug.Utils.User;
 
-public class Reload extends Command
+public class SetUserAntiCheat extends Command
 {
 
 	@Override
 	public String getName() {
-		return "reload";
+		return "setuseranticheat";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "reload <config or server>";
+		return "setuseranticheat <player> <ac>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "reload";
+		return "Manually set the AntiCheat of a user!";
 	}
 
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "reload_command";
+		return StartOfPermission() + "set-user-anticheat";
 	}
 
 	@Override
-	public String[] SubAliases() 
-	{
+	public String[] SubAliases() {
 		return null;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		if (args.length < 2)
+		if (sender instanceof Player)
 		{
-			sender.sendMessage(Rebug.RebugMessage + getSyntax());
+			Player p = (Player) sender;
+			if (!Rebug.hasAdminPerms(p) && !p.hasPermission(getPermission()))
+			{
+				p.sendMessage(Rebug.RebugMessage + "You don't have Permission to do that!");
+				return;
+			}
+		}
+		if (args.length < 3)
+		{
+			sender.sendMessage (Rebug.RebugMessage + getSyntax());
 			return;
 		}
 		
-		if (args[1].equalsIgnoreCase("config"))
-			Rebug.getINSTANCE().Reload_Configs(sender);
-		
-		if (args[1].equalsIgnoreCase("server"))
+		Player player = Bukkit.getPlayer(args[1]);
+		if (player == null)
 		{
-			for (Player p : Bukkit.getOnlinePlayers())
-				PT.KickPlayer(p, ChatColor.DARK_RED + "Reloading server join Back!");
-			
-			Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable()
-			{
-				@Override
-				public void run() 
-				{
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
-				}
-			}, 20);
+			sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
+			return;
 		}
+		User user = Rebug.getUser(player);
+		if (user == null)
+		{
+			sender.sendMessage(Rebug.RebugMessage + "Unknown User!");
+			return;
+		}
+		Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null, sender);
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) 
 	{
-		if (args.length > 1)
-		{
-			List<String> s = new ArrayList<>();
-			s.clear();
-			s.add("config");
-			s.add("server");
-			return s;
-		}
+		if (args.length > 2 && !Menu.TabAntiCheats.isEmpty())
+			return Menu.TabAntiCheats;
 		
 		return null;
 	}
 
 	@Override
 	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
-			String alias) {
+			String alias) 
+	{
+		if (args.length > 2 && !Menu.TabAntiCheats.isEmpty())
+			return true;
+		
 		return false;
 	}
 
@@ -120,5 +121,5 @@ public class Reload extends Command
 	public boolean RemoveSlash() {
 		return false;
 	}
-
+	
 }

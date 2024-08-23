@@ -1,86 +1,58 @@
 package me.killstorm103.Rebug.Commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
-import net.md_5.bungee.api.ChatColor;
 
-public class Reload extends Command
+public class SlashFly extends Command
 {
 
 	@Override
 	public String getName() {
-		return "reload";
+		return "fly";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "reload <config or server>";
+		return "fly";
 	}
 
 	@Override
 	public String getDescription() {
-		return "reload";
+		return "fly";
 	}
 
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "reload_command";
+		return StartOfPermission() + "flycmd";
 	}
 
 	@Override
-	public String[] SubAliases() 
-	{
-		return null;
+	public String[] SubAliases() {
+		return new String[] {"/fly"};
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		if (args.length < 2)
+		if (!(sender instanceof Player))
 		{
-			sender.sendMessage(Rebug.RebugMessage + getSyntax());
+			sender.sendMessage(Rebug.RebugMessage + "Only Players can run this command!");
 			return;
 		}
-		
-		if (args[1].equalsIgnoreCase("config"))
-			Rebug.getINSTANCE().Reload_Configs(sender);
-		
-		if (args[1].equalsIgnoreCase("server"))
-		{
-			for (Player p : Bukkit.getOnlinePlayers())
-				PT.KickPlayer(p, ChatColor.DARK_RED + "Reloading server join Back!");
-			
-			Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable()
-			{
-				@Override
-				public void run() 
-				{
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
-				}
-			}, 20);
-		}
+		Player player = (Player) sender;
+		player.setAllowFlight(!player.getAllowFlight());
+		player.setFallDistance(0);
+		player.sendMessage(Rebug.RebugMessage + "You can " + (player.getAllowFlight() ? "now" : "no longer") + " fly!");
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
-	{
-		if (args.length > 1)
-		{
-			List<String> s = new ArrayList<>();
-			s.clear();
-			s.add("config");
-			s.add("server");
-			return s;
-		}
-		
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return null;
 	}
 
@@ -100,8 +72,6 @@ public class Reload extends Command
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
 				s = false;
 		}
-		else
-			s = false;
 		
 		return s;
 	}
@@ -120,5 +90,5 @@ public class Reload extends Command
 	public boolean RemoveSlash() {
 		return false;
 	}
-
+	
 }

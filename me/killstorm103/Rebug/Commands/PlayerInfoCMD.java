@@ -77,10 +77,17 @@ public class PlayerInfoCMD extends Command
 				sender.sendMessage(Rebug.RebugMessage + "player <player name>");
 				return;
 			}
-			user = Rebug.getUser(Bukkit.getPlayer(args[1]));
+			Player player = Bukkit.getPlayer(args[1]);
+			if (player == null)
+			{
+				Log(sender, "Unknown Player!");
+				return;
+			}
+			
+			user = Rebug.getUser(player);
 			if (user == null)
 			{
-				sender.sendMessage(Rebug.RebugMessage + "Unknown Player!");
+				Log(sender, "Unknown User!");
 				return;
 			}
 			sender.sendMessage(Rebug.RebugMessage + "" + user.getPlayer().getName() + "'s");
@@ -95,13 +102,25 @@ public class PlayerInfoCMD extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
-		return true;
+	public boolean HideFromCommandsList(CommandSender sender)
+	{
+		boolean s = true;
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+				s = false;
+		}
+		else
+			s = false;
+		
+		return s;
 	}
 
 	@Override

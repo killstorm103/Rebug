@@ -54,12 +54,37 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 
 public class EventPackets implements PacketListener
 {
+	@SuppressWarnings("unused")
 	@Override
 	public void onPacketReceive(PacketReceiveEvent e) 
 	{
 		Player player = Bukkit.getPlayer(e.getUser().getUUID());
 		if (player == null || !player.isOnline())
 			return;
+		
+		if (Config.Experimental_Features("AntiCrasher"))
+		{
+			if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION)
+			{
+				WrapperPlayClientPlayerRotation packet = new WrapperPlayClientPlayerRotation(e);
+				float pitch = packet.getPitch(), yaw = packet.getYaw();
+				if (Float.isNaN(pitch)|| Float.isInfinite(pitch) || Math.abs(pitch) > 500)
+				{
+					e.setCancelled(true);
+					PT.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
+				}
+			}
+			if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION)
+			{
+				WrapperPlayClientPlayerRotation packet = new WrapperPlayClientPlayerRotation(e);
+				float pitch = packet.getPitch(), yaw = packet.getYaw();
+				if (Float.isNaN(pitch) || Float.isInfinite(pitch) || Math.abs(pitch) > 500)
+				{
+					e.setCancelled(true);
+					PT.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
+				}
+			}
+		}
 			
 		User user = Rebug.getUser(player);
 		if (user == null) 
@@ -233,7 +258,6 @@ public class EventPackets implements PacketListener
 		
 		ItemStack item = null;
 		user.preSend ++;
-		
 		if (e.getPacketType() == PacketType.Play.Client.TAB_COMPLETE && user.isPacketDebuggerEnabled() && user.TabCompletePacket)
 			user.DebuggerChatMessage(e, "Text= " + new WrapperPlayClientTabComplete(e).getText());
 		
@@ -537,27 +561,30 @@ public class EventPackets implements PacketListener
 			user.preReceive --;
 			e.setCancelled(true);
 		}
-		if (e.getPacketType() == PacketType.Play.Server.PLAYER_POSITION_AND_LOOK && Config.Experimental_Features ("show title"))
+		if (e.getPacketType() == PacketType.Play.Server.PLAYER_POSITION_AND_LOOK)
 		{
 			user.S08Pos = 0;
-			new BukkitRunnable() 
+			if (user.ShowS08Alert)
 			{
-                @Override
-                public void run()
-                {
-                	if (user.S08Pos > 190)
-                	{
-                		cancel();
-                		return;
-                	}
-                	
-                	
-                	IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Elasped Ticks: " + user.S08Pos + "\"}");
-					PacketPlayOutChat chat = new PacketPlayOutChat(chatTitle, (byte) 2);
-					PT.SendPacket(user.getPlayer(), chat);
-					user.S08Pos ++;
-                }
-            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
+				new BukkitRunnable () 
+				{
+	                @Override
+	                public void run()
+	                {
+	                	if (user.S08Pos > 100 || !user.ShowS08Alert)
+	                	{
+	                		cancel();
+	                		return;
+	                	}
+	                	
+	                	
+	                	IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Ticks: " 
+	                    + user.S08Pos + "\"}");
+						PT.SendPacket(user.getPlayer(), new PacketPlayOutChat(chatTitle, (byte) 2));
+						user.S08Pos ++;
+	                }
+	            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
+			}
 			/*
 			 * 
 			 * IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.GREEN + "Hello " + ChatColor.GOLD + " you" + "\"}");
@@ -584,9 +611,7 @@ public class EventPackets implements PacketListener
 				if (Rebug.anticheats.isEmpty())
 				{
 					Bukkit.getConsoleSender().sendMessage("Rebug.anticheats was Empty, trying to add ACs!");
-					if (user.getPlayer().getOpenInventory() != null)
-						user.getPlayer().closeInventory();
-					
+					user.getPlayer().closeInventory();
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getAntiCheats());
 					user.getPlayer().closeInventory();
 				}

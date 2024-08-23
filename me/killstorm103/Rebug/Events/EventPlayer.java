@@ -122,16 +122,17 @@ public class EventPlayer implements Listener
 	private boolean isAllowedInArea (Player player, Location GoingTo, User user, boolean BuildCheck) 
 	{
 		String Name = player.getWorld().getName();
-		if (Rebug.hasAdminPerms(player) || BuildCheck && user != null && user.Builder)
+		if (Rebug.hasAdminPerms(player) || user != null && user.Builder)
 		{
 			return true;
 		}
 		if (BuildCheck && user == null)
+		{
 			user = Rebug.getUser(player);
-		
-		if (BuildCheck && user != null && user.Builder)
-			return true;
-			
+			if (user != null && user.Builder)
+				return true;
+		}
+
 		if (Name.contains("nether") && (GoingTo.getY() < 55 || GoingTo.getY() > 120 || GoingTo.getX() < nether_minX || GoingTo.getY() < nether_minY || GoingTo.getZ() < nether_minZ || GoingTo.getX() > nether_maxX || GoingTo.getY() > nether_maxY || GoingTo.getZ() > nether_maxZ))
 			return false;
 			
@@ -216,7 +217,6 @@ public class EventPlayer implements Listener
 			if (user == null) return;
 			
 			Rebug.Debug(user.getPlayer(), user.getDebugLocation() + " Cause= " + e.getCause().name());
-			
 			if (e.getCause() == DamageCause.ENTITY_EXPLOSION)
 			{
 				if (AllowedIn(world.getName(), user.getLocation())) {}

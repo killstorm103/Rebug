@@ -44,7 +44,25 @@ public class Help extends Command
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
 		if (args.length == 1)
-			Log(sender, ChatColor.GRAY + "commands" + ChatColor.RESET + ":");
+			Log(sender, ChatColor.GRAY + "commands" + ChatColor.RESET + ":", false);
+		
+		if (args.length == 3)
+		{
+			Command c = Rebug.getINSTANCE().getCommandByName(args[2]);
+			c = c == null ? Rebug.getINSTANCE().getCommandBySubName(args[2]) : c;
+			if (c != null)
+			{
+				if (args[1].equalsIgnoreCase("cmd") || args[1].equalsIgnoreCase("command"));
+				{
+					Log(sender, ChatColor.GRAY + c.getSyntax(), false);
+					Log(sender, ChatColor.GRAY + c.getDescription(), false);
+				}
+			}
+			else
+				Log(sender, "Unknown Command!");
+				
+			return;
+		}
 		
 		for (Command commands : Rebug.getINSTANCE().getCommands())
 		{
@@ -52,22 +70,12 @@ public class Help extends Command
 			{
 				if (sender instanceof Player)
 				{
-					if (((Player) sender).hasPermission(commands.getPermission()) || ((Player) sender).hasPermission(Rebug.AllCommands_Permission))
-					{
-						if (!commands.HideFromCommandsList())
-							Log(sender, ChatColor.GRAY + "/rebug " + commands.getName());
-					}
+					if (commands.HideFromCommandsList(sender) && !((Player) sender).hasPermission(Rebug.AllCommands_Permission)) {}
+					else
+						Log(sender, ChatColor.GRAY + "/rebug " + commands.getName(), false);
 				}
 				else
-				{
-					if (!commands.HideFromCommandsList())
-						Log(sender, ChatColor.GRAY + "/rebug " + commands.getName());
-				}
-			}
-			if (args.length == 3 && (args[1].equalsIgnoreCase("cmd") || args[1].equalsIgnoreCase("command")) && args[2].equalsIgnoreCase(commands.getName()))
-			{
-				Log(sender, ChatColor.GRAY + "/rebug " + commands.getSyntax());
-				Log(sender, ChatColor.GRAY + commands.getDescription());
+					Log(sender, ChatColor.GRAY + "/rebug " + commands.getName(), false);
 			}
 		}
 	}
@@ -78,12 +86,14 @@ public class Help extends Command
 	}
 
 	@Override
-	public boolean HasCustomTabComplete() {
+	public boolean HasCustomTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args,
+			String alias) {
 		return false;
 	}
 
 	@Override
-	public boolean HideFromCommandsList() {
+	public boolean HideFromCommandsList(CommandSender sender) 
+	{
 		return false;
 	}
 	@Override
