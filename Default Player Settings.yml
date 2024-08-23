@@ -20,6 +20,8 @@ Allow Potion Effects: true
 Auto Refill Blocks Placed: false
 Allow Mentions: true
 Infinite Blocks: false
+Yapper: 0
+S08 Alerts: true
 ## PacketDebugger Settings
 Flying: true
 Position: true
