@@ -1,27 +1,30 @@
-default-anticheat: 'Vanilla'
+default-anticheat: Vanilla
 force-default-anticheat: false
 ## me.killstorm103.rebug.user.bypass_force_default_anticheat
 bypass-permission-enabled: true
+Custom Slots: true
+Disabled-AntiCheat:
+  disabled: false
+  kick-on-Invalid-anticheat: false
+is-vanilla-enabled: true
+custom-vanilla-menu-slot: false
+vanilla-item-slot: 15
 loaded-anticheats:
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
-  Inventory-size: 18
+  Inventory-size: 27
   ## AC Names:
   ## make them what their name is in their plugin.yml, color codes is supported use: &(code)
   ac-names:
   - '&4Vulcan'
-  - '&cHawk'
-  - '&1Warden'
   - '&1NoCheatPlus'
   - '&8GrimAC'
-  - '&2Spartan'
   - '&1Horizon'
   - '&bWave'
+  - '&0Saturn'
   - '&dKauri'
   - '&cPAC'
   - '&3LightAntiCheat'
-  - '&cAntiHaxerman'
-  - '&bNess'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -38,46 +41,24 @@ loaded-anticheats:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
   
-  ness:
-    display-name: '&bNess Reloaded'
+  saturn:
+    enabled: true
+    display-name: '&0Saturn'
     has-short-name: false
-    short-name: '&bNess'
+    short-name: '&0Saturn'
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
     has-data: false
     data: 10
-    item: 276
+    item: 120
     fix-description: true
     offset-description: 45
-    alert-message: 'ness'
-  lightanticheat:
-    display-name: '&3LightAntiCheat'
-    has-short-name: true
-    short-name: '&3LightAC'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 339
-    fix-description: true
-    offset-description: 30
-    alert-message: 'lightac'
-  antihaxerman:
-    display-name: '&cAntiHaxerMan'
-    has-short-name: false
-    short-name: '&cAHM'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 166
-    fix-description: false
-    offset-description: 30
-    alert-message: 'ahm'
+    alert-message: ness
+    requires-reconnect: false
+    menu-slot: 1
   wave:
+    enabled: true
     display-name: '&bWave'
     has-short-name: false
     short-name: NCP
@@ -89,8 +70,43 @@ loaded-anticheats:
     item: 326
     fix-description: false
     offset-description: 49
-    alert-message: 'wave'
+    alert-message: wave
+    requires-reconnect: false
+    menu-slot: 2
+  lightanticheat:
+    enabled: true
+    display-name: '&3LightAntiCheat'
+    has-short-name: true
+    short-name: '&3LightAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 339
+    fix-description: true
+    offset-description: 30
+    alert-message: lightac
+    requires-reconnect: false
+    menu-slot: 9
+  antihaxerman:
+    enabled: false
+    display-name: '&cAntiHaxerMan'
+    has-short-name: false
+    short-name: '&cAHM'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 166
+    fix-description: false
+    offset-description: 30
+    alert-message: ahm
+    requires-reconnect: false
+    menu-slot: 1
   pac:
+    enabled: true
     display-name: '&cPAC'
     has-short-name: false
     short-name: NCP
@@ -102,8 +118,11 @@ loaded-anticheats:
     item: 35
     fix-description: false
     offset-description: 49
-    alert-message: 'pac'
+    alert-message: pac
+    requires-reconnect: false
+    menu-slot: 4
   kauri:
+    enabled: true
     display-name: '&dKauri'
     has-short-name: false
     short-name: NCP
@@ -115,29 +134,11 @@ loaded-anticheats:
     item: 175
     fix-description: false
     offset-description: 49
-    alert-message: 'kauri'
-  spartan:
-    display-name: '&2Spartan'
-    has-short-name: false
-    short-name: Spar
-    unbreakable: false
-    enable_enchantment: true
-    enchantments:
-    - '19:1'
-    has_extra_lore: false
-    lore:
-    - 'Big Dick'
-    - '&bBoy &c-_-'
-    enable_item_flag: true
-    ItemFlags:
-    - HIDE_ENCHANTS
-    has-data: false
-    data: 2
-    item: 314
-    fix-description: false
-    offset-description: 0
-    alert-message: 'spartan'
+    alert-message: kauri
+    requires-reconnect: false
+    menu-slot: 5
   grimac:
+    enabled: true
     display-name: '&8GrimAC'
     has-short-name: true
     short-name: '&8Grim'
@@ -149,8 +150,11 @@ loaded-anticheats:
     item: 397
     fix-description: true
     offset-description: 49
-    alert-message: 'grim'
+    alert-message: grim
+    requires-reconnect: true
+    menu-slot: 7
   horizon:
+    enabled: true
     display-name: '&1Horizon'
     has-short-name: false
     short-name: Hori
@@ -162,8 +166,11 @@ loaded-anticheats:
     item: 173
     fix-description: false
     offset-description: 49
-    alert-message: 'horizon'
+    alert-message: horizon
+    requires-reconnect: false
+    menu-slot: 8
   nocheatplus:
+    enabled: true
     display-name: '&1NoCheatPlus'
     has-short-name: true
     short-name: '&o&1NC&cP'
@@ -175,21 +182,11 @@ loaded-anticheats:
     item: 5
     fix-description: true
     offset-description: 44
-    alert-message: 'ncp'
-  warden:
-    display-name: '&1Warden'
-    has-short-name: false
-    short-name: NCP
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 7
-    fix-description: false
-    offset-description: 28
-    alert-message: 'warden'
+    alert-message: ncp
+    requires-reconnect: false
+    menu-slot: 3
   vulcan:
+    enabled: true
     display-name: '&4Vulcan'
     has-short-name: false
     short-name: NCP
@@ -201,8 +198,11 @@ loaded-anticheats:
     item: 327
     fix-description: false
     offset-description: 49
-    alert-message: 'vulcan'
+    alert-message: vulcan
+    requires-reconnect: false
+    menu-slot: 6
   hawk:
+    enabled: false
     display-name: '&cHawk'
     has-short-name: false
     short-name: NCP
@@ -214,4 +214,6 @@ loaded-anticheats:
     item: 288
     fix-description: false
     offset-description: 49
-    alert-message: 'hawk'
+    alert-message: hawk
+    requires-reconnect: false
+    menu-slot: 1
