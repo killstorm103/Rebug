@@ -1,12 +1,14 @@
+are-users-allowed-to-disable-kicks: true
 on-join-commands:
 - horizon verbose
 - grim verbose
+experimental-feature-warning: true
 experimental-features:
 - show title
 - nofall water bucket
-experimental-feature-warning: true
+max-vclip-value: 20
 infinite-blocks-enabled: true
-special-tnt-enabled: false
+special-tnt-enabled: true
 special-tnt-fuseticks: 71
 join-message: '&l&7%player%!!!!!! &l&7Welcome &l&4Rebugger&l&7'
 delete-player-config-after-loading: false
@@ -25,21 +27,21 @@ tell-client-info-on-join: true
 tell-client-registers: true
 cancel-weather-changes: true
 force-gamemode-on-join: true
+auto-refill-blocks-ticks: 200
 map-version: v1.1
 discord-link: https://invite.gg/mhecommunity
 server-rules:
-- No Doxing/Leaking info
-- No Dossing other players or the server
-- No Griefing
-- No Spamming
-- No Scamming
-- Don't be an uptight prick
-- Niggers a nigger a whore's whore a faggots a faggot women don't have dicks there's only 2 genders etc i COULDN'T GiVE A FUCK if someone states a fact so don't come to me over this stuff wanting me to mute/kick/ban them!
+- Add your rules
 user-update-perms-command: lp user %user% parent set %anticheat%
-auto-refill-blocks-ticks: 200
 scaffold-test-area:
   minX: 3
   minY: 52
   minZ: 222
   maxX: 61
   maxZ: 302
+world-spawn:
+  posX: 41
+  posY: 58
+  posZ: 319
+  Yaw: -91.200165
+  Pitch: -0.5999501
