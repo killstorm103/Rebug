@@ -1,8 +1,8 @@
 name: Rebug
-version: '1.8'
+version: '1.9'
 main: me.killstorm103.Rebug.Main.Rebug
 author: killstorm103
-description: REBUG is a Test Server Plugin that allows you to switch between different AntiCheats and allows users to test exploits on players clients
+description: REBUG is a Test Server Plugin that allows you to switch between different AntiCheats and allows users to test exploits on their clients
 commands:
   rebug:
     description: command prefix for using rebugs commands
@@ -189,6 +189,24 @@ commands:
     usage: /<command>
     permissions:
     - me.killstorm103.rebug.command.getuuid
+    - me.killstorm103.rebug.*
+    - me.killstorm103.rebug.server_owner
+    - me.killstorm103.rebug.server_admin
+    - me.killstorm103.rebug.commands.*
+  vclip:
+    description: VClip
+    usage: /<command>
+    permissions:
+    - me.killstorm103.rebug.command.vclip
+    - me.killstorm103.rebug.*
+    - me.killstorm103.rebug.server_owner
+    - me.killstorm103.rebug.server_admin
+    - me.killstorm103.rebug.commands.*
+  fly:
+    description: Fly
+    usage: /<command>
+    permissions:
+    - me.killstorm103.rebug.command.flycmd
     - me.killstorm103.rebug.*
     - me.killstorm103.rebug.server_owner
     - me.killstorm103.rebug.server_admin
