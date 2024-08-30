@@ -9,7 +9,13 @@ Disabled-AntiCheat:
 is-vanilla-enabled: true
 custom-vanilla-menu-slot: false
 vanilla-item-slot: 15
+allowed-multiple-anticheats: true
+limiter-enabled: true
+max-anticheats: 5
 loaded-anticheats:
+  multiple-anticheats:
+    soon: 124124515215
+    soon2: daddy
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
   Inventory-size: 27
@@ -25,6 +31,12 @@ loaded-anticheats:
   - '&dKauri'
   - '&cPAC'
   - '&3LightAntiCheat'
+  - '&cAntiCheatPlus'
+  - '&1Sloth'
+  - '&dThotPatrol'
+  - '&bWatchCat'
+  - '&6FoxAddition'
+  - '&cENKIAnticheat'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -41,8 +53,120 @@ loaded-anticheats:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
   
-  saturn:
+  enkianticheat:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: true
+    display-name: '&cENKIAnticheat'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 2
+    item: 31
+    fix-description: false
+    offset-description: 45
+    alert-message: eac
+    requires-reconnect: false
+    menu-slot: 13
+  foxaddition:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: false
+    display-name: '&6FoxAddition'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 1
+    item: 31
+    fix-description: false
+    offset-description: 45
+    alert-message: FA
+    requires-reconnect: false
+    menu-slot: 12
+  watchcat:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: false
+    display-name: '&bWatchCat'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 1
+    item: 85
+    fix-description: false
+    offset-description: 45
+    alert-message: WatchCa
+    requires-reconnect: false
+    menu-slot: 12
+  thotpatrol:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    display-name: '&dThotPatrol'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 1
+    item: 85
+    fix-description: false
+    offset-description: 45
+    alert-message: ThotPatrol
+    requires-reconnect: false
+    menu-slot: 11
+  sloth:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: false
+    display-name: '&1Sloth'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 1
+    item: 31
+    fix-description: false
+    offset-description: 45
+    alert-message: sloth
+    requires-reconnect: true
+    menu-slot: 11
+    
+  anticheatplus:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: false
+    display-name: '&cAntiCheat+'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 10
+    item: 151
+    fix-description: false
+    offset-description: 45
+    alert-message: anticheat+
+    requires-reconnect: false
+    menu-slot: 10
+  
+  saturn:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
     display-name: '&0Saturn'
     has-short-name: false
     short-name: '&0Saturn'
@@ -58,7 +182,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 1
   wave:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: true
     display-name: '&bWave'
     has-short-name: false
     short-name: NCP
@@ -74,7 +200,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 2
   lightanticheat:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&3LightAntiCheat'
     has-short-name: true
     short-name: '&3LightAC'
@@ -90,7 +218,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 9
   antihaxerman:
+    permission-to-use: false
     enabled: false
+    is-multi-enabled: false
     display-name: '&cAntiHaxerMan'
     has-short-name: false
     short-name: '&cAHM'
@@ -106,7 +236,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 1
   pac:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&cPAC'
     has-short-name: false
     short-name: NCP
@@ -122,7 +254,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 4
   kauri:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&dKauri'
     has-short-name: false
     short-name: NCP
@@ -138,7 +272,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 5
   grimac:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: true
     display-name: '&8GrimAC'
     has-short-name: true
     short-name: '&8Grim'
@@ -154,7 +290,9 @@ loaded-anticheats:
     requires-reconnect: true
     menu-slot: 7
   horizon:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&1Horizon'
     has-short-name: false
     short-name: Hori
@@ -170,7 +308,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 8
   nocheatplus:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&1NoCheatPlus'
     has-short-name: true
     short-name: '&o&1NC&cP'
@@ -186,7 +326,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 3
   vulcan:
+    permission-to-use: false
     enabled: true
+    is-multi-enabled: false
     display-name: '&4Vulcan'
     has-short-name: false
     short-name: NCP
@@ -202,7 +344,9 @@ loaded-anticheats:
     requires-reconnect: false
     menu-slot: 6
   hawk:
+    permission-to-use: false
     enabled: false
+    is-multi-enabled: false
     display-name: '&cHawk'
     has-short-name: false
     short-name: NCP
