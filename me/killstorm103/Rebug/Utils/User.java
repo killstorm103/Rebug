@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,22 +64,27 @@ public class User
     private String brand = null, register = null;
     private int protocol;
     
-    // Player Settings
-    public boolean ShowS08Alert = true, Builder = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
+    public boolean ShowS08Alert = true, Builder = false, ClientCommandChecker = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
     
     public org.bukkit.Location death_location;
-    public String AntiCheat;
+    public String AntiCheat, NumberIDs = "", Keycard, HackedUUID;
+    public int SelectedAntiCheats = 0;
+    
     public Player CommandTarget; 
     public Map<String, Boolean> AlertsEnabled = new HashMap<>();
     public int  S08Pos = 0, UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
     potionlevel = 1, potion_effect_seconds = 240;
     public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
-    public long timer_balance = 0;
+    public long timer_balance = 0, joined = 0;
     public float yaw, pitch;
     
     public Player getPlayer ()
     {
     	return this.player;
+    }
+    public final UUID getUUID ()
+    {
+    	return getPlayer().getUniqueId();
     }
     public final String getName ()
     {
@@ -87,12 +93,16 @@ public class User
 	public User (Player player)
     {
         setUser(this);
+        this.HackedUUID = UUID.randomUUID().toString();
+        this.Keycard = ".say " + HackedUUID; 
         AlertsEnabled.clear();
         this.AntiCheat = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("default-anticheat");
         this.AntiCheat = PT.isStringNull(this.AntiCheat) ? "Vanilla" : this.AntiCheat;
+        this.SelectedAntiCheats = this.AntiCheat.equalsIgnoreCase("Vanilla") ? 0 : 1;
         this.player = player;
         LoadDefault();
         this.protocol = getNumber ();
+        this.joined = System.currentTimeMillis() + (5 * 1000);
     }
 	private void LoadDefault ()
 	{
@@ -120,6 +130,7 @@ public class User
 		this.Infinite_Blocks = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Infinite Blocks");
 		this.Yapper_Message_Count = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getInt("Yapper");
 		this.ShowS08Alert = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("S08 Alerts");
+		this.ClientCommandChecker = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Client Command Checker");
 		
 		// PacketDebugger Settings
 		this.FlyingPacket = Rebug.getINSTANCE().getDefaultPlayerSettingsConfigFile().getBoolean("Flying");
@@ -213,6 +224,9 @@ public class User
 	}
 	public String getColoredAntiCheat () 
 	{
+		if (this.SelectedAntiCheats > 1)
+			return ChatColor.AQUA + "Multi";
+		
 		String strip = ChatColor.stripColor(AntiCheat).toLowerCase();
     	if (strip.equals("vanilla"))
     		return ChatColor.GREEN + "Vanilla";
@@ -301,6 +315,10 @@ public class User
 					
 				case "s08 alerts":
 					text = ChatColor.AQUA + "Status: " + (ShowS08Alert ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowS08Alert;
+					break;
+					
+				case "client command checker":
+					text = ChatColor.AQUA + "Status: " + (ClientCommandChecker ? ChatColor.GREEN : ChatColor.DARK_RED) + ClientCommandChecker;
 					break;
 					
 				default:
@@ -1019,10 +1037,22 @@ public class User
 			item = Reset(Material.PAPER);
 			itemMeta.setDisplayName(ChatColor.ITALIC + "S08 Alerts");
 			lore.add(ChatColor.AQUA + "Status: " + (ShowS08Alert ? ChatColor.GREEN : ChatColor.DARK_RED) + ShowS08Alert);
-			lore.add(ChatColor.AQUA + "Description:" + ChatColor.RESET + " Enable/Disable Alerts for S08");
+			lore.add(ChatColor.AQUA + "Description: " + ChatColor.RESET + "Enable/Disable Alerts for S08");
 			itemMeta.setLore(lore);
 			item.setItemMeta(itemMeta);
 			inventory.setItem(18, item);
+			
+			
+			item = Reset(Material.COMMAND);
+			itemMeta.setDisplayName(ChatColor.ITALIC + "Client Command Checker");
+			lore.add(ChatColor.AQUA + "Status: " + (ClientCommandChecker ? ChatColor.GREEN : ChatColor.DARK_RED) + ClientCommandChecker);
+			lore.add(ChatColor.AQUA + "Description: " + ChatColor.RESET + "Checks if the player is using cheats");
+			lore.add(ChatColor.RESET + "by checking if they have client commands like");
+			lore.add(ChatColor.RESET + ".say this is easily bypassed");
+			lore.add(ChatColor.RESET + "this is done when the player first joins the server!");
+			itemMeta.setLore(lore);
+			item.setItemMeta(itemMeta);
+			inventory.setItem(19, item);
 			
 			
 			item = Reset(Material.TNT);

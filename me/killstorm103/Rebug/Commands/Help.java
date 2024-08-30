@@ -44,26 +44,30 @@ public class Help extends Command
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
 		if (args.length == 1)
-			Log(sender, ChatColor.GRAY + "commands" + ChatColor.RESET + ":", false);
-		
+		{
+			Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.GRAY + "v" + Rebug.PluginVersion() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.GRAY + Rebug.PluginEdition() + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + " made by " + ChatColor.YELLOW + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|", false);
+			Log(sender, ChatColor.GRAY + "commands (" + "You have access to " + Rebug.getINSTANCE().getAccessToCommandsNumber (sender) + " / " + Rebug.getINSTANCE().getCommands().size() + ")" + ChatColor.RESET + ":", false);
+		}
 		if (args.length == 3)
 		{
-			Command c = Rebug.getINSTANCE().getCommandByName(args[2]);
-			c = c == null ? Rebug.getINSTANCE().getCommandBySubName(args[2]) : c;
-			if (c != null)
+			args[1] = args[1].replace("cmd", "command");
+			if (args[1].equalsIgnoreCase("command"))
 			{
-				if (args[1].equalsIgnoreCase("cmd") || args[1].equalsIgnoreCase("command"));
+				Command c = Rebug.getINSTANCE().getCommandByName(args[2]);
+				c = c == null ? Rebug.getINSTANCE().getCommandBySubName(args[2]) : c;
+				if (c != null)
 				{
 					Log(sender, ChatColor.GRAY + c.getSyntax(), false);
 					Log(sender, ChatColor.GRAY + c.getDescription(), false);
 				}
+				else
+					Log(sender, "Unknown Command!");
 			}
 			else
-				Log(sender, "Unknown Command!");
-				
+				Log(sender, getSyntax());
+
 			return;
 		}
-		
 		for (Command commands : Rebug.getINSTANCE().getCommands())
 		{
 			if (args.length == 1)

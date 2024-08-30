@@ -65,10 +65,10 @@ public class SetUserAntiCheat extends Command
 		User user = Rebug.getUser(player);
 		if (user == null)
 		{
-			sender.sendMessage(Rebug.RebugMessage + "Unknown User!");
+			sender.sendMessage(Rebug.RebugMessage + "Unknown User (User was null)!");
 			return;
 		}
-		Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null, sender);
+		Rebug.getINSTANCE().UpdateAntiCheat(user, args.length > 3 ? args : new String[] {args[2]}, null, sender, args.length > 3);
 	}
 
 	@Override

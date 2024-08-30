@@ -44,11 +44,14 @@ public class EventBlockHandling implements Listener
 			}
 			
 		}
-		
+		double minY = Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minY"), maxY = Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxY");
+		maxY = maxY < minY ? minY + 1 : maxY;
+		minY = minY > maxY ? maxY - 1 : minY;
+			
 		if (world.getName().equalsIgnoreCase("world") &&
 		(loc.getBlockX() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minX") &&
-	    loc.getBlockY() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minY") &&
-	    loc.getBlockZ() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minZ") && loc.getBlockX() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxX") && loc.getBlockZ() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxZ")))
+	    loc.getBlockY() >= minY &&
+	    loc.getBlockZ() >= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minZ") && loc.getBlockX() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxX") && loc.getBlockY() <= maxY && loc.getBlockZ() <= Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxZ")))
 			return true;
 		
 		return false;

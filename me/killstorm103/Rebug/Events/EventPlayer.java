@@ -1,6 +1,8 @@
 package me.killstorm103.Rebug.Events;
 
 
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,15 +53,14 @@ public class EventPlayer implements Listener
 	public void onChat (AsyncPlayerChatEvent e)
 	{
 		Player player = e.getPlayer();
-		if (Config.Experimental_Features("ChatPerm") && !Rebug.hasAdminPerms(player) && !player.hasPermission("me.killstorm103.rebug.user.chat"))
+		if (!Rebug.hasAdminPerms(player) && !player.hasPermission("me.killstorm103.rebug.user.chat") && Config.Experimental_Features("ChatPerm"))
 		{
 			e.setCancelled(true);
 			return;
 		}
-			
+		String message = ChatColor.stripColor(e.getMessage());
 		if (Bukkit.getOnlinePlayers().size() > 1)
 		{
-			String message = e.getMessage();
 			message = message.trim();
 			String[] inChat = StringUtils.split(message);
 			for (int i = 0; i < inChat.length; i ++)
@@ -77,8 +78,40 @@ public class EventPlayer implements Listener
 		
 		User user = Rebug.getUser(player);
 		if (user == null) return;
-		
-		user.Yapper_Message_Count ++;
+		if (user.ClientCommandChecker)
+		{
+			if (message.equals(user.Keycard) && Rebug.lockedList.contains(player.getUniqueId())) 
+			{
+				Rebug.lockedList.remove(player.getUniqueId());
+                user.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully passed Client Command Checker!"));
+	            e.setMessage("");
+                e.setCancelled(true);
+                return;
+	        }
+			if (Rebug.lockedList.contains(user.getUUID()) && message.equals(user.HackedUUID)) 
+			{
+				e.setMessage("");
+                e.setCancelled(true);
+                return;
+	        }
+		}
+		if (Rebug.lockedList.contains(user.getUUID())) 
+        {
+            e.setMessage("");
+            e.setCancelled(true);
+            return;
+        }
+		if (!Rebug.lockedList.isEmpty())
+		{
+			for (UUID uid : Rebug.lockedList) 
+            {
+                Player p = Bukkit.getPlayer(uid);
+                if (p != null && p.isOnline())
+                e.getRecipients().remove(p);
+            }
+		}
+		if (!user.ClientCommandChecker || !Rebug.lockedList.contains(user.getUUID()))
+			user.Yapper_Message_Count ++;
 	}
 	
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -162,7 +195,7 @@ public class EventPlayer implements Listener
 		if (user != null)
 		{
 			user.death_location = user.getPlayer().getLocation();
-			user.getPlayer().sendMessage(Rebug.RebugMessage + "Use /back to teleport to where you died!");
+			user.sendMessage("Use /back to teleport to where you died!");
 		}
 	}
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)

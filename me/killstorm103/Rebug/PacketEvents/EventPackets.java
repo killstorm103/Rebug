@@ -564,26 +564,29 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Server.PLAYER_POSITION_AND_LOOK)
 		{
 			user.S08Pos = 0;
-			if (user.ShowS08Alert)
+			if (user.joined < System.currentTimeMillis())
 			{
-				new BukkitRunnable () 
+				if (user.ShowS08Alert)
 				{
-	                @Override
-	                public void run()
-	                {
-	                	if (user.S08Pos > 100 || !user.ShowS08Alert)
-	                	{
-	                		cancel();
-	                		return;
-	                	}
-	                	
-	                	
-	                	IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Ticks: " 
-	                    + user.S08Pos + "\"}");
-						PT.SendPacket(user.getPlayer(), new PacketPlayOutChat(chatTitle, (byte) 2));
-						user.S08Pos ++;
-	                }
-	            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
+					new BukkitRunnable () 
+					{
+		                @Override
+		                public void run()
+		                {
+		                	if (user.S08Pos > 100 || !user.ShowS08Alert)
+		                	{
+		                		cancel();
+		                		return;
+		                	}
+		                	
+		                	
+		                	IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Ticks: " 
+		                    + user.S08Pos + "\"}");
+							PT.SendPacket(user.getPlayer(), new PacketPlayOutChat(chatTitle, (byte) 2));
+							user.S08Pos ++;
+		                }
+		            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);
+				}
 			}
 			/*
 			 * 
@@ -628,9 +631,123 @@ public class EventPackets implements PacketListener
 				
 				if (Alert_Related.length < 4) return;
 				
+				String connedAntiCheat = user.AntiCheat.toLowerCase();
+				
 				for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
 				{
-					String alert = map.getValue(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert.toLowerCase() + ".alert-message"));
+					String alert = map.getValue().toLowerCase(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert.toLowerCase() + ".alert-message"));
+					alert_message = ChatColor.stripColor(alert_message);
+					alert_message = alert_message.trim();
+					alert = alert.trim();
+					
+					if (Alert_Related[0].equalsIgnoreCase(alert_message))
+					{
+						// Flags
+						if (Alert_Related[2].equalsIgnoreCase("failed") || Alert_Related[2].equalsIgnoreCase("flagged"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Flag (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!connedAntiCheat.contains(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Flag - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("flagged"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!connedAntiCheat.contains(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						if (Alert_Related.length > 4 && Alert_Related[2].equalsIgnoreCase("might") && Alert_Related[3].equalsIgnoreCase("be") && Alert_Related[4].equalsIgnoreCase("using"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!connedAntiCheat.contains(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						
+						// Punished
+						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("punished"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!connedAntiCheat.contains(alert) || !user.ShowPunishes))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowPunishes was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						
+						// Setback
+						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("setback"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!connedAntiCheat.contains(alert) || !user.ShowSetbacks))
+							{
+								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowPunishes was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						break;
+					}
+				}
+				
+				
+				/*
+				 * 
+				 * for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
+				{
+					String alert = map.getValue().toLowerCase(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert.toLowerCase() + ".alert-message"));
 					alert_message = ChatColor.stripColor(alert_message);
 					alert_message = alert_message.trim();
 					alert = alert.trim();
@@ -657,6 +774,24 @@ public class EventPackets implements PacketListener
 							break;
 						}
 						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("flagged"))
+						{
+							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
+							{
+								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
+								user.preReceive --;
+								e.setCancelled(true);
+								break;
+							}
+							break;
+						}
+						if (Alert_Related.length > 4 && Alert_Related[2].equalsIgnoreCase("might") && Alert_Related[3].equalsIgnoreCase("be") && Alert_Related[4].equalsIgnoreCase("using"))
 						{
 							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
 							{
@@ -718,6 +853,7 @@ public class EventPackets implements PacketListener
 						break;
 					}
 				}
+				 */
 			}
 		}
 	}

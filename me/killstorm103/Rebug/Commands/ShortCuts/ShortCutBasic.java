@@ -23,24 +23,17 @@ public class ShortCutBasic implements TabExecutor
 		if (c != null)
 			return c.HasCustomTabComplete(sender, command, args, arg2) ? c.onTabComplete(sender, command, args, arg2) : null;
 		
-		me.killstorm103.Rebug.Main.Command cmd = Rebug.getINSTANCE().getCommandBySubName(command.getName());
-		if (cmd != null && cmd.HasCustomTabComplete(sender, command, args, arg2))
-			return cmd.onTabComplete(sender, command, args, arg2);
-			
-		/*
 		for (me.killstorm103.Rebug.Main.Command cmd : Rebug.getINSTANCE().getCommands())
 		{
-			if (cmd.HasCustomTabComplete(sender, command, args, arg2) && cmd.SubAliases() != null && cmd.SubAliases().length > 0)
+			if (cmd.SubAliases() != null && cmd.SubAliases().length > 0)
 			{
 				for (int i = 0; i < cmd.SubAliases().length; i ++)
 				{
-					if (command.getName().equalsIgnoreCase(cmd.SubAliases()[i].replace("/", "").replace("//", "")))
+					if (command.getName().equalsIgnoreCase(cmd.SubAliases()[i].replace("/", "").replace("//", "")) && cmd.HasCustomTabComplete(sender, command, args, arg2))
 						return cmd.onTabComplete(sender, command, args, arg2);
 				}
 			}
 		}
-		*/
-			
 			
 		return null;
 	}

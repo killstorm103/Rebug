@@ -177,7 +177,7 @@ public class EventMenus implements Listener
 							return;
 						}
 					}
-					Rebug.getINSTANCE().UpdateAntiCheat(user, ItemName, item, null);
+					Rebug.getINSTANCE().UpdateAntiCheat(user, new String[] {ItemName}, item, null, false);
 				}
 				if (MenuName.equalsIgnoreCase("Exploits") && e.getClickedInventory() != user.getPlayer().getInventory() && ItemName != null)
 				{
@@ -225,8 +225,19 @@ public class EventMenus implements Listener
 						}
 						if (ItemName.equalsIgnoreCase("Reset Scaffold Area"))
 						{
-							Rebug.getINSTANCE().RestScaffoldTask.cancel();
-							ResetScaffoldTestArea.getMainTask().run();
+							if (Rebug.getINSTANCE().ResetScaffoldTask != null)
+							{
+								Rebug.getINSTANCE().ResetScaffoldTask.cancel();
+								ResetScaffoldTestArea.getMainTask().run();
+							}
+							else
+							{
+								user.sendMessage("Scaffold Area Task was null!, Restarting Scaffold Area Task!");
+								Rebug.getINSTANCE().ResetScaffoldTask = Bukkit.getScheduler().runTaskTimer(Rebug.getINSTANCE(), ResetScaffoldTestArea.getMainTask(), 0, 10000); // 6000
+								Rebug.getINSTANCE().ResetScaffoldTask.cancel();
+								ResetScaffoldTestArea.getMainTask().run();
+							}
+							
 							return;
 						}
 						if (ItemName.equalsIgnoreCase("Reload Config"))
@@ -274,6 +285,9 @@ public class EventMenus implements Listener
 							{
 								user.Exterranl_Damage =! user.Exterranl_Damage;
 							}
+							if (ItemName.equalsIgnoreCase("Client Command Checker"))
+								user.ClientCommandChecker =! user.ClientCommandChecker;
+							
 							if (ItemName.equalsIgnoreCase("Damage Resistance"))
 							{
 								user.Damage_Resistance =! user.Damage_Resistance;

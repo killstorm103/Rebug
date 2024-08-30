@@ -1,5 +1,6 @@
 package me.killstorm103.Rebug.PluginHooks;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,6 @@ import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PT;
 import me.killstorm103.Rebug.Utils.User;
-import net.md_5.bungee.api.ChatColor;
 
 public class PlaceholderapiHook extends PlaceholderExpansion
 {
@@ -51,6 +51,10 @@ public class PlaceholderapiHook extends PlaceholderExpansion
 			
 			if (params.equalsIgnoreCase("anticheat"))
 			{
+				if (user.SelectedAntiCheats > 1)
+					return ChatColor.AQUA + "Multi" + ChatColor.RESET;
+				
+				
 				String ac = user.getColoredAntiCheat() + ChatColor.RESET, strip = ChatColor.stripColor(ac).toLowerCase();
 				if (strip.equalsIgnoreCase("Vanilla"))
 					return ac;

@@ -44,16 +44,19 @@ public class PT
 	public final Location getSpawn ()
 	{
 		final Location loc = new Location(Bukkit.getWorld("world"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posX"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posY"),
-	    Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posZ"),
-		(float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Yaw"), (float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Pitch"));
+	    Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posZ")), locWithRots =  new Location(Bukkit.getWorld("world"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posX"), Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posY"),
+	    	    Rebug.getINSTANCE().getConfig().getDouble("world-spawn.posZ"), (float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Yaw"), (float) Rebug.getINSTANCE().getConfig().getDouble("world-spawn.Pitch"));
 		
-		return loc;
+		return Rebug.getINSTANCE().getConfig().getBoolean("world-spawn.set-rots") ? locWithRots : loc;
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void DebuggerChatMessage (Player player, PacketReceiveEvent e, String toDebug)
 	{
-		if (player == null || PT.isStringNull(toDebug)) return;
+		if (player == null) return;
+		if (PT.isStringNull(toDebug))
+			toDebug = "N/A";
+		
 		
 		int debuggercounter = Rebug.PacketDebuggerPlayers.get(player.getUniqueId());
 		TextComponent component = new TextComponent(ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.RED + "DEBUGGER " + ChatColor.DARK_GRAY + ">> " + "[" + debuggercounter + "] " + e.getPacketName());

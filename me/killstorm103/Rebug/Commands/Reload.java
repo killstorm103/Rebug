@@ -1,16 +1,12 @@
 package me.killstorm103.Rebug.Commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
-import net.md_5.bungee.api.ChatColor;
 
 public class Reload extends Command
 {
@@ -22,7 +18,7 @@ public class Reload extends Command
 
 	@Override
 	public String getSyntax() {
-		return "reload <config or server>";
+		return "reload";
 	}
 
 	@Override
@@ -44,43 +40,12 @@ public class Reload extends Command
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		if (args.length < 2)
-		{
-			sender.sendMessage(Rebug.RebugMessage + getSyntax());
-			return;
-		}
-		
-		if (args[1].equalsIgnoreCase("config"))
-			Rebug.getINSTANCE().Reload_Configs(sender);
-		
-		if (args[1].equalsIgnoreCase("server"))
-		{
-			for (Player p : Bukkit.getOnlinePlayers())
-				PT.KickPlayer(p, ChatColor.DARK_RED + "Reloading server join Back!");
-			
-			Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable()
-			{
-				@Override
-				public void run() 
-				{
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "reload");
-				}
-			}, 20);
-		}
+		Rebug.getINSTANCE().Reload_Configs(sender);
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String[] args, String alias) 
 	{
-		if (args.length > 1)
-		{
-			List<String> s = new ArrayList<>();
-			s.clear();
-			s.add("config");
-			s.add("server");
-			return s;
-		}
-		
 		return null;
 	}
 

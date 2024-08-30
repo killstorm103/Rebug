@@ -19,6 +19,6 @@ public class EventHandlePlayerSpawn implements Listener
 		 if (Rebug.debug)
 			 Rebug.Debug(player, player.getWorld().getName());
 		 
-		 e.setRespawnLocation(PT.INSTANCE.getSpawn());
+		 e.setRespawnLocation(Rebug.getINSTANCE().getConfig().getBoolean("world-spawn.use-this") ? PT.INSTANCE.getSpawn() : (player.getBedSpawnLocation() != null ? player.getBedSpawnLocation() : player.getWorld().getSpawnLocation()));
 	 }
 }

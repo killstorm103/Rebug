@@ -152,7 +152,7 @@ public class Menu extends Command
 				{
 					if (args.length >= 3)
 					{
-						Rebug.getINSTANCE().UpdateAntiCheat(user, args[2], null, null);
+						Rebug.getINSTANCE().UpdateAntiCheat(user, args.length > 3 ? args : new String[] {args[2]}, null, null, args.length > 3);
 						return;
 					}
 					user.getPlayer().openInventory(ItemsAndMenusUtils.INSTANCE.getAntiCheats());

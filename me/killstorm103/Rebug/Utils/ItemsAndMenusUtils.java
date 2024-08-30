@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -246,6 +247,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 			}
 			if (!Rebug.anticheats.isEmpty())
 			{
+				final String[] canbe = {"PacketEvents", "ProtocolLib", "Atlas", "ProtocolSupport", "PacketListenerApi"};
 				item = Reset(Material.DIRT);
 				itemMeta.setDisplayName(ChatColor.WHITE + "Vanilla");
 				lore.add("");
@@ -256,6 +258,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 				itemMeta.setLore(lore);
 				item.setItemMeta(itemMeta);
 				inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot") : 0, item);
+				
 				int adding = 1;
 				final boolean CustomSlots = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("Custom Slots");
 				for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
@@ -282,7 +285,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 						else
 							author = AntiCheat.getDescription().getAuthors().get(0);
 					}
-					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has-data"))
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("loaded-anticheats." + name + ".has-data") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has-data"))
 						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)), 1, (short) 0, (byte) Config.getItemData(name));
 					else
 						item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)));
@@ -303,7 +306,7 @@ public class ItemsAndMenusUtils implements InventoryHolder
 							}
 						}
 					}
-					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_item_flag"))
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + name + ".enable_item_flag") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".enable_item_flag"))
 					{
 						for (String itemflag : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".ItemFlags")) 
 						{
@@ -314,8 +317,8 @@ public class ItemsAndMenusUtils implements InventoryHolder
 								itemMeta.addItemFlags(flag);
 						}
 					}
-					
-					itemMeta.spigot().setUnbreakable(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".unbreakable"));
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + name + ".unbreakable") != null)
+						itemMeta.spigot().setUnbreakable(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".unbreakable"));
 					
 					itemMeta.setDisplayName(ChatColor.WHITE + AntiCheat.getName());
 					lore.add("");
@@ -353,7 +356,88 @@ public class ItemsAndMenusUtils implements InventoryHolder
 					else
 						lore.add(ChatColor.AQUA + "Description: "+ ChatColor.WHITE + "None");
 					
-					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has_extra_lore"))
+					if (AntiCheat.getDescription() != null)
+					{
+						String soft_depend = "", hard_depend = "";
+						int soft = AntiCheat.getDescription().getSoftDepend().size(), hard = AntiCheat.getDescription().getDepend().size();
+						if (soft > 0)
+						{
+							if (soft > 1)
+							{
+								for (int i = 0; i < soft; i ++)
+								{
+									for (int o = 0; o < canbe.length; o ++)
+									{
+										if (AntiCheat.getDescription().getSoftDepend().get(i).equalsIgnoreCase(canbe[o]))
+											soft_depend += AntiCheat.getDescription().getSoftDepend().get(i) + " ";
+									}
+								}
+							}
+							else
+							{
+								for (int o = 0; o < canbe.length; o ++)
+								{
+									if (AntiCheat.getDescription().getSoftDepend().get(0).equalsIgnoreCase(canbe[o]))
+										soft_depend += AntiCheat.getDescription().getSoftDepend().get(0);
+								}
+							}
+							soft_depend = soft_depend.replace(", ]", "").replace("[[", "").replace("]]", "").replace(",,", "").replace(",", "");
+						}
+						if (hard > 0)
+						{
+							if (hard > 1)
+							{
+								for (int i = 0; i < hard; i ++)
+								{
+									for (int o = 0; o < canbe.length; o ++)
+									{
+										if (AntiCheat.getDescription().getDepend().get(i).equalsIgnoreCase(canbe[o]))
+											hard_depend += AntiCheat.getDescription().getDepend().get(i) + " ";
+									}
+								}
+							}
+							else
+							{
+								for (int o = 0; o < canbe.length; o ++)
+								{
+									if (AntiCheat.getDescription().getDepend().get(0).equalsIgnoreCase(canbe[o]))
+										hard_depend += AntiCheat.getDescription().getDepend().get(0);
+								}
+							}
+							hard_depend = hard_depend.replace(", ]", "").replace("[[", "").replace("]]", "").replace(",,", "").replace(",", "");
+						}
+						if (!PT.isStringNull(hard_depend))
+						{
+							String NewHD = "";
+							String[] Split = StringUtils.split(hard_depend);
+							if (Split.length > 1)
+							{
+								for (int i = 0; i < Split.length; i ++)
+								{
+									NewHD += Split[i] + (i < Split.length - 1 ? ", " : "");
+								}
+							}
+							
+							lore.add(ChatColor.AQUA + "Hard Depend: " + ChatColor.WHITE + (PT.isStringNull(NewHD) ? hard_depend : NewHD));
+						}
+						if (!PT.isStringNull(soft_depend))
+						{
+							String NewSD = "";
+							String[] Split = StringUtils.split(soft_depend);
+							if (Split.length > 1)
+							{
+								for (int i = 0; i < Split.length; i ++)
+								{
+									NewSD += Split[i] + (i < Split.length - 1 ? ", " : "");
+								}
+							}
+							lore.add(ChatColor.AQUA + "Soft Depend: " + ChatColor.WHITE + (PT.isStringNull(NewSD) ? soft_depend : NewSD));
+						}
+						if (PT.isStringNull(soft_depend) && PT.isStringNull(hard_depend))
+							lore.add(ChatColor.AQUA + "Dependencies: " + ChatColor.WHITE + "None");
+					}
+					
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + name + ".has_extra_lore") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + name + ".has_extra_lore"))
 					{
 						for (String lores : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + name + ".lore"))
 							lore.add(ChatColor.translateAlternateColorCodes('&', lores));
