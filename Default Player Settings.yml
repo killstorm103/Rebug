@@ -22,6 +22,7 @@ Allow Mentions: true
 Infinite Blocks: false
 Yapper: 0
 S08 Alerts: true
+Client Command Checker: true
 ## PacketDebugger Settings
 Flying: true
 Position: true
