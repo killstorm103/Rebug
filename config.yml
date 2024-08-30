@@ -2,6 +2,11 @@ are-users-allowed-to-disable-kicks: true
 on-join-commands:
 - horizon verbose
 - grim verbose
+- foxaddition verbose
+client-command-checker:
+  sendOnce: false
+  topString: '&e------&aplease click the button&e------'
+  bottomString: '&e------&aplease click the button&e------'
 experimental-feature-warning: true
 experimental-features:
 - show title
@@ -33,13 +38,20 @@ discord-link: https://invite.gg/mhecommunity
 server-rules:
 - Add your rules
 user-update-perms-command: lp user %user% parent set %anticheat%
+is-clear-lag-plugin-enabled: true
+clear-lag-command: lagg clear
 scaffold-test-area:
   minX: 3
   minY: 52
   minZ: 222
   maxX: 61
+  maxY: 255
   maxZ: 302
+  auto-clear: false
+  clear_blocks_command: fill
 world-spawn:
+  use-this: true
+  set-rots: false
   posX: 41
   posY: 58
   posZ: 319
