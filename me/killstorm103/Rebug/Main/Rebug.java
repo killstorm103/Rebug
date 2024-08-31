@@ -8,13 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,6 +43,7 @@ import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.killstorm103.Rebug.Commands.BackCMD;
 import me.killstorm103.Rebug.Commands.ClientCMD;
+import me.killstorm103.Rebug.Commands.ClientCommandCheckerCMD;
 import me.killstorm103.Rebug.Commands.ConsoleMessage;
 import me.killstorm103.Rebug.Commands.Credits;
 import me.killstorm103.Rebug.Commands.DamageCMD;
@@ -79,25 +80,107 @@ import me.killstorm103.Rebug.Events.EventHandlePlayerSpawn;
 import me.killstorm103.Rebug.Events.EventMenus;
 import me.killstorm103.Rebug.Events.EventPlayer;
 import me.killstorm103.Rebug.Events.EventWeather;
+import me.killstorm103.Rebug.NMS.NMS_Interface;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_10_R1;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_11_R1;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_12_R1;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_7_R1;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_7_R2;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_7_R4;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_8_R1;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_8_R3;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_9_R2;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_9_R1;
 import me.killstorm103.Rebug.PacketEvents.EventPackets;
 import me.killstorm103.Rebug.PacketEvents.EventTestPacket;
 import me.killstorm103.Rebug.PluginHooks.PlaceholderapiHook;
 import me.killstorm103.Rebug.Tasks.OneSecondUpdater_Task;
 import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class Rebug extends JavaPlugin implements Listener
 {
 	public static Map<UUID, Integer> PacketDebuggerPlayers = new HashMap<>();
-	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true, AutoRefillBlocks = true, Reloading = false;
+	public static boolean debug = false, KickOnReloadConfig = false, debugOpOnly = true, PrivatePerPlayerAlerts = true, AutoRefillBlocks = true, Reloading = false, DebugSound = false;
 	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
 	private static Rebug INSTANCE;
 	private final ArrayList<me.killstorm103.Rebug.Main.Command> commands = new ArrayList<me.killstorm103.Rebug.Main.Command>();
 	public static final HashMap<UUID, User> USERS = new HashMap<>();
 	public static final String RebugMessage = ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.DARK_GRAY + ">> ";
-	public static String APIVersion = "1.8";
+	private NMS_Interface TheInterface;
+	public NMS_Interface getNMS ()
+	{
+		return TheInterface;
+	}
+	private String Server_Version;
+	public String getServerVersion ()
+	{
+		Server_Version = Server_Version == null ? "Unknown" : Server_Version;
+		return Server_Version;
+	}
+	private boolean isServerVersionSupportedCheck ()
+	{
+		String ServerVersion = "N/A";
+		try
+		{
+			ServerVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+		}
+		catch (ArrayIndexOutOfBoundsException e) 
+		{
+			Log(Level.SEVERE, "Failed to get the Server's version!");
+			return false;
+		}
+		Server_Version = ServerVersion;
+		switch (ServerVersion)
+		{
+		case "v1_7_R1":
+			TheInterface = new PT_1_7_R1();
+			break;
+		
+		case "v1_7_R2":
+			TheInterface = new PT_1_7_R2();
+			break;
+		
+		case "v1_7_R4":
+			TheInterface = new PT_1_7_R4();
+			break;
+			
+		case "v1_8_R1":
+			TheInterface = new PT_1_8_R1();
+			break;
+			
+		case "v1_8_R3":
+			TheInterface = new PT_1_8_R3();
+			break;
+			
+		case "v1_9_R1":
+			TheInterface = new PT_1_9_R1();
+			break;
+			
+		case "v1_9_R2":
+			TheInterface = new PT_1_9_R2();
+			break;
+			
+		case "v1_10_R1":
+			TheInterface = new PT_1_10_R1();
+			break;
+			
+		case "v1_11_R1":
+			TheInterface = new PT_1_11_R1();
+			break;
+			
+		case "v1_12_R1":
+			TheInterface = new PT_1_12_R1();
+			break;
+
+		default:
+			break;
+		}
+			
+		return TheInterface != null;
+	}
 	
 	public static User getUser(Player player) 
 	{
@@ -113,7 +196,7 @@ public class Rebug extends JavaPlugin implements Listener
     }
     public static void Debug (CommandSender sender, String msg)
     {
-    	if (!debug || PT.isStringNull(msg)) return;
+    	if (!debug || PTNormal.isStringNull(msg)) return;
     	
     	if (sender != null && sender instanceof Player)
     	{
@@ -268,7 +351,7 @@ public class Rebug extends JavaPlugin implements Listener
         	    		|| plugin == null || !plugin.isEnabled())
         	    		{
         	    			user.AntiCheat = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("default-anticheat");
-        	        		user.AntiCheat = PT.isStringNull(user.AntiCheat) ? "Vanilla" : user.AntiCheat;
+        	        		user.AntiCheat = PTNormal.isStringNull(user.AntiCheat) ? "Vanilla" : user.AntiCheat;
         	    		}
         	    	}
         }
@@ -403,7 +486,7 @@ public class Rebug extends JavaPlugin implements Listener
     	if (KickOnReloadConfig)
 		{
 			for (Player players : Bukkit.getOnlinePlayers())
-				PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
+				PTNormal.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
 		}
     	boolean noerror;
     	try
@@ -414,8 +497,7 @@ public class Rebug extends JavaPlugin implements Listener
         	ItemsConfig = YamlConfiguration.loadConfiguration(LoadedItemsConfigFile);
         	DefaultPlayerSettingsConfig = YamlConfiguration.loadConfiguration(DefaultPlayerSettingsFile);
         	anticheats.clear();
-        	ItemsAndMenusUtils.INSTANCE.lore.clear();
-        	ItemsAndMenusUtils.INSTANCE.AntiCheatMenu = ItemsAndMenusUtils.INSTANCE.ItemPickerMenu = null;
+        	ItemsAndMenusUtils.AntiCheatMenu = ItemsAndMenusUtils.ItemPickerMenu = null;
     		if (sender instanceof Player)
     			sender.sendMessage(RebugMessage + "Successfully Reloaded Config!");
     		
@@ -442,13 +524,13 @@ public class Rebug extends JavaPlugin implements Listener
 					if (used != null && !used.AntiCheat.equalsIgnoreCase("Vanilla") && (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("loaded-anticheats." + used.AntiCheat.toLowerCase()) == null || !Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + used.AntiCheat.toLowerCase() + ".enabled")))
 					{
 						if (getLoadedAntiCheatsFile().getBoolean("Disabled-AntiCheat.kick-on-Invalid-anticheat"))
-							PT.KickPlayer(used.getPlayer(), RebugMessage + used.AntiCheat + " was Disabled! - Invalid AntiCheat upon Config Reload");
+							PTNormal.KickPlayer(used.getPlayer(), RebugMessage + used.AntiCheat + " was Disabled! - Invalid AntiCheat upon Config Reload");
 						
 						else
 						{
 							used.sendMessage(used.AntiCheat + " was Disabled! - Invalid AntiCheat upon Config Reload");
 							used.AntiCheat = getLoadedAntiCheatsFile().getString("default-anticheat");
-							used.AntiCheat = PT.isStringNull(used.AntiCheat) ? "Vanilla" : used.AntiCheat;
+							used.AntiCheat = PTNormal.isStringNull(used.AntiCheat) ? "Vanilla" : used.AntiCheat;
 							String NewAC = used.getColoredAntiCheat(), striped = ChatColor.stripColor(used.AntiCheat).toLowerCase();
 					   		if (getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))
 					   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
@@ -473,7 +555,7 @@ public class Rebug extends JavaPlugin implements Listener
     }
     private void createCustomConfig (String con) 
     {
-    	if (PT.isStringNull(con)) return;
+    	if (PTNormal.isStringNull(con)) return;
     	
     	if (con.equalsIgnoreCase("config"))
     	{
@@ -560,7 +642,7 @@ public class Rebug extends JavaPlugin implements Listener
    		BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
    		if (board == null) return;
    		
-   		if (!PT.isStringNull(board.get(score)))
+   		if (!PTNormal.isStringNull(board.get(score)))
    			board.remove(score);
    		
    		board.set(text, score);
@@ -634,7 +716,7 @@ public class Rebug extends JavaPlugin implements Listener
 				@Override
 				public void run() 
 				{
-					user.getPlayer().teleport(PT.INSTANCE.getSpawn());
+					user.getPlayer().teleport(PTNormal.INSTANCE.getSpawn());
 				}
 			});
         }
@@ -655,7 +737,7 @@ public class Rebug extends JavaPlugin implements Listener
    				}
    			}, 100);
    		}
-   		checkPlayer(user);
+   		checkPlayer(user, false);
 	} 
    	public void run_server_command (String cmd) 
    	{
@@ -663,9 +745,9 @@ public class Rebug extends JavaPlugin implements Listener
     }
    	public static List<UUID> lockedList = new ArrayList<>();
    	
-   	public void checkPlayer (User user)
+   	public void checkPlayer (User user, boolean sudo)
    	{
-   		if (user == null || !user.ClientCommandChecker) return;
+   		if (user == null || !user.ClientCommandChecker && !sudo) return;
    		
         if (!lockedList.contains(user.getUUID())) 
             lockedList.add(user.getUUID());
@@ -789,11 +871,30 @@ public class Rebug extends JavaPlugin implements Listener
 			
 		e.setQuitMessage(ChatColor.GRAY + "[" + ChatColor.RED + "-" + ChatColor.GRAY + "] " + e.getPlayer().getName());
 	}
+	public void Log (Level JavaUtilLog, String message)
+	{
+		if (PTNormal.isStringNull(message))
+		{
+			getLogger().log(Level.SEVERE, "message was null, Rebug.java: public void Log");
+			message = "N/A";
+		}
+		if (JavaUtilLog == null)
+		{
+			getLogger().log(Level.SEVERE, "JavaUtilLog was null, Rebug.java: public void Log");
+			JavaUtilLog = Level.INFO;
+		}
+		getLogger().log(JavaUtilLog, message);
+	}
 	@Override
 	public void onEnable ()
 	{
+		if (!isServerVersionSupportedCheck())
+		{
+			getLogger().log(Level.SEVERE, "Unsupported Server Version!");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
 		INSTANCE = this;
-		
 		PacketDebuggerPlayers.clear();
 		isAlertsEnabled.clear();
 		isAllowedToDebugPackets.clear();
@@ -805,7 +906,7 @@ public class Rebug extends JavaPlugin implements Listener
 		for (int i = 0; i < list_configs.size(); i ++)
 			createCustomConfig(list_configs.get(i));
 		
-		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's commands");
+		getLogger().log(Level.INFO, "Enabling commands");
 		// ShortCuts
 		getCommand("client").setExecutor(new ShortCutBasic());
 		getCommand("exploits").setExecutor(new ShortCutBasic());
@@ -834,6 +935,7 @@ public class Rebug extends JavaPlugin implements Listener
 		getCommand("packetdebugger").setTabCompleter(new ShortCutBasic());
 		getCommand("vclip").setExecutor(new ShortCutBasic());
 		getCommand("fly").setExecutor(new ShortCutBasic());
+		getCommand("clientcommandchecker").setExecutor(new ShortCutBasic());
 		
 		if (commands.isEmpty())
 		{
@@ -870,12 +972,13 @@ public class Rebug extends JavaPlugin implements Listener
 			commands.add(new DebugRebugCMD());
 			commands.add(new SlashFly());
 			commands.add(new SetUserAntiCheat());
+			commands.add(new ClientCommandCheckerCMD());
 			
 			for (me.killstorm103.Rebug.Main.Command cmds : commands)
 				cmd.add(cmds.getName());
 		}
 		
-		getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Rebug's Events/Listeners");
+		getLogger().log(Level.INFO, "Enabling Events/Listeners");
 		PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new EventBlockHandling(), this);
         pm.registerEvents(this, this);
@@ -883,22 +986,27 @@ public class Rebug extends JavaPlugin implements Listener
         pm.registerEvents(new EventWeather(),  this);
         pm.registerEvents(new EventHandlePlayerSpawn(), this);
         pm.registerEvents(new EventPlayer(),  this);
-        
         pm.registerEvents(new EventCommandPreProcess(),  this);
         
         ResetScaffoldTask = ResetScaffoldTask == null ? getServer().getScheduler().runTaskTimer(this, ResetScaffoldTestArea.getMainTask(), 0, 10000) : ResetScaffoldTask; // 6000
         EverySecondUpdaterTask = EverySecondUpdaterTask == null ? getServer().getScheduler().runTaskTimer(this, OneSecondUpdater_Task.getMainTask(), 0, 20) : EverySecondUpdaterTask;
         
-        
-        getServer().getConsoleSender().sendMessage (ChatColor.YELLOW + "Enabling Packet Events");
+        getLogger().log(Level.INFO, "Enabling Packet Events");
         PacketEvents.IDENTIFIER = "REBUG - Test Server Plugin - killstorm103";
         PacketEvents.getAPI().getEventManager().registerListener(new EventTestPacket(), PacketListenerPriority.NORMAL);
         PacketEvents.getAPI().getEventManager().registerListener(new EventPackets(), PacketListenerPriority.HIGHEST);
         PacketEvents.getAPI().init();
 		
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null)
+        {
+        	getLogger().log(Level.INFO, "Hooking PlaceholderAPI!");
         	PlaceholderapiHook.registerHook();
+        }
+        else
+        	getLogger().log(Level.SEVERE, "The Plugin PlaceholderAPI wasn't Found this will cause issues!");
         
+        if (getServer().getPluginManager().getPlugin("ViaVersion") == null)
+        	Log(Level.WARNING, "ViaVersion is not on the server it is a soft depend");
 	}
 	
 	@Override
@@ -1128,7 +1236,7 @@ public class Rebug extends JavaPlugin implements Listener
 			String ID_Name = "", Kickables = "";
 			for (int i = 2; i < ItemName.length; i ++)
 			{
-				if (PT.isStringNull(ItemName[i])) 
+				if (PTNormal.isStringNull(ItemName[i])) 
 				{
 					if (Sudo != null)
 						Sudo.sendMessage(RebugMessage + "Failed to change user's AntiCheat, the given anticheat name string [" + i + "] was null!");
@@ -1208,7 +1316,7 @@ public class Rebug extends JavaPlugin implements Listener
 				
 				ID_Name += AntiCheatName + (i < ItemName.length - 1 ? " " : "");
 			}
-			if (PT.isStringNull(ID_Name))
+			if (PTNormal.isStringNull(ID_Name))
 			{
 				if (Sudo != null)
 					Sudo.sendMessage(RebugMessage + "Failed to set Multi AC due to ID being null!");
@@ -1236,7 +1344,7 @@ public class Rebug extends JavaPlugin implements Listener
 			else
 				user.sendMessage("You selected: " + ID_Name);
 
-			if (!PT.isStringNull(Kickables))
+			if (!PTNormal.isStringNull(Kickables))
 			{
 				String[] Split = StringUtils.split(Kickables);
 				if (Split.length > 1)
@@ -1251,19 +1359,19 @@ public class Rebug extends JavaPlugin implements Listener
 				else
 					Kickables = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + Split[0].toLowerCase() + ".display-name")));
 				
-				PT.KickPlayer(user.getPlayer(), RebugMessage + "Reconnect required in order to make sure " + Kickables + ChatColor.DARK_GRAY + " work properly!");
+				PTNormal.KickPlayer(user.getPlayer(), RebugMessage + "Reconnect required in order to make sure " + Kickables + ChatColor.DARK_GRAY + " work properly!");
 				return;
 			}
 			
 			UpdateScoreBoard(user, ChatColor.DARK_RED + "AC " + ChatColor.AQUA + "Multi", 10);
-			PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
+			getNMS().PlayAntiCheatSelectedSound(user.getPlayer());
 			return;
 		}
 		
 		
 		
 		
-		if (PT.isStringNull(ItemName[0])) 
+		if (PTNormal.isStringNull(ItemName[0])) 
 		{
 			if (Sudo != null)
 				Sudo.sendMessage(RebugMessage + "Failed to change user's AntiCheat, the given anticheat name string was null!");
@@ -1278,7 +1386,7 @@ public class Rebug extends JavaPlugin implements Listener
 			if (Sudo != null)
 				Sudo.sendMessage(RebugMessage + "Unable to change " + user.getName() + "'s AntiCheat due to " + user.getName() + " already having this AntiCheat Selected!");
 			
-			PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
+			getNMS().PlayAntiCheatSelectedSound(user.getPlayer());
 			if (user.AutoCloseAntiCheatMenu)
 				user.getPlayer().closeInventory();
 			
@@ -1362,7 +1470,7 @@ public class Rebug extends JavaPlugin implements Listener
 			if (Sudo != null)
 				Sudo.sendMessage(RebugMessage + "Successfully Changed " + user.getName() + "'s AntiCheat to: " + ChatColor.stripColor(user.getColoredAntiCheat()));
 			
-			PT.KickPlayer(user.getPlayer(), RebugMessage + "Reconnect required in order to make sure " + user.getColoredAntiCheat() + ChatColor.DARK_GRAY + " works properly!");
+			PTNormal.KickPlayer(user.getPlayer(), RebugMessage + "Reconnect required in order to make sure " + user.getColoredAntiCheat() + ChatColor.DARK_GRAY + " works properly!");
 			return;
 		}
 		
@@ -1380,7 +1488,7 @@ public class Rebug extends JavaPlugin implements Listener
 		   		
 		   		UpdateScoreBoard(user, ChatColor.DARK_RED + "AC " + NewAC, 10);
 		   		
-				PT.PlaySound(user.getPlayer(), Sound.ANVIL_USE, 1, 1);
+		   		getNMS().PlayAntiCheatSelectedSound(user.getPlayer());
 				String AC = ChatColor.stripColor(NewAC);
 				if (Sudo != null)
 				{
@@ -1391,7 +1499,7 @@ public class Rebug extends JavaPlugin implements Listener
 				{
 					if (item != null)
 						user.sendMessage("You selected: " + AC + (AC.equalsIgnoreCase("vanilla") ||
-								AC.equalsIgnoreCase("nocheatplus") || AC.equalsIgnoreCase("NCP") ? "" : " " + ChatColor.stripColor(PT.SubString(item.getItemMeta().getLore().get(3), 10,
+								AC.equalsIgnoreCase("nocheatplus") || AC.equalsIgnoreCase("NCP") ? "" : " " + ChatColor.stripColor(PTNormal.SubString(item.getItemMeta().getLore().get(3), 10,
 								item.getItemMeta().getLore().get(3).length()).replace(" ", ""))));
 					else
 						user.sendMessage("You selected: " + AC);

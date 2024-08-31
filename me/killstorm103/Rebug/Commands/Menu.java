@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class Menu extends Command
@@ -113,7 +113,7 @@ public class Menu extends Command
 			User user = Rebug.getUser((Player) sender);
 			if (user == null)
 			{
-				PT.KickPlayer((Player) sender, PT.RebugsUserWasNullErrorMessage("when trying to use the rebug menu command"));
+				PTNormal.KickPlayer((Player) sender, PTNormal.RebugsUserWasNullErrorMessage("when trying to use the rebug menu command"));
 				return;
 			}
 			String menu = args[1].replace("%", " ").replace("_", " ").replace("-", " ");
@@ -168,10 +168,10 @@ public class Menu extends Command
 					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getCrashers());
 					else
-						user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use this on other players!");
+						user.sendMessage("You don't have permission to use this on other players!");
 				}
 				else
-					user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have permission to use that!");
+					user.sendMessage("You don't have permission to use that!");
 				break;
 				
 			case "exploits":
@@ -217,7 +217,6 @@ public class Menu extends Command
 			default:
 				break;
 			}
-			user.lore.clear();
 		}
 		else
 			Log(sender, Rebug.RebugMessage + "Only player's can run this command!");

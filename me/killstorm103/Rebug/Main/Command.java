@@ -46,6 +46,7 @@ public abstract class Command
 	}
 	public final String StartOfPermission ()
 	{
+		
 		return "me.killstorm103.rebug.command.";
 	}
 }

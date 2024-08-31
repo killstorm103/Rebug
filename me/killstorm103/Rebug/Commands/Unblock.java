@@ -6,13 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
-import net.minecraft.server.v1_8_R3.PacketDataSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutCustomPayload;
 
 public class Unblock extends Command
 {
@@ -55,12 +50,7 @@ public class Unblock extends Command
 			Log(sender, "Player not found!");
 			return;
 		}
-		ByteBuf buf = Unpooled.buffer(256);
-		buf.setByte(0, (byte)0);
-		buf.writerIndex(1);
-		PacketPlayOutCustomPayload p = new PacketPlayOutCustomPayload("NWS|Debugger Switch",
-	    new PacketDataSerializer(buf));
-		PT.SendPacket(player, p);
+		Rebug.getINSTANCE().getNMS().SendPacketUnBlock(player);
 		Log(sender, Rebug.RebugMessage + "Tried to unlock packet debugger for NumbWare");
 		Log(sender, Rebug.RebugMessage + "if this didn't work it's cause your not using Developer Edition of NumbWare!");
 	}

@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class Enchant extends Command
@@ -58,7 +58,7 @@ public class Enchant extends Command
 					player.sendMessage(Rebug.RebugMessage + "You must have a item in your hand!");
 					return;
 				}
-				if (!PT.isNumber_Integer(args[1])) 
+				if (!PTNormal.isNumber_Integer(args[1])) 
 				{
 					player.sendMessage(Rebug.RebugMessage + "You must put in a number!");
 					return;
@@ -66,7 +66,7 @@ public class Enchant extends Command
 				User user = Rebug.getUser(player);
 				if (user == null)
 				{
-					player.sendMessage(PT.RebugsUserWasNullErrorMessage("When trying to enchant!"));
+					player.sendMessage(PTNormal.RebugsUserWasNullErrorMessage("When trying to enchant!"));
 					return;
 				}
 				if (user.getPlayer().getItemInHand().getItemMeta().hasDisplayName() && user.getPlayer().getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) 
@@ -85,7 +85,7 @@ public class Enchant extends Command
 				}
 				String name = enchantment.getName().toLowerCase();
 				
-				if (PT.isNumber_Integer(args[2]))
+				if (PTNormal.isNumber_Integer(args[2]))
 				{
 					int Added;
 					level = Integer.parseInt(args[2]);

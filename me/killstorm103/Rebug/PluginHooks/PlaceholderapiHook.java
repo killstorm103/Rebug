@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class PlaceholderapiHook extends PlaceholderExpansion
@@ -44,7 +44,7 @@ public class PlaceholderapiHook extends PlaceholderExpansion
 				return ChatColor.DARK_RED + ChatColor.BOLD.toString() + "REBUG " + ChatColor.RESET + ChatColor.BOLD + "v" + Rebug.PluginVersion();
 			
 			if (params.equalsIgnoreCase("server_version"))
-				return ChatColor.DARK_RED + ChatColor.BOLD.toString() + "Server" + ChatColor.WHITE + ": Spigot " + PT.getServerVersion ();
+				return ChatColor.DARK_RED + ChatColor.BOLD.toString() + "Server" + ChatColor.WHITE + ": " + PTNormal.getServerVersion ();
 			
 			if (params.equalsIgnoreCase("map_version"))
 				return ChatColor.DARK_RED + "Map" + ChatColor.WHITE + ": "+ Config.getMapVersion();

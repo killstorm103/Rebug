@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class ClientCMD extends Command
@@ -57,7 +57,7 @@ public class ClientCMD extends Command
 				user = Rebug.getUser(player);
 				if (user == null)
 				{
-					PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("in ClientCMD Line 57"));
+					PTNormal.KickPlayer(player, PTNormal.RebugsUserWasNullErrorMessage("in ClientCMD Line 57"));
 					return;
 				}
 				
@@ -68,10 +68,10 @@ public class ClientCMD extends Command
 	    				user.getPlayer().sendMessage(Rebug.RebugMessage + "failed to load your client brand this may cause issues!");
 	    			
 	    			else if (Config.getClientInfoSetting().equalsIgnoreCase("kick")) 
-	    				PT.KickPlayer(user.getPlayer(), Rebug.RebugMessage + "kicked you due to failing to load your client brand!");
+	    				PTNormal.KickPlayer(user.getPlayer(), Rebug.RebugMessage + "kicked you due to failing to load your client brand!");
 	    			
 	    			else if (Config.getClientInfoSetting().equalsIgnoreCase("ban"))
-	    				PT.BanPlayer(user.getPlayer(), Rebug.RebugMessage + "banned you due to failing to load your client brand!");
+	    				PTNormal.BanPlayer(user.getPlayer(), Rebug.RebugMessage + "banned you due to failing to load your client brand!");
 					
 					return;
 				}
@@ -92,7 +92,7 @@ public class ClientCMD extends Command
 		user = Rebug.getUser(player);
 		if (user == null)
 		{
-			PT.KickPlayer(player, PT.RebugsUserWasNullErrorMessage("in ClientCMD Line 91"));
+			PTNormal.KickPlayer(player, PTNormal.RebugsUserWasNullErrorMessage("in ClientCMD Line 91"));
 			return;
 		}
 		
@@ -107,13 +107,13 @@ public class ClientCMD extends Command
 			else if (Config.getClientInfoSetting().equalsIgnoreCase("kick")) 
 			{
 				sender.sendMessage(Rebug.RebugMessage + "kicked " + user.getPlayer().getName() + " due to failing to load their client brand!");
-				PT.KickPlayer(user.getPlayer(), Rebug.RebugMessage + "kicked you due to failing to load your client brand!");
+				PTNormal.KickPlayer(user.getPlayer(), Rebug.RebugMessage + "kicked you due to failing to load your client brand!");
 			}
 			
 			else if (Config.getClientInfoSetting().equalsIgnoreCase("ban"))
 			{
 				sender.sendMessage(Rebug.RebugMessage + "banned " + user.getPlayer().getName() + " due to failing to load their client brand!");
-				PT.BanPlayer(user.getPlayer(), Rebug.RebugMessage + "banned you due to failing to load your client brand!");
+				PTNormal.BanPlayer(user.getPlayer(), Rebug.RebugMessage + "banned you due to failing to load your client brand!");
 			}
 			
 			return;

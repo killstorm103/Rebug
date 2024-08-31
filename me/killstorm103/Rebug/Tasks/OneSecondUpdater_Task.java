@@ -9,7 +9,7 @@ import fr.minuskube.netherboard.Netherboard;
 import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 import net.md_5.bungee.api.ChatColor;
 
@@ -50,23 +50,23 @@ public class OneSecondUpdater_Task implements Runnable
 					BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
 			   		if (board != null)
 			   		{
-			   			if (!PT.isStringNull(board.get(5)))
+			   			if (!PTNormal.isStringNull(board.get(5)))
 				   			board.remove(5);
 				   		
 				   		board.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
 			   			
-			   			if (!PT.isStringNull(board.get(6)))
+			   			if (!PTNormal.isStringNull(board.get(6)))
 				   			board.remove(6);
 				   		
 				   		board.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
 				   		
-				   		if (!PT.isStringNull(board.get(7)))
+				   		if (!PTNormal.isStringNull(board.get(7)))
 				   			board.remove(7);
 				   		
 				   		board.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
 				   		
 				   		
-				   		if (!PT.isStringNull(board.get(8)))
+				   		if (!PTNormal.isStringNull(board.get(8)))
 				   			board.remove(8);
 				   		
 				   		board.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 8);

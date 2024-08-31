@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class NoBreak extends Command
@@ -53,7 +53,7 @@ public class NoBreak extends Command
 			User user = Rebug.getUser(player);
 			if (user.getPlayer().getItemInHand() != null)
 			{
-				ItemStack Item = user.getPlayer().getItemInHand(), Repair = PT.RepairItem(Item);
+				ItemStack Item = user.getPlayer().getItemInHand(), Repair = PTNormal.RepairItem(Item);
 				if (Item.getItemMeta().hasDisplayName() && Item.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) 
 				{
 					player.sendMessage(Rebug.RebugMessage + "You can't use this command on this item!");

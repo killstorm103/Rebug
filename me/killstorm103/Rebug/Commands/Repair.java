@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 
 public class Repair extends Command
 {
@@ -50,7 +50,7 @@ public class Repair extends Command
 			Player player = (Player) sender;
 			if (player.getItemInHand() != null)
 			{
-				ItemStack Item = player.getItemInHand(), Repair = PT.RepairItem(Item);
+				ItemStack Item = player.getItemInHand(), Repair = PTNormal.RepairItem(Item);
 				if (Item.getDurability() != Repair.getDurability())
 				{
 					player.setItemInHand(Repair);

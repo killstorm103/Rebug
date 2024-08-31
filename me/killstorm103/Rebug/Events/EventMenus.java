@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Tasks.ResetScaffoldTestArea;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 
@@ -121,7 +121,7 @@ public class EventMenus implements Listener
 			User user = Rebug.getUser((Player) e.getView().getPlayer());
 			if (user == null)
 			{
-				PT.KickPlayer((Player) e.getView().getPlayer(), PT.RebugsUserWasNullErrorMessage("in " + MenuName));
+				PTNormal.KickPlayer((Player) e.getView().getPlayer(), PTNormal.RebugsUserWasNullErrorMessage("in " + MenuName));
 				return;
 			}
 			if (item != null && item.getItemMeta() != null)
@@ -183,7 +183,7 @@ public class EventMenus implements Listener
 				{
 					e.setCancelled(true);
 					if (!ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
-						user.ExploitSendPacket(user.CommandTarget, ItemName);
+						Rebug.getINSTANCE().getNMS().ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName);
 				}
 				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
@@ -208,7 +208,7 @@ public class EventMenus implements Listener
 							user.UpdateMenuValueChangeLore(user.VanillaFlyChecksMenu, slot, 0, user.getValues ("Vanilla Fly Checks", ItemName));
 							return;
 						}
-						e.setCurrentItem(user.getMadeItems (MenuName, ItemName));
+						e.setCurrentItem(Rebug.getINSTANCE().getNMS().getMadeItems (user, MenuName, ItemName));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Rebug Settings") && Rebug.hasAdminPerms(user.getPlayer()) && e.getClickedInventory() != user.getPlayer().getInventory())
@@ -246,13 +246,13 @@ public class EventMenus implements Listener
 							return;
 						}
 						
-						ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.INSTANCE.getRebugSettingsMenu, slot, ItemsAndMenusUtils.INSTANCE.getMadeItems(MenuName, ItemName));
+						ItemsAndMenusUtils.INSTANCE.UpdateItemInMenu(ItemsAndMenusUtils.getRebugSettingsMenu, slot, Rebug.getINSTANCE().getNMS().getMadeItems(MenuName, ItemName));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Packet Selector") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
-					user.UpdateItemInMenu(user.PacketDebuggerMenu, slot, user.getMadeItems(MenuName, ItemName));
+					user.UpdateItemInMenu(user.PacketDebuggerMenu, slot, Rebug.getINSTANCE().getNMS().getMadeItems(user, MenuName, ItemName));
 				}
 				if (MenuName.equalsIgnoreCase("Player Settings"))
 				{
@@ -389,7 +389,7 @@ public class EventMenus implements Listener
 					if (e.getClickedInventory() != user.getPlayer().getInventory()) 
 					{
 						e.setCancelled(true);
-						if (PT.isInventoryFull(user.getPlayer()))
+						if (PTNormal.isInventoryFull(user.getPlayer()))
 						{
 							user.getPlayer().sendMessage(Rebug.RebugMessage + "Your Inventory's full make some space!");
 							return;
@@ -432,7 +432,7 @@ public class EventMenus implements Listener
 							e.setCancelled(true);
 							return;
 						}
-						user.CrashSendPacket(user.CommandTarget, ItemName, null);
+						Rebug.getINSTANCE().getNMS().CrashSendPacket(user.getPlayer(), user.CommandTarget, ItemName, null);
 						e.setCancelled(true);
 					}
 				}
@@ -460,7 +460,7 @@ public class EventMenus implements Listener
 							e.setCancelled(true);
 							return;
 						}
-						user.CrashSendPacket(user.CommandTarget, "SpawnEntity", ItemName);
+						Rebug.getINSTANCE().getNMS().CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 						e.setCancelled(true);
 					}
 				}

@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 
 public class EventHandlePlayerSpawn implements Listener
 {
@@ -19,6 +19,6 @@ public class EventHandlePlayerSpawn implements Listener
 		 if (Rebug.debug)
 			 Rebug.Debug(player, player.getWorld().getName());
 		 
-		 e.setRespawnLocation(Rebug.getINSTANCE().getConfig().getBoolean("world-spawn.use-this") ? PT.INSTANCE.getSpawn() : (player.getBedSpawnLocation() != null ? player.getBedSpawnLocation() : player.getWorld().getSpawnLocation()));
+		 e.setRespawnLocation(Rebug.getINSTANCE().getConfig().getBoolean("world-spawn.use-this") ? PTNormal.INSTANCE.getSpawn() : (player.getBedSpawnLocation() != null ? player.getBedSpawnLocation() : player.getWorld().getSpawnLocation()));
 	 }
 }

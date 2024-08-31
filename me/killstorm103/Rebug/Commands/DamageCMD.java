@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 
 public class DamageCMD extends Command
 {
@@ -55,7 +55,7 @@ public class DamageCMD extends Command
 				player = (Player) sender;
 				if (args.length == 2)
 				{
-					if (PT.isNumber_Double(args[1]))
+					if (PTNormal.isNumber_Double(args[1]))
 					{
 						damage = Double.parseDouble(args[1]);
 					}
@@ -73,7 +73,7 @@ public class DamageCMD extends Command
 		}
 		else if (args.length == 3)
 		{
-			if (PT.isNumber_Double(args[1]))
+			if (PTNormal.isNumber_Double(args[1]))
 			{
 				damage = Double.parseDouble(args[1]);
 			}

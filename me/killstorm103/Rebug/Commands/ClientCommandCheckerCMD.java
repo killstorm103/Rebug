@@ -8,34 +8,34 @@ import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PTNormal;
+import me.killstorm103.Rebug.Utils.User;
 
-public class VClip extends Command
+public class ClientCommandCheckerCMD extends Command
 {
 
 	@Override
 	public String getName() {
-		return "vclip";
+		return "clientcommandchecker";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "vclip <if console: player> <tp number>";
+		return "clientcommandchecker <nothing or player name>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "vclip";
+		return "checks if the player has client commands";
 	}
 
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "vclip";
+		return StartOfPermission() + "clientcommandchecker_cmd";
 	}
 
 	@Override
 	public String[] SubAliases() {
-		return new String[] {"/vclip"};
+		return new String[] {"/clientcommandchecker"};
 	}
 
 	@Override
@@ -43,47 +43,52 @@ public class VClip extends Command
 	{
 		if (sender instanceof Player)
 		{
-			Player player = (Player) sender;
+			User user = null;
+			Player p = (Player) sender;
 			if (args.length > 1)
 			{
-				if (!PTNormal.isNumber_Double(args[1])) 
+				if (!p.hasPermission("me.killstorm103.rebug.user.use_clientcommandchecker.others") && !Rebug.hasAdminPerms(p))
 				{
-					player.sendMessage(Rebug.RebugMessage + "You must put a number!");
+					p.sendMessage(Rebug.RebugMessage + "You don't have permission to use this on other players!");
 					return;
 				}
-				double max = Rebug.getINSTANCE().getConfig().getDouble("max-vclip-value"), tp = Double.parseDouble(args[1]);
-				tp = max > 0 && tp > max ? max : tp;
-				player.setNoDamageTicks(35);
-				player.setFallDistance(0);
-				player.teleport(player.getLocation().add(0, tp, 0));
-			}
-			else
-				player.sendMessage(Rebug.RebugMessage + getSyntax());
-		}
-		else
-		{
-			if (args.length > 2)
-			{
 				Player player = Bukkit.getPlayer(args[1]);
 				if (player == null)
 				{
 					Log(sender, "Unknown Player!");
 					return;
 				}
-				if (!PTNormal.isNumber_Double(args[2]))
-				{
-					Log(sender, "You must put a number!");
-					return;
-				}
-				double max = Rebug.getINSTANCE().getConfig().getDouble("max-vclip-value"), tp = Double.parseDouble(args[1]);
-				tp = max > 0 && tp > max ? max : tp;
-				player.setNoDamageTicks(35);
-				player.setFallDistance(0);
-				player.teleport(player.getLocation().add(0, tp, 0));
+				user = Rebug.getUser(player);
 			}
 			else
-				Log(sender, getSyntax());
+				user = Rebug.getUser(p);
+			
+			if (user == null)
+			{
+				Log(sender, "Unknown User!");
+				return;
+			}
+			Rebug.getINSTANCE().checkPlayer(user, true);
+			return;
 		}
+		if (args.length < 2)
+		{
+			Log(sender, "as the Server this as to be ran on a player!");
+			return;
+		}
+		Player player = Bukkit.getPlayer(args[1]);
+		if (player == null)
+		{
+			Log(sender, "Unknown Player!");
+			return;
+		}
+		User user = Rebug.getUser(player);
+		if (user == null)
+		{
+			Log(sender, "Unknown User!");
+			return;
+		}
+		Rebug.getINSTANCE().checkPlayer(user, true);
 	}
 
 	@Override
@@ -115,17 +120,20 @@ public class VClip extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
+	public boolean HasToBeConsole() 
+	{
 		return false;
 	}
 
 	@Override
-	public boolean hasCommandCoolDown() {
+	public boolean hasCommandCoolDown()
+	{
 		return false;
 	}
 
 	@Override
-	public boolean RemoveSlash() {
+	public boolean RemoveSlash() 
+	{
 		return false;
 	}
 	

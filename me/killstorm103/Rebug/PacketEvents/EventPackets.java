@@ -42,15 +42,13 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSt
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientTabComplete;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientWindowConfirmation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
+
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 
 public class EventPackets implements PacketListener
 {
@@ -71,7 +69,7 @@ public class EventPackets implements PacketListener
 				if (Float.isNaN(pitch)|| Float.isInfinite(pitch) || Math.abs(pitch) > 500)
 				{
 					e.setCancelled(true);
-					PT.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
+					PTNormal.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
 				}
 			}
 			if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION)
@@ -81,7 +79,7 @@ public class EventPackets implements PacketListener
 				if (Float.isNaN(pitch) || Float.isInfinite(pitch) || Math.abs(pitch) > 500)
 				{
 					e.setCancelled(true);
-					PT.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
+					PTNormal.KickPlayer(player, ChatColor.DARK_RED + "Rebug | AntiCrasher | illegal Pitch | " + pitch);
 				}
 			}
 		}
@@ -100,22 +98,22 @@ public class EventPackets implements PacketListener
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_FLYING && config.getConfigurationSection(Section).getBoolean("Flying"))
 					{
 						WrapperPlayClientPlayerFlying packet = new WrapperPlayClientPlayerFlying(e);
-						PT.INSTANCE.DebuggerChatMessage (player, e, "Ground= " + packet.isOnGround());
+						PTNormal.INSTANCE.DebuggerChatMessage (player, e, "Ground= " + packet.isOnGround());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION && config.getConfigurationSection(Section).getBoolean("Position"))
 					{
 						WrapperPlayClientPlayerPosition packet = new WrapperPlayClientPlayerPosition(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nGround= " + packet.isOnGround());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nGround= " + packet.isOnGround());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION && config.getConfigurationSection(Section).getBoolean("PositionLook"))
 					{
 						WrapperPlayClientPlayerPositionAndRotation packet = new WrapperPlayClientPlayerPositionAndRotation(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nYaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "X= " + packet.getLocation().getX() + "\nY= " + packet.getLocation().getY() + "\nZ= " + packet.getLocation().getX() + "\nYaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION &&  config.getConfigurationSection(Section).getBoolean("Look"))
 					{
 						WrapperPlayClientPlayerRotation packet = new WrapperPlayClientPlayerRotation(e);
-						PT.INSTANCE.DebuggerChatMessage (player, e, "Yaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
+						PTNormal.INSTANCE.DebuggerChatMessage (player, e, "Yaw= " + packet.getLocation().getYaw() + "\nPitch= " + packet.getLocation().getPitch() + "\nGround= " + packet.isOnGround());
 					}
 					
 					if (e.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE && config.getConfigurationSection(Section).getBoolean("Custom PayLoad"))
@@ -123,7 +121,7 @@ public class EventPackets implements PacketListener
 						WrapperPlayClientPluginMessage packet = new WrapperPlayClientPluginMessage(e);
 						try
 						{
-							PT.INSTANCE.DebuggerChatMessage(player, e, "Channel= " + packet.getChannelName() + "\nData= " + new String(packet.getData(), "UTF-8").replace("", ""));
+							PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Channel= " + packet.getChannelName() + "\nData= " + new String(packet.getData(), "UTF-8").replace("", ""));
 						}
 						catch (Exception g) 
 						{
@@ -134,69 +132,69 @@ public class EventPackets implements PacketListener
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_ABILITIES && config.getConfigurationSection(Section).getBoolean("Abilities"))
 					{
 						WrapperPlayClientPlayerAbilities packet = new WrapperPlayClientPlayerAbilities(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Invulnerable= " + packet.isInGodMode().get() + "\nFlying= " + packet.isFlying() + "\nAllowedFlight= " + packet.isFlightAllowed().get() 
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Invulnerable= " + packet.isInGodMode().get() + "\nFlying= " + packet.isFlying() + "\nAllowedFlight= " + packet.isFlightAllowed().get() 
 						+ "\nCreativeMode= " + packet.isInCreativeMode().get() + "\nFlySpeed= " + packet.getFlySpeed().get() + "\nWalkSpeed= " + packet.getWalkSpeed().get());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.CLIENT_SETTINGS && config.getConfigurationSection(Section).getBoolean("Client Settings"))
 					{
 						WrapperPlayClientSettings packet = new WrapperPlayClientSettings(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Locale= " + packet.getLocale() + "\nViewDistance= " + packet.getViewDistance() + "\nChatVisibility= " + packet.getVisibility().name() + 
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Locale= " + packet.getLocale() + "\nViewDistance= " + packet.getViewDistance() + "\nChatVisibility= " + packet.getVisibility().name() + 
 						"\nChatColors= " + packet.isChatColorable() + "\nVersion= " + packet.getClientVersion().getProtocolVersion() + 
 					    "\nSkinParts= " + packet.getVisibleSkinSection().getMask() + "\nHand= " + packet.getMainHand().name() + "\nServerListingAllowed= " + packet.isServerListingAllowed());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.CLIENT_STATUS && config.getConfigurationSection(Section).getBoolean("Client Status"))
 					{
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Action= " + new WrapperPlayClientClientStatus(e).getAction().name());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Action= " + new WrapperPlayClientClientStatus(e).getAction().name());
 					}
 					
 					if (e.getPacketType() == PacketType.Play.Client.CLOSE_WINDOW && config.getConfigurationSection(Section).getBoolean("Close Window"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "ID= " + new WrapperPlayClientCloseWindow(e).getWindowId());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "ID= " + new WrapperPlayClientCloseWindow(e).getWindowId());
 					
 					if (e.getPacketType() == PacketType.Play.Client.CLICK_WINDOW && config.getConfigurationSection(Section).getBoolean("Click Window"))
 					{
 						WrapperPlayClientClickWindow packet = new WrapperPlayClientClickWindow(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "ID= " + packet.getWindowId() + "\nSlot= " + packet.getSlot() + "\nButton= " + packet.getButton() + "\nClickType= " + packet.getWindowClickType().name() + "\nItem= " + packet.getCarriedItemStack() + "\nMode= " + packet.getActionNumber().get());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "ID= " + packet.getWindowId() + "\nSlot= " + packet.getSlot() + "\nButton= " + packet.getButton() + "\nClickType= " + packet.getWindowClickType().name() + "\nItem= " + packet.getCarriedItemStack() + "\nMode= " + packet.getActionNumber().get());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.KEEP_ALIVE && config.getConfigurationSection(Section).getBoolean("Keep Alive"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "ID= " + new WrapperPlayClientKeepAlive(e).getId());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "ID= " + new WrapperPlayClientKeepAlive(e).getId());
 					
 					if (e.getPacketType() == PacketType.Play.Client.SPECTATE && config.getConfigurationSection(Section).getBoolean("Spectate"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "UUID= " + new WrapperPlayClientSpectate(e).getTargetUUID());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "UUID= " + new WrapperPlayClientSpectate(e).getTargetUUID());
 					
 					if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE && config.getConfigurationSection(Section).getBoolean("Steer Vehicle"))
 					{
 						WrapperPlayClientSteerVehicle packet = new WrapperPlayClientSteerVehicle(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Forwards= " + packet.getForward() + "\nSideWards= " + packet.getSideways() + "\nFlags= " + packet.getFlags());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Forwards= " + packet.getForward() + "\nSideWards= " + packet.getSideways() + "\nFlags= " + packet.getFlags());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.WINDOW_CONFIRMATION && config.getConfigurationSection(Section).getBoolean("Transaction"))
 					{
 						WrapperPlayClientWindowConfirmation packet = new WrapperPlayClientWindowConfirmation(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Window= " + packet.getWindowId() + "\nActionID= " + packet.getActionId() + "\nAccepted= " + packet.isAccepted());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Window= " + packet.getWindowId() + "\nActionID= " + packet.getActionId() + "\nAccepted= " + packet.isAccepted());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.ANIMATION && config.getConfigurationSection(Section).getBoolean("Arm Animation"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "N/A");
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "N/A");
 					
 					if (e.getPacketType() == PacketType.Play.Client.HELD_ITEM_CHANGE && config.getConfigurationSection(Section).getBoolean("Held Item Slot"))
 					{
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Slot= " + new WrapperPlayClientHeldItemChange(e).getSlot());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Slot= " + new WrapperPlayClientHeldItemChange(e).getSlot());
 					}
 					
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT && config.getConfigurationSection(Section).getBoolean("Block Place"))
 					{
 						WrapperPlayClientPlayerBlockPlacement packet = new WrapperPlayClientPlayerBlockPlacement(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "posX= " + packet.getBlockPosition().getX() + "\nposY= " + packet.getBlockPosition().getY() + "\nposZ= " + packet.getBlockPosition().getZ() + "\nCursorPosX= " + packet.getCursorPosition().getX() + "\nCursorPosY= " + packet.getCursorPosition().getY() + "\nCursorPosZ= " + packet.getCursorPosition().getZ() + "\nFace= " + packet.getFace().name() + "\nItem= " + packet.getItemStack() + "\nHand= " + packet.getHand().name() + "\nInsideBlock= " + packet.getInsideBlock() + "\nSequence= " + packet.getSequence());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "posX= " + packet.getBlockPosition().getX() + "\nposY= " + packet.getBlockPosition().getY() + "\nposZ= " + packet.getBlockPosition().getZ() + "\nCursorPosX= " + packet.getCursorPosition().getX() + "\nCursorPosY= " + packet.getCursorPosition().getY() + "\nCursorPosZ= " + packet.getCursorPosition().getZ() + "\nFace= " + packet.getFace().name() + "\nItem= " + packet.getItemStack() + "\nHand= " + packet.getHand().name() + "\nInsideBlock= " + packet.getInsideBlock() + "\nSequence= " + packet.getSequence());
 					}
 					if (e.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING && config.getConfigurationSection(Section).getBoolean("Digging"))
 					{
 						WrapperPlayClientPlayerDigging packet = new WrapperPlayClientPlayerDigging(e);
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Action= " + packet.getAction().name() + "\nBlockFace= " + packet.getBlockFace() + "\nX= " + packet.getBlockPosition().getX() + "\nY= " + packet.getBlockPosition().getY() + "\nZ= " + packet.getBlockPosition().getZ() + "\nSequence= " + packet.getSequence());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Action= " + packet.getAction().name() + "\nBlockFace= " + packet.getBlockFace() + "\nX= " + packet.getBlockPosition().getX() + "\nY= " + packet.getBlockPosition().getY() + "\nZ= " + packet.getBlockPosition().getZ() + "\nSequence= " + packet.getSequence());
 					}
 					
 					if (e.getPacketType() == PacketType.Play.Client.ENTITY_ACTION && config.getConfigurationSection(Section).getBoolean("Entity Action"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Action= " + new WrapperPlayClientEntityAction(e).getAction());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Action= " + new WrapperPlayClientEntityAction(e).getAction());
 					
 					if (e.getPacketType() == PacketType.Play.Client.TAB_COMPLETE && config.getConfigurationSection(Section).getBoolean("Tab Complete"))
-						PT.INSTANCE.DebuggerChatMessage(player, e, "Text= " + new WrapperPlayClientTabComplete(e).getText());
+						PTNormal.INSTANCE.DebuggerChatMessage(player, e, "Text= " + new WrapperPlayClientTabComplete(e).getText());
 					
 				}
 			}
@@ -212,9 +210,9 @@ public class EventPackets implements PacketListener
 					{
 						String brand = new String(packet.getData(), "UTF-8").substring(1);
 						if (Config.TellClientBrandOnJoin())
-							player.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(PT.getPlayerVersion(player)) + " (" + PT.getPlayerVersion(player) + ")");
+							player.sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PTNormal.getPlayerVersion(PTNormal.getPlayerVersion(player)) + " (" + PTNormal.getPlayerVersion(player) + ")");
 					
-						Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + player.getName() + "'s " + ChatColor.AQUA + "client brand " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PT.getPlayerVersion(PT.getPlayerVersion(player)) + " (" + PT.getPlayerVersion(player) + ")");
+						Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + player.getName() + "'s " + ChatColor.AQUA + "client brand " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + brand + " " + PTNormal.getPlayerVersion(PTNormal.getPlayerVersion(player)) + " (" + PTNormal.getPlayerVersion(player) + ")");
 						Rebug.getINSTANCE().ClientBranded.put(player.getUniqueId(), brand);
 					} 
 					catch (UnsupportedEncodingException e1) {}
@@ -328,7 +326,7 @@ public class EventPackets implements PacketListener
 		{
 			item = user.getPlayer().getItemInHand();
 			Rebug.getINSTANCE().UpdateScoreBoard(user, ChatColor.DARK_RED + "Blocking " + ChatColor.RED + ChatColor.BOLD.toString() + "X", 3);
-			if (PT.isHoldingSword(item))
+			if (PTNormal.isHoldingSword(item))
 				Rebug.getINSTANCE().UpdateScoreBoard(user, ChatColor.DARK_RED + "Blocking " + ChatColor.GREEN + Rebug.getINSTANCE().getTickMark(), 3);
 			
 			if (user.isPacketDebuggerEnabled() && user.BlockPlacePacket)
@@ -454,11 +452,11 @@ public class EventPackets implements PacketListener
 		    	if (user.BrandSetCount > 0)
 		    	{
 		    		if (Config.getCantOverrideClientBrand().equalsIgnoreCase("kick"))
-		    			PT.KickPlayer(user.getPlayer(), "Rebug's already collected your client brand you shound't be sending another client brand Packet!");
+		    			PTNormal.KickPlayer(user.getPlayer(), "Rebug's already collected your client brand you shound't be sending another client brand Packet!");
 		    		else if (Config.getCantOverrideClientBrand().equalsIgnoreCase("ban"))
-		    			PT.BanPlayer(user.getPlayer(), " Rebug's already collected your client brand you shound't be sending another client brand Packet!");
+		    			PTNormal.BanPlayer(user.getPlayer(), " Rebug's already collected your client brand you shound't be sending another client brand Packet!");
 		    		else if (Config.getCantOverrideClientBrand().equalsIgnoreCase("warn"))
-		    			user.getPlayer().sendMessage(Rebug.RebugMessage + "Already collected your client brand you shound't be sending another client brand Packet!");
+		    			user.sendMessage("Already collected your client brand you shound't be sending another client brand Packet!");
 		    		
 		    		return;
 		    	}
@@ -474,12 +472,12 @@ public class EventPackets implements PacketListener
 			    			
 			    			if (Config.getClientInfoSetting().equalsIgnoreCase("kick")) 
 			    			{
-			    				PT.KickPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
+			    				PTNormal.KickPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
 			    				return;
 			    			}
 			    			if (Config.getClientInfoSetting().equalsIgnoreCase("ban"))
 			    			{
-			    				PT.BanPlayer(user.getPlayer(), "Rebug banned you due to failing to load your client brand!");
+			    				PTNormal.BanPlayer(user.getPlayer(), "Rebug banned you due to failing to load your client brand!");
 			    				return;
 			    			}
 				    	}
@@ -491,9 +489,9 @@ public class EventPackets implements PacketListener
 								@Override
 								public void run() {
 									if (Config.TellClientBrandOnJoin())
-										user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getBrand() + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+										user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "client " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getBrand() + " " + PTNormal.getPlayerVersion(user.getProtocol()) + " (" + PTNormal.getPlayerVersion(user.getPlayer()) + ")");
 								
-									Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "client brand " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getBrand() + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+									Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "client brand " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getBrand() + " " + PTNormal.getPlayerVersion(user.getProtocol()) + " (" + PTNormal.getPlayerVersion(user.getPlayer()) + ")");
 								}
 							}, 11);
 						}
@@ -509,13 +507,13 @@ public class EventPackets implements PacketListener
 		    	catch (Exception ee) 
 		    	{
 		    		if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
-	    				user.getPlayer().sendMessage(Rebug.RebugMessage + "Failed to load your client brand this may cause issues!");
+	    				user.sendMessage("Failed to load your client brand this may cause issues!");
 	    			
 	    			else if (Config.getClientInfoSetting().equalsIgnoreCase("kick")) 
-	    				PT.KickPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
+	    				PTNormal.KickPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
 	    			
 	    			else if (Config.getClientInfoSetting().equalsIgnoreCase("ban"))
-	    				PT.BanPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
+	    				PTNormal.BanPlayer(user.getPlayer(), "Rebug kicked you due to failing to load your client brand!");
 	    			
 	    			if (Rebug.debug)
 	    				ee.printStackTrace();
@@ -528,7 +526,7 @@ public class EventPackets implements PacketListener
 		user.UnReceivedBrand ++;
 		if (user.UnReceivedBrand >= (Config.AntiCancelClientBrandCounter() < 200 ? 200 : Config.AntiCancelClientBrandCounter()))
 		{
-			PT.KickPlayer(user.getPlayer(), ChatColor.RED + "You were kicked by " + ChatColor.DARK_RED.toString() + ChatColor.BOLD + "REBUG " + ChatColor.RED + "for not sending a Client Brand Packet!");
+			PTNormal.KickPlayer(user.getPlayer(), ChatColor.RED + "You were kicked by " + ChatColor.DARK_RED.toString() + ChatColor.BOLD + "REBUG " + ChatColor.RED + "for not sending a Client Brand Packet!");
 			return;
 		}
 		Rebug.Debug(user.getPlayer(), "UnReceivedBrand= " + user.UnReceivedBrand);
@@ -579,10 +577,8 @@ public class EventPackets implements PacketListener
 		                		return;
 		                	}
 		                	
-		                	
-		                	IChatBaseComponent chatTitle = ChatSerializer.a("{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Ticks: " 
-		                    + user.S08Pos + "\"}");
-							PT.SendPacket(user.getPlayer(), new PacketPlayOutChat(chatTitle, (byte) 2));
+		                	Rebug.getINSTANCE().getNMS().SendChatPacket(user.getPlayer(), "{\"text\":\"" + ChatColor.AQUA + "Server Position (S08) Receiving : Ticks: " 
+				                    + user.S08Pos + "\"}", (byte) 2);
 							user.S08Pos ++;
 		                }
 		            }.runTaskTimer(Rebug.getINSTANCE(), 0, 1);

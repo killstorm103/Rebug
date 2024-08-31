@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class InvSeeCMD extends Command
@@ -54,7 +54,7 @@ public class InvSeeCMD extends Command
 			User user = Rebug.getUser(player);
 			if (user == null)
 			{
-				player.sendMessage(PT.RebugsUserWasNullErrorMessage("in invsee - cmd"));
+				player.sendMessage(PTNormal.RebugsUserWasNullErrorMessage("in invsee - cmd"));
 				return;
 			}
 			if (args.length < 2)

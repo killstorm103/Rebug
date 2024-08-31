@@ -21,7 +21,6 @@ public class EventCommandPreProcess implements Listener
 	{
 		String command = e.getMessage().toLowerCase();
 		Rebug.Debug(e.getPlayer(), "player= " + e.getPlayer().getName() + " msg= " + e.getMessage());
-		
 		User user = Rebug.getUser(e.getPlayer());
 		if (user == null) return;
 		

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
 public class PlayerInfoCMD extends Command
@@ -54,7 +54,7 @@ public class PlayerInfoCMD extends Command
 			{
 				user = Rebug.getUser((Player) sender);
 				user.sendMessage(Rebug.RebugMessage + "" + user.getPlayer().getName());
-				user.sendMessage(Rebug.RebugMessage + "Your client is: " + user.ClientBrand() + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+				user.sendMessage(Rebug.RebugMessage + "Your client is: " + user.ClientBrand() + " " + PTNormal.getPlayerVersion(user.getProtocol()) + " (" + PTNormal.getPlayerVersion(user.getPlayer()) + ")");
 				user.sendMessage(Rebug.RebugMessage + "Selected AntiCheat: " + user.AntiCheat);
 			}
 			else
@@ -66,7 +66,7 @@ public class PlayerInfoCMD extends Command
 					return;
 				}
 				sender.sendMessage(Rebug.RebugMessage + user.getPlayer().getName() + "'s");
-				sender.sendMessage(Rebug.RebugMessage + "Client is: " + user.ClientBrand() + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+				sender.sendMessage(Rebug.RebugMessage + "Client is: " + user.ClientBrand() + " " + PTNormal.getPlayerVersion(user.getProtocol()) + " (" + PTNormal.getPlayerVersion(user.getPlayer()) + ")");
 				sender.sendMessage(Rebug.RebugMessage + "Selected AntiCheat: " + user.AntiCheat);
 			}
 		}
@@ -91,7 +91,7 @@ public class PlayerInfoCMD extends Command
 				return;
 			}
 			sender.sendMessage(Rebug.RebugMessage + "" + user.getPlayer().getName() + "'s");
-			sender.sendMessage(Rebug.RebugMessage + "Client is: " + user.ClientBrand() + " " + PT.getPlayerVersion(user.getProtocol()) + " (" + PT.getPlayerVersion(user.getPlayer()) + ")");
+			sender.sendMessage(Rebug.RebugMessage + "Client is: " + user.ClientBrand() + " " + PTNormal.getPlayerVersion(user.getProtocol()) + " (" + PTNormal.getPlayerVersion(user.getPlayer()) + ")");
 			sender.sendMessage(Rebug.RebugMessage + "Selected AntiCheat: " + user.AntiCheat);
 		}
 	}

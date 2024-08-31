@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.NMS.Versions.PT_1_8_R3;
 import me.killstorm103.Rebug.Utils.TeleportUtils;
 import me.killstorm103.Rebug.Utils.User;
 
@@ -75,43 +75,29 @@ public class EventPlayer implements Listener
 				}
 			}
 		}
-		
-		User user = Rebug.getUser(player);
-		if (user == null) return;
-		if (user.ClientCommandChecker)
-		{
-			if (message.equals(user.Keycard) && Rebug.lockedList.contains(player.getUniqueId())) 
-			{
-				Rebug.lockedList.remove(player.getUniqueId());
-                user.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully passed Client Command Checker!"));
-	            e.setMessage("");
-                e.setCancelled(true);
-                return;
-	        }
-			if (Rebug.lockedList.contains(user.getUUID()) && message.equals(user.HackedUUID)) 
-			{
-				e.setMessage("");
-                e.setCancelled(true);
-                return;
-	        }
-		}
-		if (Rebug.lockedList.contains(user.getUUID())) 
-        {
-            e.setMessage("");
-            e.setCancelled(true);
-            return;
-        }
 		if (!Rebug.lockedList.isEmpty())
 		{
 			for (UUID uid : Rebug.lockedList) 
             {
                 Player p = Bukkit.getPlayer(uid);
-                if (p != null && p.isOnline())
-                e.getRecipients().remove(p);
+                if (p != null && p != player && p.isOnline())
+                	e.getRecipients().remove(p);
             }
 		}
-		if (!user.ClientCommandChecker || !Rebug.lockedList.contains(user.getUUID()))
-			user.Yapper_Message_Count ++;
+		User user = Rebug.getUser(player);
+		if (user == null) return;
+		
+		if (user.ClientCommandChecker && Rebug.lockedList.contains(user.getUUID()))
+		{
+			if (message.equals(user.Keycard))
+			{
+				Rebug.lockedList.remove(player.getUniqueId());
+                user.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully passed Client Command Checker!"));
+			}
+			e.setCancelled(true);
+			return;
+		}
+		user.Yapper_Message_Count ++;
 	}
 	
 	@EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -123,7 +109,7 @@ public class EventPlayer implements Listener
 			ItemStack Bow = e.getBow();
 			if (!Bow.hasItemMeta() || !Bow.getItemMeta().hasDisplayName() || !Bow.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) return;
 			
-			User user = Rebug.getUser(PT.getPlayerFromHumanEntity(e.getEntity()));
+			User user = Rebug.getUser(PT_1_8_R3.getPlayerFromHumanEntity(e.getEntity()));
 			if (user == null) return;
 			
 			

@@ -42,9 +42,9 @@ public class TeleportUtils
         World world = player.getWorld();
         if (world.getName().equalsIgnoreCase("world_nether"))
         {
-        	y = PT.randomNumber(59, 55);
-        	x = PT.randomNumber(-100, 97);
-        	z = PT.randomNumber(123, -83);
+        	y = PTNormal.randomNumber(59, 55);
+        	x = PTNormal.randomNumber(-100, 97);
+        	z = PTNormal.randomNumber(123, -83);
         	Location randomLocation = new Location(player.getWorld(), x, y, z);
         	y = randomLocation.getWorld().getHighestBlockYAt(randomLocation);
             randomLocation.setY(y);

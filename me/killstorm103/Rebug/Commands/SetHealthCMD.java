@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.PTNormal;
 
 public class SetHealthCMD extends Command
 {
@@ -53,7 +53,7 @@ public class SetHealthCMD extends Command
 				player.sendMessage(Rebug.RebugMessage + "Your Max Health is: " + player.getMaxHealth() + " BTW!");
 				return;
 			}
-			if (PT.isNumber_Double(args[1]))
+			if (PTNormal.isNumber_Double(args[1]))
 			{
 				double health = Double.parseDouble(args[1]);
 				health = health > player.getMaxHealth() ? player.getMaxHealth() : health < 0 ? 0 : health;
