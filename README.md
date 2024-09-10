@@ -11,7 +11,7 @@ it's a AntiCheat Switcher with other things like crashers and other exploits for
 
 
 Info:
-- JavaSE: 1.8
+- Java: jdk 21
 - if you want to see what i've added to rebug live you can join my discord server: https://discord.gg/5xWHx3MUUr
 
 Known Bugs:
