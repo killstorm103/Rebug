@@ -75,8 +75,9 @@ public class Credits extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 	@Override
 	public boolean RemoveSlash() {

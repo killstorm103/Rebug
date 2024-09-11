@@ -1,6 +1,7 @@
 package me.killstorm103.Rebug.PacketEvents;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,8 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientTa
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientWindowConfirmation;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 
+import fr.minuskube.netherboard.Netherboard;
+import fr.minuskube.netherboard.bukkit.BPlayerBoard;
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
@@ -52,6 +55,8 @@ import me.killstorm103.Rebug.Utils.User;
 
 public class EventPackets implements PacketListener
 {
+	private final DecimalFormat former = new DecimalFormat("#.###");
+	
 	@SuppressWarnings("unused")
 	@Override
 	public void onPacketReceive(PacketReceiveEvent e) 
@@ -83,7 +88,6 @@ public class EventPackets implements PacketListener
 				}
 			}
 		}
-			
 		User user = Rebug.getUser(player);
 		if (user == null) 
 		{
@@ -253,9 +257,16 @@ public class EventPackets implements PacketListener
 			user.setRegister(Rebug.getINSTANCE().ClientRegistered.get(user.getPlayer().getUniqueId()));
 			Rebug.getINSTANCE().ClientRegistered.remove(user.getPlayer().getUniqueId());
 		}
-		
+		BPlayerBoard board = Netherboard.instance().getBoard(user.getPlayer());
 		ItemStack item = null;
 		user.preSend ++;
+		final double
+		distX = user.getLocation().getX() - user.lastTickPosX,
+		distY = user.getLocation().getY() - user.lastTickPosY,
+		distZ = user.getLocation().getZ() - user.lastTickPosZ,
+		bpsXZ = Math.sqrt(distX * distX + distZ * distZ) * 20.0,
+		bpsY = Math.sqrt(distY * distY) * 20.0;  
+		
 		if (e.getPacketType() == PacketType.Play.Client.TAB_COMPLETE && user.isPacketDebuggerEnabled() && user.TabCompletePacket)
 			user.DebuggerChatMessage(e, "Text= " + new WrapperPlayClientTabComplete(e).getText());
 		
@@ -374,9 +385,11 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION)
 		{
 			WrapperPlayClientPlayerPosition packet = new WrapperPlayClientPlayerPosition(e);
-			user.lastTickPosX = user.getLocation().getX();
-			user.lastTickPosY = user.getLocation().getY();
-			user.lastTickPosZ = user.getLocation().getZ();
+			if (board != null)
+			{
+				board.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
+				board.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
+			}
 			Rebug.getINSTANCE().UpdateScoreBoard(user, ChatColor.DARK_RED + "TB " + (e.getTimestamp() - user.timer_balance) + "ms", 4);
 			
 			user.timer_balance = e.getTimestamp();
@@ -387,11 +400,13 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_POSITION_AND_ROTATION)
 		{
 			WrapperPlayClientPlayerPositionAndRotation packet = new WrapperPlayClientPlayerPositionAndRotation(e);
-			user.lastTickPosX = user.getLocation().getX();
-			user.lastTickPosY = user.getLocation().getY();
-			user.lastTickPosZ = user.getLocation().getZ();
 			user.yaw = packet.getLocation().getYaw();
 			user.pitch = packet.getLocation().getPitch();
+			if (board != null)
+			{
+				board.set(ChatColor.DARK_RED + "BPS (Y) " + ChatColor.WHITE + former.format(bpsY), 6);
+				board.set(ChatColor.DARK_RED + "BPS (XZ) " + ChatColor.WHITE + former.format(bpsXZ), 7);
+			}
 			Rebug.getINSTANCE().UpdateScoreBoard(user, ChatColor.DARK_RED + "TB " + (e.getTimestamp() - user.timer_balance) + "ms", 4);
 			
 			user.timer_balance = e.getTimestamp();
@@ -402,9 +417,6 @@ public class EventPackets implements PacketListener
 		if (e.getPacketType() == PacketType.Play.Client.PLAYER_ROTATION)
 		{
 			WrapperPlayClientPlayerRotation packet = new WrapperPlayClientPlayerRotation(e);
-			user.lastTickPosX = user.getLocation().getX();
-			user.lastTickPosY = user.getLocation().getY();
-			user.lastTickPosZ = user.getLocation().getZ();
 			user.yaw = packet.getLocation().getYaw();
 			user.pitch = packet.getLocation().getPitch();
 			Rebug.getINSTANCE().UpdateScoreBoard(user, ChatColor.DARK_RED + "OnGround " + (packet.isOnGround() ? ChatColor.GREEN + Rebug.getINSTANCE().getTickMark() : ChatColor.RED + ChatColor.BOLD.toString() + "X"), 0);
@@ -435,7 +447,7 @@ public class EventPackets implements PacketListener
 				{
 					user.setRegister(new String(packet.getData(), "UTF-8").substring(0));
 					if (Config.TellClientRegisters())
-						user.getPlayer().sendMessage(Rebug.RebugMessage + ChatColor.RED + "Your " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getRegister());
+						user.sendMessage (ChatColor.RED + "Your " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getRegister());
 					
 					Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + ChatColor.RED + user.getPlayer().getName() + "'s " + ChatColor.AQUA + "register " + ChatColor.RED + "is" + ChatColor.GRAY + ": " + user.getRegister());
 				}
@@ -468,7 +480,7 @@ public class EventPackets implements PacketListener
 						if (user.getBrand() == null || user.getBrand().length() <= 0)
 				    	{
 				    		if (Config.getClientInfoSetting().equalsIgnoreCase("warn"))
-			    				user.getPlayer().sendMessage(Rebug.RebugMessage + "Failed to load your client brand this may cause issues!");
+			    				user.sendMessage("Failed to load your client brand this may cause issues!");
 			    			
 			    			if (Config.getClientInfoSetting().equalsIgnoreCase("kick")) 
 			    			{
@@ -543,6 +555,7 @@ public class EventPackets implements PacketListener
 		User user = Rebug.getUser(player);
 		if (user == null) return;
 		user.preReceive ++;
+		
 		if (e.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT)
 		{
 			if (user.PotionEffects) return;
@@ -607,7 +620,7 @@ public class EventPackets implements PacketListener
 				
 				if (!Rebug.PrivatePerPlayerAlerts) return;
 				
-				if (Rebug.anticheats.isEmpty())
+				if (Rebug.anticheats.isEmpty() && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats.create-inventory"))
 				{
 					Bukkit.getConsoleSender().sendMessage("Rebug.anticheats was Empty, trying to add ACs!");
 					user.getPlayer().closeInventory();
@@ -616,12 +629,14 @@ public class EventPackets implements PacketListener
 				}
 				if (Rebug.anticheats.isEmpty())
 				{
-					Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Rebug AntiCheats was still Empty!");
+					if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats.create-inventory"))
+						Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Rebug AntiCheats was still Empty!");
+					
 					return;
 				}
 				
 				message = message.replace("[", "").replace("]", "").replace("{", "").replace("}", "").replace(">>", "").replace("<<", "").replace(">", "")
-			    .replace("<", "").replace("/", "").replace("//", "").replace("Â", "").replace("ÂÂ", "").replace("ÂÂÂ", "").replace("(", "").replace(")", "");
+			    .replace("<", "").replace("/", "").replace("//", "").replace("Â", "").replace("ÂÂ", "").replace("ÂÂÂ", "").replace("(", "").replace(")", "").replace("┬", "").replace("º", "").replace("┬º", "").replace("*", "").replace("**", "").replace("^", "");
 				
 				String[] Alert_Related = StringUtils.split(message);
 				
@@ -737,119 +752,6 @@ public class EventPackets implements PacketListener
 						break;
 					}
 				}
-				
-				
-				/*
-				 * 
-				 * for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
-				{
-					String alert = map.getValue().toLowerCase(), alert_message = ChatColor.translateAlternateColorCodes('&', Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + alert.toLowerCase() + ".alert-message"));
-					alert_message = ChatColor.stripColor(alert_message);
-					alert_message = alert_message.trim();
-					alert = alert.trim();
-					
-					if (Alert_Related[0].equalsIgnoreCase(alert_message))
-					{
-						// Flags
-						if (Alert_Related[2].equalsIgnoreCase("failed") || Alert_Related[2].equalsIgnoreCase("flagged"))
-						{
-							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Flag (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Flag - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							break;
-						}
-						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("flagged"))
-						{
-							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
-							{
-								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
-							{
-								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							break;
-						}
-						if (Alert_Related.length > 4 && Alert_Related[2].equalsIgnoreCase("might") && Alert_Related[3].equalsIgnoreCase("be") && Alert_Related[4].equalsIgnoreCase("using"))
-						{
-							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
-							{
-								Rebug.Debug(user, "Skipped MSG Line= Not User - was Flagged - (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowFlags))
-							{
-								Rebug.Debug(user, "Skipped MSG Line= is User - was Flagged - AC isn't the same as the User's tho or ShowFlags was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							break;
-						}
-						
-						// Punished
-						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("punished"))
-						{
-							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowPunishes))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowPunishes was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							break;
-						}
-						
-						// Setback
-						if (Alert_Related[2].equalsIgnoreCase("was") && Alert_Related[3].equalsIgnoreCase("setback"))
-						{
-							if (!Alert_Related[1].equalsIgnoreCase(user.getName()))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Not User - Punished (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							if (Alert_Related[1].equalsIgnoreCase(user.getName()) && (!user.AntiCheat.equalsIgnoreCase(alert) || !user.ShowSetbacks))
-							{
-								Rebug.Debug(user.getPlayer(), "Skipped MSG Line= Is User - Punished - AC isn't the same as the User's tho or ShowPunishes was off! (P-AC " + user.AntiCheat + " A-AC " + alert + ")");
-								user.preReceive --;
-								e.setCancelled(true);
-								break;
-							}
-							break;
-						}
-						break;
-					}
-				}
-				 */
 			}
 		}
 	}

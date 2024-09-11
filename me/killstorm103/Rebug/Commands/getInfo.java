@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class getInfo extends Command
 {
 
@@ -143,8 +144,9 @@ public class getInfo extends Command
 		return s;
 	}
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

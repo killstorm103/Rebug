@@ -1,12 +1,11 @@
 package me.killstorm103.Rebug.Events;
 
-import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -43,27 +42,9 @@ public class EventMenus implements Listener
 	@EventHandler
 	public void onInventoryClose (InventoryCloseEvent e)
 	{
-		User user = Rebug.getUser((Player) e.getPlayer());
-		if (user == null || user.CommandTarget == null) return;
-		
-		if (user.InvSeed)
-		{
-			for (Map.Entry<ItemStack, Integer> map : user.OldItems.entrySet())
-			{
-				if (map == null || map.getKey() == null) return;
-				
-				if (map.getKey().getType() == Material.AIR)
-					user.getPlayer().getInventory().getItem(map.getValue()).setType(Material.AIR);
-				else
-					user.getPlayer().getInventory().setItem(map.getValue(), map.getKey());
-			}
-			user.getPlayer().updateInventory();
-			user.OldItems.clear();
-			user.InvSeed = false;
-		}
 	}
 	@SuppressWarnings("deprecation")
-	@EventHandler
+	@EventHandler (priority =  EventPriority.HIGHEST)
 	public void onMenu (InventoryClickEvent e)
 	{
 		ItemMeta meta = null;
@@ -128,23 +109,6 @@ public class EventMenus implements Listener
 			{
 				meta = item.getItemMeta();
 				String ItemName = meta.hasDisplayName() ? ChatColor.stripColor(meta.getDisplayName()) : null;
-				if (MenuName.equalsIgnoreCase("Inventory") && user.InvSeed && e.getClickedInventory() == user.getPlayer().getInventory())
-				{
-					if (e.getClickedInventory() != user.CommandTarget.getInventory())
-					{
-						if (ItemName.equalsIgnoreCase("Max Item"))
-						{
-							e.setCancelled(true);
-							e.getCursor().setAmount(64);
-							e.setCursor(e.getCursor());
-						}
-						if (ItemName.equalsIgnoreCase("Delete Item"))
-						{
-							e.setCancelled(true);
-							e.setCursor(null);
-						}
-					}
-				}
 				if (MenuName.equalsIgnoreCase("Potions") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
@@ -165,6 +129,17 @@ public class EventMenus implements Listener
 				if (MenuName.equalsIgnoreCase("AntiCheats") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
 					e.setCancelled(true);
+					if (item != null && item.getType() != Material.AIR && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats.debug-clicked-item"))
+					{
+						user.sendMessage("Clicked on= " + ItemName);
+						user.sendMessage("Name= " + item.getType().name());
+						user.sendMessage("ID= " + item.getType().getId());
+						if (getCursor.getData() != null)
+							player.sendMessage(Rebug.RebugMessage + "Data= " + getCursor.getData().getData());
+						
+						return;
+					}
+					
 					if (item == null || !item.hasItemMeta() || item.getItemMeta().getLore() == null || item.getItemMeta().getLore().size() <= 1)
 						return;
 					
@@ -183,7 +158,18 @@ public class EventMenus implements Listener
 				{
 					e.setCancelled(true);
 					if (!ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
-						Rebug.getINSTANCE().getNMS().ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName);
+					{
+						if (user.CommandTarget != user.getPlayer())
+						{
+							if (ItemName.toLowerCase().contains("crash") && !user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") && !Rebug.hasAdminPerms(user) 
+							|| !ItemName.toLowerCase().contains("crash") && !user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") && !Rebug.hasAdminPerms(user))
+							{
+								user.sendMessage("You don't have permission to use this on other players!");
+								return;
+							}
+						}
+						Rebug.getINSTANCE().getNMS().ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName, ItemName.toLowerCase().contains("crash"));
+					}
 				}
 				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
@@ -412,6 +398,7 @@ public class EventMenus implements Listener
 				}
 				if (MenuName.equalsIgnoreCase("Crashers") && e.getClickedInventory() != user.getPlayer().getInventory())
 				{
+					/*
 					if (ItemName != null)
 					{
 						if (ItemName.equalsIgnoreCase("User " + user.CommandTarget.getName()))
@@ -435,9 +422,11 @@ public class EventMenus implements Listener
 						Rebug.getINSTANCE().getNMS().CrashSendPacket(user.getPlayer(), user.CommandTarget, ItemName, null);
 						e.setCancelled(true);
 					}
+					*/
 				}
 				if (MenuName.equalsIgnoreCase("Spawn Entity Crashers"))
 				{
+					/*
 					if (ItemName != null && e.getClickedInventory() != user.getPlayer().getInventory())
 					{
 						if (ItemName.equalsIgnoreCase("User " + user.CommandTarget.getName()))
@@ -463,6 +452,7 @@ public class EventMenus implements Listener
 						Rebug.getINSTANCE().getNMS().CrashSendPacket(user.getPlayer(), user.CommandTarget, "SpawnEntity", ItemName);
 						e.setCancelled(true);
 					}
+					*/
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class Discord extends Command
 {
 
@@ -77,8 +78,9 @@ public class Discord extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

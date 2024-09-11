@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class GetUUID extends Command
 {
 
@@ -51,7 +52,7 @@ public class GetUUID extends Command
 		if (sender instanceof Player)
 		{
 			player = (Player) sender;
-			if (Rebug.hasAdminPerms(player))
+			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
 			{
 				if (args.length < 2)
 					player.sendMessage(Rebug.RebugMessage + player.getName() + "'s UUID: " + player.getUniqueId());
@@ -116,8 +117,9 @@ public class GetUUID extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class Unblock extends Command
 {
 
@@ -44,7 +45,7 @@ public class Unblock extends Command
 			return;
 		}
 		Player player = null;
-		player = Rebug.getINSTANCE().getServer().getPlayer(args[1]);
+		player = Bukkit.getPlayer(args[1]);
 		if (player == null)
 		{
 			Log(sender, "Player not found!");
@@ -90,8 +91,9 @@ public class Unblock extends Command
 		return s;
 	}
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

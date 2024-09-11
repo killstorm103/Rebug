@@ -6,16 +6,26 @@ import java.util.List;
 
 public class Config
 {
-	public static final List<String> getOnJoinCommands ()
-	{
-		return Rebug.getINSTANCE().getConfig().getStringList("on-join-commands");
-	}
 	public static final int getAntiCheatItemID (String AC)
 	{
 		int ID =- Integer.MAX_VALUE;
 		try
 		{
 			ID = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + AC + ".item");
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return ID;
+	}
+	// Used for 1.13+ cause spigots gay!
+	public static final String getAntiCheatItemNameID (String AC)
+	{
+		String ID = "";
+		try
+		{
+			ID = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + AC + ".item");
 		}
 		catch (Exception e) 
 		{

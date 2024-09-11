@@ -3,12 +3,13 @@ package me.killstorm103.Rebug.Commands;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
+import me.killstorm103.Rebug.Utils.PTNormal;
+
 
 public class SpawnCMD extends Command
 {
@@ -20,7 +21,7 @@ public class SpawnCMD extends Command
 
 	@Override
 	public String getSyntax() {
-		return "spawn";
+		return "spawn | spawn <player> (if console)";
 	}
 
 	@Override
@@ -45,10 +46,25 @@ public class SpawnCMD extends Command
 			Player player = (Player) sender;
 			player.setNoDamageTicks(50);
 			player.setFallDistance(0);
-			player.teleport(new Location(Bukkit.getServer().getWorld("world"), 41, 58, 319, -91.200165F, -0.5999501F));
+			player.teleport(PTNormal.INSTANCE.getSpawn());
 		}
 		else
-			sender.sendMessage(Rebug.RebugMessage + "Only Players can use this command!");
+		{
+			if (args.length > 1)
+			{
+				Player player = Bukkit.getPlayer(args[1]);
+				if (player == null)
+				{
+					Log(sender, "Unknown Player!");
+					return;
+				}
+				player.setNoDamageTicks(50);
+				player.setFallDistance(0);
+				player.teleport(PTNormal.INSTANCE.getSpawn());
+				return;
+			}
+			Log(sender, getSyntax());
+		}
 	}
 
 	@Override
@@ -66,24 +82,24 @@ public class SpawnCMD extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+				return false;
+			
+			return true;
 		}
 		
-		return s;
+		return false;
 	}
 
 
 	@Override
-	public boolean HasToBeConsole()
+	public Types getType ()
 	{
-		return false;
+		return Types.AnySender;
 	}
-
 	@Override
 	public String[] SubAliases() 
 	{

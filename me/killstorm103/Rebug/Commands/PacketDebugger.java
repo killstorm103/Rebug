@@ -43,12 +43,6 @@ public class PacketDebugger extends Command
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
-		if (!(sender instanceof Player))
-		{
-			Log(sender, "Only Players can use this Command!");
-			return;
-		}
-		
 		if (args.length < 2) 
 		{
 			sender.sendMessage(Rebug.RebugMessage + getSyntax());
@@ -108,20 +102,20 @@ public class PacketDebugger extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+				return false;
 		}
 		
-		return s;
+		return true;
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override

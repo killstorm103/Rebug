@@ -130,8 +130,6 @@ public class PotionCommand extends Command
 			}
 			
 		}
-		else
-			sender.sendMessage(Rebug.RebugMessage + "Only players can run this command!");
 	}
 
 	@Override
@@ -159,20 +157,20 @@ public class PotionCommand extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+			if (player.hasPermission(getPermission()) || Rebug.hasAdminPerms(player))
+				return false;
 		}
 		
-		return s;
+		return true;
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override

@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
+import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 
 public abstract class Command 
@@ -19,9 +18,13 @@ public abstract class Command
 	public abstract List<String> onTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
 	public abstract boolean HasCustomTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
 	public abstract boolean HideFromCommandsList (CommandSender sender);
-	public abstract boolean HasToBeConsole ();
+	public abstract Types getType ();
 	public abstract boolean hasCommandCoolDown();
 	public abstract boolean RemoveSlash ();
+	public enum Types 
+	{
+		AnySender, Player, Console; 
+	}
 	
 	public Map<UUID, Long> CoolDown = new HashMap<>();
 	
@@ -42,7 +45,7 @@ public abstract class Command
 	public void LogToConsole (String tolog)
 	{
 		tolog = tolog.replace(Rebug.RebugMessage, "");
-		Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + tolog);
+		Rebug.getINSTANCE().Log(Level.INFO, Rebug.RebugMessage + tolog);
 	}
 	public final String StartOfPermission ()
 	{

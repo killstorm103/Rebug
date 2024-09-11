@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class Reload extends Command
 {
 
@@ -70,10 +71,10 @@ public class Reload extends Command
 		
 		return s;
 	}
-
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

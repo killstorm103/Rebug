@@ -51,8 +51,13 @@ public class VClip extends Command
 					player.sendMessage(Rebug.RebugMessage + "You must put a number!");
 					return;
 				}
-				double max = Rebug.getINSTANCE().getConfig().getDouble("max-vclip-value"), tp = Double.parseDouble(args[1]);
-				tp = max > 0 && tp > max ? max : tp;
+				double tp = Double.parseDouble(args[1]);
+				if (!Rebug.hasAdminPerms(player))
+				{
+					double max = Rebug.getINSTANCE().getConfig().getDouble("max-vclip-value");
+					tp = max > 0 && tp > max ? max : tp;
+				}
+					
 				player.setNoDamageTicks(35);
 				player.setFallDistance(0);
 				player.teleport(player.getLocation().add(0, tp, 0));
@@ -75,11 +80,9 @@ public class VClip extends Command
 					Log(sender, "You must put a number!");
 					return;
 				}
-				double max = Rebug.getINSTANCE().getConfig().getDouble("max-vclip-value"), tp = Double.parseDouble(args[1]);
-				tp = max > 0 && tp > max ? max : tp;
 				player.setNoDamageTicks(35);
 				player.setFallDistance(0);
-				player.teleport(player.getLocation().add(0, tp, 0));
+				player.teleport(player.getLocation().add(0, Double.parseDouble(args[1]), 0));
 			}
 			else
 				Log(sender, getSyntax());
@@ -115,8 +118,9 @@ public class VClip extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

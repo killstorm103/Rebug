@@ -151,10 +151,10 @@ public class ClientCMD extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
-
 	@Override
 	public String[] SubAliases() 
 	{

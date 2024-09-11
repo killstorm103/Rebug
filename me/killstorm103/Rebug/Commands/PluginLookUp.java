@@ -2,53 +2,68 @@ package me.killstorm103.Rebug.Commands;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
-
-public class SlashFly extends Command
+public class PluginLookUp extends Command
 {
 
 	@Override
 	public String getName() {
-		return "fly";
+		return "pluginlookup";
 	}
 
 	@Override
 	public String getSyntax() {
-		return "fly";
+		return "pluginlookup <plugin>";
 	}
 
 	@Override
 	public String getDescription() {
-		return "fly";
+		return "look up plugins";
 	}
 
 	@Override
 	public String getPermission() {
-		return StartOfPermission() + "flycmd";
+		return StartOfPermission() + "plugin_lookup";
 	}
 
 	@Override
 	public String[] SubAliases() {
-		return new String[] {"/fly"};
+		return null;
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception
 	{
-		if (!(sender instanceof Player))
+		if (args.length < 2)
 		{
-			sender.sendMessage(Rebug.RebugMessage + "Only Players can run this command!");
+			Log(sender, getSyntax());
 			return;
 		}
-		Player player = (Player) sender;
-		player.setAllowFlight(!player.getAllowFlight());
-		player.setFallDistance(0);
-		player.sendMessage(Rebug.RebugMessage + "You can " + (player.getAllowFlight() ? "now" : "no longer") + " fly!");
+		Plugin plugin = Bukkit.getPluginManager().getPlugin(args[1]);
+		if (plugin == null)
+		{
+			Log(sender, "Unknown Plugin!");
+			return;
+		}
+		Log(sender, plugin.getName());
+		if (plugin.getDescription() != null)
+		{
+			if (!plugin.getDescription().getPermissions().isEmpty())
+			{
+				for (Permission perms : plugin.getDescription().getPermissions())
+				{
+					Log(sender, "perm: " + perms.getName());
+				}
+			}
+		}
 	}
 
 	@Override
@@ -64,26 +79,28 @@ public class SlashFly extends Command
 	}
 
 	@Override
-	public boolean HideFromCommandsList(CommandSender sender)
+	public boolean HideFromCommandsList(CommandSender sender) 
 	{
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
+			if (player.hasPermission(getPermission()) || Rebug.hasAdminPerms(player))
 				return false;
+			
+			return true;
 		}
 		
-		return true;
+		return false;
 	}
 
 	@Override
-	public Types getType ()
+	public Types getType() {
+		return Types.AnySender;
+	}
+
+	@Override
+	public boolean hasCommandCoolDown() 
 	{
-		return Types.Player;
-	}
-
-	@Override
-	public boolean hasCommandCoolDown() {
 		return false;
 	}
 

@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -42,6 +43,34 @@ public class PTNormal
 			t.add(Players[i].getName());
 		}
 		return t;
+	}
+	public static String reverseName (String name)
+	{
+	    name = name.trim();
+	    StringBuilder reversedNameBuilder = new StringBuilder();
+	    StringBuilder subNameBuilder = new StringBuilder();
+
+	    for (int i = 0; i < name.length(); i++)
+	    {
+
+	        char currentChar = name.charAt(i);
+
+	        if (currentChar != ' ' && currentChar != '-')
+	        {
+	            subNameBuilder.append(currentChar);
+	        } 
+	        else
+	        {
+	            reversedNameBuilder.insert(0, currentChar + subNameBuilder.toString());
+	            subNameBuilder.setLength(0);
+	        }
+	    }
+
+	    return reversedNameBuilder.insert(0, subNameBuilder.toString()).toString();
+	}
+	public static Player getPlayerFromHumanEntity(LivingEntity entity) 
+	{
+		return (Player) entity;
 	}
 	public static boolean isInventoryFull (Player player)
 	{

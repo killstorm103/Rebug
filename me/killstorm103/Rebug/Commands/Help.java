@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Rebug;
 
+
 public class Help extends Command
 {
 
@@ -101,8 +102,9 @@ public class Help extends Command
 		return false;
 	}
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.AnySender;
 	}
 
 	@Override

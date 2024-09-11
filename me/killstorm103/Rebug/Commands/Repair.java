@@ -91,8 +91,9 @@ public class Repair extends Command
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override

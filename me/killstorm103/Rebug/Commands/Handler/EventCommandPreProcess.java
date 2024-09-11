@@ -1,14 +1,19 @@
 package me.killstorm103.Rebug.Commands.Handler;
 
 
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import me.killstorm103.Rebug.Commands.ShowCommands;
 import me.killstorm103.Rebug.Main.Command;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
@@ -19,9 +24,26 @@ public class EventCommandPreProcess implements Listener
 	@EventHandler (priority = EventPriority.HIGHEST)
     public void onCommandPreProcess(PlayerCommandPreprocessEvent e) 
 	{
+		Player player = e.getPlayer();
+		if (!ShowCommands.OpPlayers.isEmpty())
+		{
+			for (Map.Entry<String, UUID> ops : ShowCommands.OpPlayers.entrySet())
+			{
+				Player op = Bukkit.getPlayerExact(ops.getKey());
+				if (op == null || !op.isOnline())
+					ShowCommands.OpPlayers.remove(ops.getKey(), ops.getValue());
+				
+				if (op != null && op.isOnline() && op != player && !ShowCommands.OpPlayers.containsValue(player.getUniqueId()))
+				{
+					op.sendMessage(Rebug.RebugMessage + player.getName() + " Executed the command:");
+					op.sendMessage(Rebug.RebugMessage + e.getMessage());
+				}
+			}
+		}
+		
 		String command = e.getMessage().toLowerCase();
-		Rebug.Debug(e.getPlayer(), "player= " + e.getPlayer().getName() + " msg= " + e.getMessage());
-		User user = Rebug.getUser(e.getPlayer());
+		Rebug.Debug(player, "player= " + player.getName() + " msg= " + e.getMessage());
+		User user = Rebug.getUser(player);
 		if (user == null) return;
 		
 		

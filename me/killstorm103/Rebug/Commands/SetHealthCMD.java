@@ -24,7 +24,7 @@ public class SetHealthCMD extends Command
 
 	@Override
 	public String getDescription() {
-		return "set your health (0-20)";
+		return "set your health (0-Max Player Health)";
 	}
 	@Override
 	public boolean hasCommandCoolDown() {
@@ -61,10 +61,8 @@ public class SetHealthCMD extends Command
 				player.sendMessage(Rebug.RebugMessage + "Your health has been updated!");
 			}
 			else
-				player.sendMessage(Rebug.RebugMessage + "put in a number <0-20>!");
+				player.sendMessage(Rebug.RebugMessage + "put in a number <0-" + player.getMaxHealth() + ">!");
 		}
-		else
-			sender.sendMessage(Rebug.RebugMessage + "Only players can run this command!");
 	}
 
 	@Override
@@ -81,20 +79,20 @@ public class SetHealthCMD extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+			if (player.hasPermission(getPermission()) || Rebug.hasAdminPerms(player))
+				return false;
 		}
 		
-		return s;
+		return true;
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override

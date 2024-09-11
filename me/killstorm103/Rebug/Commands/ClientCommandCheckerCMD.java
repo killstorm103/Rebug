@@ -118,11 +118,10 @@ public class ClientCommandCheckerCMD extends Command
 		
 		return s;
 	}
-
 	@Override
-	public boolean HasToBeConsole() 
+	public Types getType ()
 	{
-		return false;
+		return Types.AnySender;
 	}
 
 	@Override

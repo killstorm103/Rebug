@@ -9,8 +9,7 @@ import me.killstorm103.Rebug.Utils.User;
 
 public interface NMS_Interface 
 {
-	public void ExploitSendPacket (Player attacker, Player target, String exploit);
-	public void CrashSendPacket (Player attacker, Player target, String mode, String spawncrashmode);
+	public void ExploitSendPacket (Player attacker, Player target, String exploit, boolean CrashesPlayer);
 	public void SendPacketUnBlock (Player player);
 	public void SendPacket (Player player, Object object);
 	public void SendChatPacket (Player player, String text, byte type);

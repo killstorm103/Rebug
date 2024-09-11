@@ -27,7 +27,7 @@ public class User
     private String brand = null, register = null;
     private int protocol;
     
-    public boolean ShowS08Alert = true, Builder = false, ClientCommandChecker = false, SentUpdatedCommand = false, Infinite_Blocks, InvSeed = false, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
+    public boolean ShowS08Alert = true, Builder = false, ClientCommandChecker = false, SentUpdatedCommand = false, Infinite_Blocks, CancelInteract = false, AutoCloseAntiCheatMenu, Hunger, Fire_Resistance, Damage_Resistance, Exterranl_Damage, Vanilla1_8FlyCheck, Vanilla1_9FlyCheck, NotifyFlyingKick1_8, NotifyFlyingKick1_9, PotionEffects, AutoRefillBlocks, AntiCheatKick, AllowMentions, ProximityPlayerHider, HideOnlinePlayers, AllowDirectMessages, ShowFlags, ShowPunishes, ShowSetbacks, FallDamage;
     
     public org.bukkit.Location death_location;
     public String AntiCheat, NumberIDs = "", Keycard, HackedUUID;
@@ -272,14 +272,23 @@ public class User
     }
 	public final int getVersion ()
     {
+		if (!Rebug.getINSTANCE().isViaVersionOnServer())
+			return 0;
+		
     	return Via.getAPI().getPlayerVersion(this.player.getUniqueId());
     }
     public final String getVersion_ ()
     {
+    	if (!Rebug.getINSTANCE().isViaVersionOnServer())
+    		return "ViaVersion not found!";
+    	
     	return ProtocolVersion.getProtocol(this.protocol).getName();
     }
     public final String getVersion_Short ()
     {
+    	if (!Rebug.getINSTANCE().isViaVersionOnServer())
+    		return "ViaVersion not found!";
+    	
     	String version = getVersion_();
     	int find = 0;
 		if (version.contains("-"))
@@ -298,6 +307,9 @@ public class User
 	}
 	private int getNumber ()
     {
+		if (!Rebug.getINSTANCE().isViaVersionOnServer())
+			return 0;
+		
     	int game_version =- 1;
     	try
     	{
@@ -336,7 +348,7 @@ public class User
     }
 	
 	// Inventory
-    public Inventory OldInventory, CrashersMenu, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, SpawnEntityCrashersMenu, PotionsMenu, PacketDebuggerMenu;
+    public Inventory OldInventory, ExploitsMenu, SettingsMenu, VanillaFlyChecksMenu, PotionsMenu, PacketDebuggerMenu;
  // Inventory Size can be: 9, 18, 27, 36, 45, 54
 
     // Packet Debugger
@@ -358,26 +370,6 @@ public class User
     	
     	return PacketDebuggerMenu;
     }
-    
-   
-	public final Map<ItemStack, Integer> OldItems = new HashMap<>();
-	public static final Map<ItemStack, Integer> TempItemsInvSee = new HashMap<>();
-	static
-	{
-		@SuppressWarnings("deprecation")
-		ItemStack tempstack =  new ItemStack(Material.WOOL, 1, (short) 0, (byte) 5);
-		ItemMeta meta = tempstack.getItemMeta();
-		meta.setDisplayName(ChatColor.GREEN + "Max Item");
-		tempstack.setItemMeta(meta);
-		TempItemsInvSee.put(tempstack, 16);
-		@SuppressWarnings("deprecation")
-		ItemStack tempstack2 = new ItemStack(Material.WOOL, 1, (short) 0, (byte) 14);
-		ItemMeta meta2 = tempstack2.getItemMeta();
-		meta2.setDisplayName(ChatColor.RED + "Delete Item");
-		tempstack2.setItemMeta(meta2);
-		TempItemsInvSee.put(tempstack2, 17);
-	}
-	
 	public void UpdateMenuValueChangeLore(Inventory inventory, int slot, int loreslot, String ChangedTo)
 	{
 		if (inventory == null || PTNormal.isStringNull(ChangedTo)) return;
@@ -418,18 +410,6 @@ public class User
 		this.player.getItemInHand().setItemMeta(NewMeta);
 	}
 	
-    public Inventory getCrashers ()
-    {
-    	if (CrashersMenu != null)
-    	{
-    		User user = Rebug.getUser(CommandTarget);
-    		UpdateItemInMenu(CrashersMenu, 0, Rebug.getINSTANCE().getNMS().getMadeItems("%user-info%", user));
-    	}
-    	if (CrashersMenu == null)
-    		Rebug.getINSTANCE().getNMS().SetUpMenu(this, "crashers menu");
-    	
-    	return OldInventory = CrashersMenu;
-    }
     public Inventory getVanillaFlyChecks ()
     {
     	if (VanillaFlyChecksMenu == null)
@@ -450,24 +430,12 @@ public class User
     	if (ExploitsMenu != null)
     	{
     		User user = Rebug.getUser(CommandTarget);
-    		UpdateItemInMenu(CrashersMenu, 0, Rebug.getINSTANCE().getNMS().getMadeItems("%user-info%", user));
+    		UpdateItemInMenu(ExploitsMenu, 0, Rebug.getINSTANCE().getNMS().getMadeItems("%user-info%", user));
     	}
     	if (ExploitsMenu == null)
     		Rebug.getINSTANCE().getNMS().SetUpMenu(this, "exploits menu");
     		
     	return ExploitsMenu;
-    }
-    public Inventory getSpawnEntityCrashers ()
-    {
-    	if (SpawnEntityCrashersMenu != null)
-    	{
-    		User user = Rebug.getUser(CommandTarget);
-    		UpdateItemInMenu(CrashersMenu, 1, Rebug.getINSTANCE().getNMS().getMadeItems("%user-info%", user));
-    	}
-    	if (SpawnEntityCrashersMenu == null)
-    		Rebug.getINSTANCE().getNMS().SetUpMenu(this, "Spawn Entity Crasher");
-    	
-    	return SpawnEntityCrashersMenu;
     }
 	public boolean hasPermission (String perm) 
 	{

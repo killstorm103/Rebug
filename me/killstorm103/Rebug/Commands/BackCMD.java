@@ -69,22 +69,20 @@ public class BackCMD extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender) 
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+				return false;
 		}
-		else
-			s = false;
 		
-		return s;
+		return true;
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override

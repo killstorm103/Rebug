@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
-import me.killstorm103.Rebug.NMS.Versions.PT_1_8_R3;
+import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.TeleportUtils;
 import me.killstorm103.Rebug.Utils.User;
 
@@ -92,11 +92,12 @@ public class EventPlayer implements Listener
 			if (message.equals(user.Keycard))
 			{
 				Rebug.lockedList.remove(player.getUniqueId());
-                user.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aSuccessfully passed Client Command Checker!"));
+				user.sendMessage(ChatColor.GREEN + "Successfully passed Client Command Checker!");
 			}
 			e.setCancelled(true);
 			return;
 		}
+		
 		user.Yapper_Message_Count ++;
 	}
 	
@@ -109,7 +110,7 @@ public class EventPlayer implements Listener
 			ItemStack Bow = e.getBow();
 			if (!Bow.hasItemMeta() || !Bow.getItemMeta().hasDisplayName() || !Bow.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Teleport Bow")) return;
 			
-			User user = Rebug.getUser(PT_1_8_R3.getPlayerFromHumanEntity(e.getEntity()));
+			User user = Rebug.getUser(PTNormal.getPlayerFromHumanEntity(e.getEntity()));
 			if (user == null) return;
 			
 			
@@ -136,7 +137,13 @@ public class EventPlayer implements Listener
 			player.teleport(e.getFrom());
 			return;
 		}
-		
+		User user = Rebug.getUser(player);
+		if (user != null)
+		{
+			user.lastTickPosX = user.getLocation().getX();
+			user.lastTickPosY = user.getLocation().getY();
+			user.lastTickPosZ = user.getLocation().getZ();
+		}
 	}
 	private boolean isAllowedInArea (Player player, Location GoingTo, User user, boolean BuildCheck) 
 	{

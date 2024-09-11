@@ -133,8 +133,6 @@ public class Enchant extends Command
 			else
 				player.sendMessage(Rebug.RebugMessage + getSyntax());
 		}
-		else
-			sender.sendMessage(Rebug.RebugMessage + "Your not able to use this command only players can!");
 	}
 
 	@Override
@@ -151,24 +149,21 @@ public class Enchant extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender) 
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+				return false;
 		}
-		else
-			s = true;
 		
-		return s;
+		return true;
 	}
 
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
-
 	@Override
 	public boolean RemoveSlash() {
 		return false;

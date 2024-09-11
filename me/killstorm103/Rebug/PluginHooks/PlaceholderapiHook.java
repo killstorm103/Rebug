@@ -67,7 +67,7 @@ public class PlaceholderapiHook extends PlaceholderExpansion
 			}
 			if (params.equalsIgnoreCase("testserver"))
 			{
-				return ChatColor.translateAlternateColorCodes('&', ChatColor.DARK_GRAY + "| " + Config.ScoreboardTitle() + " ") + ChatColor.DARK_GRAY + "§cTest §2Server " + ChatColor.DARK_GRAY + "|";
+				return ChatColor.translateAlternateColorCodes('&', ChatColor.DARK_GRAY + "| " + Config.ScoreboardTitle() + " ") + ChatColor.RED + "Test " + ChatColor.DARK_GREEN +  "Server " + ChatColor.DARK_GRAY + "|";
 			}
 			if (params.equalsIgnoreCase("client_version") || params.equalsIgnoreCase("client"))
 			{

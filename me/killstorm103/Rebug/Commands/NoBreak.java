@@ -70,8 +70,6 @@ public class NoBreak extends Command
 			else
 				user.getPlayer().sendMessage(Rebug.RebugMessage + "You don't have a item to make unbreakable/breakable!");
 		}
-		else
-			sender.sendMessage(Rebug.RebugMessage + "Only Players can run this command!");
 	}
 
 	@Override
@@ -88,18 +86,18 @@ public class NoBreak extends Command
 	@Override
 	public boolean HideFromCommandsList(CommandSender sender)
 	{
-		boolean s = true;
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
 			if (Rebug.hasAdminPerms(player) || player.hasPermission(getPermission()))
-				s = false;
+				return false;
 		}
-		return s;
+		return true;
 	}
 	@Override
-	public boolean HasToBeConsole() {
-		return false;
+	public Types getType ()
+	{
+		return Types.Player;
 	}
 
 	@Override
