@@ -1,0 +1,12 @@
+Owner:
+  permission: me.killstorm103.rebug.server_owner
+Admin:
+  permission: me.killstorm103.rebug.server_admin
+Mod:
+  permission: me.killstorm103.rebug.server_mod
+Helper:
+  permission: me.killstorm103.rebug.server_helper
+Dev:
+  permission: me.killstorm103.rebug.user_rank_dev
+ACDev:
+  permission: me.killstorm103.rebug.user_rank_acdev

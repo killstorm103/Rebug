@@ -1,9 +1,12 @@
 are-users-allowed-to-disable-kicks: true
 on-join-commands:
-- horizon verbose
-- grim verbose
-- foxaddition verbose
+  everytime:
+  - grim verbose
+  - foxaddition verbose
+  once:
+  - horizon verbose
 client-command-checker:
+  blockCommands: true
   sendOnce: false
   topString: '&e------&aplease click the button&e------'
   bottomString: '&e------&aplease click the button&e------'
@@ -11,7 +14,7 @@ experimental-feature-warning: true
 experimental-features:
 - show title
 - nofall water bucket
-max-vclip-value: 20
+max-vclip-value: 1000
 infinite-blocks-enabled: true
 special-tnt-enabled: true
 special-tnt-fuseticks: 71
@@ -36,8 +39,17 @@ auto-refill-blocks-ticks: 200
 map-version: v1.1
 discord-link: https://invite.gg/mhecommunity
 server-rules:
-- Add your rules
+- No Doxing/Leaking info
+- No Dossing other players or the server
+- No Griefing
+- No Spamming
+- No Scamming
+- Don't be an uptight prick
+- Niggers a nigger a whore's whore a faggots a faggot women don't have dicks there's only 2 genders etc i COULDN'T GiVE A FUCK if someone states a fact so don't come to me over this stuff wanting me to mute/kick/ban them!
 user-update-perms-command: lp user %user% parent set %anticheat%
+use-ranks: true
+use-one-rank: true
+user-staff-group-command: lp user %user% parent add
 is-clear-lag-plugin-enabled: true
 clear-lag-command: lagg clear
 scaffold-test-area:
@@ -47,11 +59,11 @@ scaffold-test-area:
   maxX: 61
   maxY: 255
   maxZ: 302
-  auto-clear: false
+  auto-clear: true
   clear_blocks_command: fill
 world-spawn:
   use-this: true
-  set-rots: false
+  set-rots: true
   posX: 41
   posY: 58
   posZ: 319
