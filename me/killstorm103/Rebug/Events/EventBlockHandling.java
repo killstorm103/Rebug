@@ -34,7 +34,7 @@ public class EventBlockHandling implements Listener
 	{
 		if (player.isOnline()) 
 		{
-			if (Rebug.hasAdminPerms(player) || user != null && user.Builder)
+			if (user != null && user.Builder)
 				return true;
 			
 			if (BuilderCheck && user == null)
@@ -42,7 +42,6 @@ public class EventBlockHandling implements Listener
 				user = Rebug.getUser(player);
 				if (user != null && user.Builder) return true;
 			}
-			
 		}
 		double minY = Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.minY"), maxY = Rebug.getINSTANCE().getConfig().getDouble("scaffold-test-area.maxY");
 		maxY = maxY < minY ? minY + 1 : maxY;
@@ -170,7 +169,7 @@ public class EventBlockHandling implements Listener
 			e.setCancelled(true);
 			return;
 		}
-		if (!Rebug.AutoRefillBlocks || Rebug.hasAdminPerms(user.getPlayer()) || user.Builder) return;
+		if (!Rebug.AutoRefillBlocks || user.Builder) return;
 		
 		Bukkit.getScheduler().runTaskLater(Rebug.getINSTANCE(), new Runnable() 
 		{

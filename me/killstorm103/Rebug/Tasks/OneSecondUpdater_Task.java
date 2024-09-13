@@ -42,6 +42,10 @@ public class OneSecondUpdater_Task implements Runnable
 						board.remove(5);
 						
 					board.set(ChatColor.DARK_RED + "PPS " + ChatColor.WHITE + user.sendPacketCounts + "/in " + user.receivePacketCounts + "/out", 5);
+					
+					if (!PTNormal.isStringNull(board.get(8)))
+						board.remove(8);
+					
 			   		board.set(ChatColor.DARK_RED + "CPS " + ChatColor.WHITE + user.ClicksPerSecond, 8);
 				}
 		   		user.preSend = user.preReceive = user.preCPS = 0;

@@ -31,7 +31,8 @@ public class Help extends Command
 		return "gets a list of commands and Syntax of commands";
 	}
 	@Override
-	public boolean hasCommandCoolDown() {
+	public boolean hasCommandCoolDown () 
+	{
 		return false;
 	}
 	@Override
@@ -46,7 +47,7 @@ public class Help extends Command
 	{
 		if (args.length == 1)
 		{
-			Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.GRAY + "v" + Rebug.PluginVersion() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.GRAY + Rebug.PluginEdition() + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + " made by " + ChatColor.YELLOW + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|", false);
+			Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.GRAY + "v" + Rebug.PluginVersion() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + " made by " + ChatColor.YELLOW + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|", false);
 			Log(sender, ChatColor.GRAY + "commands (" + "You have access to " + Rebug.getINSTANCE().getAccessToCommandsNumber (sender) + " / " + Rebug.getINSTANCE().getCommands().size() + ")" + ChatColor.RESET + ":", false);
 		}
 		if (args.length == 3)

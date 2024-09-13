@@ -694,7 +694,12 @@ public class S_1_9_4_Interface implements NMS_Interface, InventoryHolder
 			case "exploits menu":
 				if (user.ExploitsMenu == null)
 				{
-					User used = Rebug.getUser(user.CommandTarget);
+					if (user.getCommandTarget(true) == null)
+					{
+						user.sendMessage("Your Command Target was null so they must of left the server!");
+						return;
+					}
+					User used = Rebug.getUser(user.getCommandTarget(false));
 		    		Inventory inventory = PTNormal.createInventory(user.getPlayer(), 54, ChatColor.DARK_RED + "Exploits");
 		    		item = getMadeItems("%user-info%", used);
 					inventory.setItem(0, item);
@@ -1371,6 +1376,15 @@ public class S_1_9_4_Interface implements NMS_Interface, InventoryHolder
 					if (!Rebug.anticheats.isEmpty())
 					{
 						final String[] canbe = {"PacketEvents", "ProtocolLib", "Atlas", "ProtocolSupport", "PacketListenerApi"};
+						item = Reset (Material.ENCHANTMENT_TABLE);
+						itemMeta.setDisplayName(ChatColor.WHITE + "Info");
+						lore.add("");
+						lore.add(ChatColor.AQUA + "To select Multiple AntiCheats");
+						lore.add(ChatColor.AQUA + "do /ac <anticheat> <anticheat> (....)");
+						itemMeta.setLore(lore);
+						item.setItemMeta(itemMeta);
+						inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-info-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("info-item-slot") : 0, item);
+						
 						item = Reset(Material.DIRT);
 						itemMeta.setDisplayName(ChatColor.WHITE + "Vanilla");
 						lore.add("");
@@ -1380,9 +1394,10 @@ public class S_1_9_4_Interface implements NMS_Interface, InventoryHolder
 						lore.add(ChatColor.AQUA + "Author: " + ChatColor.WHITE + "Mojang");
 						itemMeta.setLore(lore);
 						item.setItemMeta(itemMeta);
-						inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot") : 0, item);
+						inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot") : 1, item);
 						
-						int adding = 1;
+						
+						int adding = 2;
 						final boolean CustomSlots = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("Custom Slots");
 						for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet())
 						{

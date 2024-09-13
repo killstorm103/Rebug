@@ -139,8 +139,7 @@ public class EventMenus implements Listener
 						
 						return;
 					}
-					
-					if (item == null || !item.hasItemMeta() || item.getItemMeta().getLore() == null || item.getItemMeta().getLore().size() <= 1)
+					if (item == null || !item.hasItemMeta() || item.getItemMeta().getLore() == null || item.getItemMeta().getLore().size() <= 1 || ItemName.equalsIgnoreCase("info"))
 						return;
 					
 					if (ItemName.equalsIgnoreCase("Vanilla"))
@@ -159,7 +158,13 @@ public class EventMenus implements Listener
 					e.setCancelled(true);
 					if (!ItemName.equalsIgnoreCase("User " + user.getPlayer().getName()))
 					{
-						if (user.CommandTarget != user.getPlayer())
+						if (user.getCommandTarget(true) == null)
+						{
+							user.sendMessage("Your Command Target was null so they must of left the server!");
+							user.getPlayer().closeInventory();
+							return;
+						}
+						if (user.getCommandTarget(false) != user.getPlayer())
 						{
 							if (ItemName.toLowerCase().contains("crash") && !user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") && !Rebug.hasAdminPerms(user) 
 							|| !ItemName.toLowerCase().contains("crash") && !user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") && !Rebug.hasAdminPerms(user))
@@ -168,7 +173,7 @@ public class EventMenus implements Listener
 								return;
 							}
 						}
-						Rebug.getINSTANCE().getNMS().ExploitSendPacket(user.getPlayer(), user.CommandTarget, ItemName, ItemName.toLowerCase().contains("crash"));
+						Rebug.getINSTANCE().getNMS().ExploitSendPacket(user.getPlayer(), user.getCommandTarget(false), ItemName, ItemName.toLowerCase().contains("crash"));
 					}
 				}
 				if (MenuName.equalsIgnoreCase("Vanilla Fly Checks") && e.getClickedInventory() != user.getPlayer().getInventory())

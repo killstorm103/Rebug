@@ -19,13 +19,13 @@ public abstract class Command
 	public abstract boolean HasCustomTabComplete (CommandSender sender, org.bukkit.command.Command command, String[] args, String alias);
 	public abstract boolean HideFromCommandsList (CommandSender sender);
 	public abstract Types getType ();
-	public abstract boolean hasCommandCoolDown();
+	public abstract boolean hasCommandCoolDown ();
 	public abstract boolean RemoveSlash ();
+	
 	public enum Types 
 	{
 		AnySender, Player, Console; 
 	}
-	
 	public Map<UUID, Long> CoolDown = new HashMap<>();
 	
 	public void Log (CommandSender sender, String tolog)

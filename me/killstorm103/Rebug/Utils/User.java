@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,13 +34,33 @@ public class User
     public String AntiCheat, NumberIDs = "", Keycard, HackedUUID;
     public int SelectedAntiCheats = 0;
     
-    public Player CommandTarget; 
+    private Player PlayerTarget;
+    public UUID Target;
     public Map<String, Boolean> AlertsEnabled = new HashMap<>();
     public int  S08Pos = 0, UnReceivedBrand = 0, ShouldTeleportByBow = 0, preSend = 0, preReceive = 0, sendPacketCounts = 0, receivePacketCounts = 0, BrandSetCount = 0, ClicksPerSecond = 0, preCPS = 0, Yapper_Message_Count = 0,
     potionlevel = 1, potion_effect_seconds = 240;
     public double lastTickPosX = 0, lastTickPosY = 0, lastTickPosZ = 0;
     public long timer_balance = 0, joined = 0;
     public float yaw, pitch;
+    
+    public Player getCommandTarget (boolean NullOfflineCheck)
+    {
+    	if (PlayerTarget != null && !NullOfflineCheck)
+    		return PlayerTarget;
+    	
+    	if (Target != null)
+    	{
+    		Player target = Bukkit.getPlayer(Target);
+    		if (target != null)
+    		{
+    			PlayerTarget = target;
+    			target = null;
+    			return PlayerTarget;
+    		}
+    	}
+    	Target = null;
+    	return PlayerTarget = null;
+    }
     
     public Player getPlayer ()
     {
@@ -429,7 +450,13 @@ public class User
     {
     	if (ExploitsMenu != null)
     	{
-    		User user = Rebug.getUser(CommandTarget);
+    		if (user.getCommandTarget(true) == null)
+			{
+    			getPlayer().closeInventory();
+				sendMessage("Your Command Target was null so they must of left the server!");
+				return ExploitsMenu = null;
+			}
+    		User user = Rebug.getUser(getCommandTarget(false));
     		UpdateItemInMenu(ExploitsMenu, 0, Rebug.getINSTANCE().getNMS().getMadeItems("%user-info%", user));
     	}
     	if (ExploitsMenu == null)

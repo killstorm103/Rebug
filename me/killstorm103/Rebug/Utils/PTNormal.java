@@ -1,6 +1,7 @@
 package me.killstorm103.Rebug.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -44,7 +45,7 @@ public class PTNormal
 		}
 		return t;
 	}
-	public static String reverseName (String name)
+	public static String ReverseString (String name)
 	{
 	    name = name.trim();
 	    StringBuilder reversedNameBuilder = new StringBuilder();
@@ -367,19 +368,22 @@ public class PTNormal
 	    }
 	    return true;
 	}
-	public static long getMaxMemory() {
+	public static long getMaxMemory () 
+	{
         long maxMemory = Runtime.getRuntime().maxMemory();
         return maxMemory / 0x100000L;
     }
 
-    public static long getUsedMemory() {
+    public static long getUsedMemory ()
+    {
         long totalMemory = Runtime.getRuntime().totalMemory(), freeMemory = Runtime.getRuntime().freeMemory(), usedMemory = totalMemory - freeMemory;
         return usedMemory / 0x100000L;
     }
 	public static int getPing (Player player) 
 	{
-		try {
-			Object craftPlayer = player.getClass().getMethod("getHandle", new Class[0]).invoke((Object)player, new Object[0]);
+		try 
+		{
+			Object craftPlayer = player.getClass().getMethod("getHandle", new Class[0]).invoke(player, new Object[0]);
 			int ping = (Integer) craftPlayer.getClass().getField("ping").get(craftPlayer);
 			return ping;
 		}
@@ -389,4 +393,11 @@ public class PTNormal
 			return -1;
 		}
 	}
+	public static boolean isSameStringButDiffOrder (String str1, String str2)
+	{
+        String[] words1 = str1.split(" "), words2 = str2.split(" ");
+        Arrays.sort(words1);
+        Arrays.sort(words2);
+        return Arrays.equals(words1, words2);
+    }
 }

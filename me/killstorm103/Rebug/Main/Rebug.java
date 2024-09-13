@@ -148,10 +148,10 @@ public class Rebug extends JavaPlugin implements Listener
     	if (sender != null && sender instanceof Player)
     	{
     		Player player = (Player) sender;
-    		if (hasAdminPerms(player) || !debugOpOnly)
+    		if (!debugOpOnly || hasAdminPerms(player))
         		player.sendMessage(RebugMessage + msg); 
     	}
-    	Bukkit.getServer().getConsoleSender().sendMessage(RebugMessage + msg);
+    	Rebug.getINSTANCE().Log(Level.INFO, msg);
     }
     public static void Debug (User user, String msg)
     {
@@ -168,10 +168,6 @@ public class Rebug extends JavaPlugin implements Listener
 	public static final String getAuthor ()
 	{
 		return "killstorm103";
-	}
-	public static final String PluginEdition ()
-	{
-		return getINSTANCE().getDescription().getDepend().get(0) + " Edition";
 	}
 	public static final String PluginVersion ()
 	{
@@ -487,7 +483,7 @@ public class Rebug extends JavaPlugin implements Listener
 					   		if (getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))
 					   			NewAC = NewAC.replace(NewAC, ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + striped + ".short-name")) + ChatColor.RESET);
 					
-					   		UpdateUserPerms (used, used.AntiCheat);
+					   		UpdateUserPerms (used.getPlayer(), used.AntiCheat);
 					   		UpdateScoreBoard(used, ChatColor.DARK_RED + "AC " + NewAC, 10);
 						}
 					}
@@ -656,7 +652,7 @@ public class Rebug extends JavaPlugin implements Listener
 		Rebug.USERS.put(player.getUniqueId(), new User(player));
 		User user = Rebug.getUser(player);
 		restorePlayer(user.getPlayer());
-		UpdateUserPerms(user, user.SelectedAntiCheats > 1 ? user.NumberIDs : user.AntiCheat);
+		UpdateUserPerms(user.getPlayer(), user.SelectedAntiCheats > 1 ? user.NumberIDs : user.AntiCheat);
 		addToScoreBoard(user.getPlayer());
 		if (user.Fire_Resistance)
 			user.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, true, false));
@@ -809,19 +805,21 @@ public class Rebug extends JavaPlugin implements Listener
 		if (isAlertsEnabledEveryTime.contains(player.getUniqueId()))
 			isAlertsEnabledEveryTime.remove(player.getUniqueId());
 		
+		/*
 		for (Player p : Bukkit.getOnlinePlayers())
 		{
 			if (p != player)
 			{
 				User user = getUser(p);
-				if (user.CommandTarget != null && user.CommandTarget == player)
+				if (user.getCommandTarget() != null && user.getCommandTarget() == player)
 				{
 					user.getPlayer().closeInventory();
 					user.sendMessage("CommandTarget <" + player.getName() + "> Left so closing the Inventory!");
-					user.CommandTarget = null;
+					user.Target = null;
 				}
 			}
 		}
+		*/
 		
 		BPlayerBoard board = Netherboard.instance().getBoard(player);
 		if (board != null)
@@ -906,6 +904,7 @@ public class Rebug extends JavaPlugin implements Listener
 		getCommand("vclip").setExecutor(new ShortCutBasic());
 		getCommand("fly").setExecutor(new ShortCutBasic());
 		getCommand("clientcommandchecker").setExecutor(new ShortCutBasic());
+		getCommand("checkac").setExecutor(new ShortCutBasic());;
 		
 		cmd.clear();
 		commands.clear();
@@ -942,6 +941,7 @@ public class Rebug extends JavaPlugin implements Listener
 		commands.add(new ShowCommands());
 		commands.add(new ClientCommandCheckerCMD());
 		commands.add(new PluginLookUp());
+		commands.add(new CheckAC());
 		
 		for (me.killstorm103.Rebug.Main.Command cmds : commands)
 			cmd.add(cmds.getName());
@@ -1169,7 +1169,7 @@ public class Rebug extends JavaPlugin implements Listener
 		
 		return true;
 	}
-	private void UpdateUserPerms(User user, String itemName) 
+	private void UpdateUserPerms (Player user, String itemName) 
 	{
 		if (user == null) return;
 		
@@ -1233,7 +1233,7 @@ public class Rebug extends JavaPlugin implements Listener
 				return;
 			}
 			
-			String ID_Name = "", Carded = "", Kickables = "";
+			String ID_Name = "", Carded = "", Kickables = "", AntiCheatName;
 			for (int i = 2; i < ItemName.length; i ++)
 			{
 				if (PTNormal.isStringNull(ItemName[i])) 
@@ -1263,7 +1263,7 @@ public class Rebug extends JavaPlugin implements Listener
 					
 					return;
 				}
-				String AntiCheatName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + ItemName[i].toLowerCase() + ".display-name")));
+				AntiCheatName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + ItemName[i].toLowerCase() + ".display-name")));
 				
 				if (!getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + AntiCheatName.toLowerCase()+ ".enabled"))
 				{
@@ -1322,46 +1322,47 @@ public class Rebug extends JavaPlugin implements Listener
 					Sudo.sendMessage(RebugMessage + "Failed to set Multi AC due to ID being null!");
 				else
 					user.sendMessage("Failed to set Multi AC due to ID being null!");
-					
+				
 				return;
 			}
-			Carded = ID_Name.replace(" ", "_");
-			if (getLoadedAntiCheatsFile().get("loaded-anticheats.multiple-anticheats." + Carded.toLowerCase()) == null)
+			Carded = ID_Name.replace(" ", "_").toLowerCase();
+			if (getLoadedAntiCheatsFile().get("loaded-anticheats.multiple-anticheats." + Carded) == null)
 			{
-				Rebug.getINSTANCE().Log(Level.WARNING, "Failed to find " + Carded.toLowerCase() + " in the Loaded AntiCheats.yml config file so trying to reverseName " +
-			   (size > 2 ? "size > 2 reversing isn't supported for more than 2 ACs!" : ""));
 				if (size == 2)
-					Carded = PTNormal.reverseName(Carded.replace("_", " ")).replace(" ", "_");
+					Carded = PTNormal.ReverseString(Carded.replace("_", " ")).replace(" ", "_");
 				
 				else
 				{
-					/*
-					for (String section : getLoadedAntiCheatsFile().getConfigurationSection("loaded-anticheats.multiple-anticheats").getKeys(true))
+					Carded = Carded.replace("_", " ");
+					for (String AC : getLoadedAntiCheatsFile().getConfigurationSection("loaded-anticheats.multiple-anticheats").getKeys(true))
 			        {
+						if (PTNormal.isSameStringButDiffOrder (Carded, AC.replace("_", " ")))
+						{
+							Carded = AC;
+							break;
+						}
 			        }
-			        */
-					Rebug.getINSTANCE().Log(Level.SEVERE, "Finding the closest AC isn't supported for more than 2 AntiCheats!, you'll have to make a " + 
-			        Carded.toLowerCase() + " in the Loaded AntiCheats.yml config file!");
+				}
+				Carded = Carded.replace(" ", "_").toLowerCase();
+				if (getLoadedAntiCheatsFile().get("loaded-anticheats.multiple-anticheats." + Carded) == null)
+				{
+					if (Sudo != null)
+						Sudo.sendMessage(RebugMessage + Carded + " was not Found in the Loaded AntiCheats.yml file!");
+					else
+						user.sendMessage(Carded + " was not Found in the Loaded AntiCheats.yml file! tell a Owner or Admin!");
+					
 					return;
 				}
 			}
-			if (getLoadedAntiCheatsFile().get("loaded-anticheats.multiple-anticheats." + Carded.toLowerCase()) == null)
-			{
-				if (Sudo != null)
-					Sudo.sendMessage(RebugMessage + Carded.toLowerCase() + " was not Found in the Loaded AntiCheats.yml file!");
-				else
-					user.sendMessage(Carded.toLowerCase() + " was not Found in the Loaded AntiCheats.yml file!");
-				
-				return;
-			}
-			Carded = Carded.toLowerCase();
-			if (size > 2)
-				user.sendMessage("Incoming Card= " + Carded + "!");
+			if (Sudo == null)
+				Debug (user, "Incoming Card= " + Carded + "!");
+			else
+				Debug (Sudo, "Incoming Card= " + Carded + "!");
 			
-			user.AntiCheat = ID_Name;
+			user.AntiCheat = Carded.replace("_", " ");
 			user.SelectedAntiCheats = size;
-			user.NumberIDs = getLoadedAntiCheatsFile().getInt("loaded-anticheats.multiple-anticheats." + Carded.toLowerCase()) + "";
-			UpdateUserPerms (user, user.NumberIDs);
+			user.NumberIDs = getLoadedAntiCheatsFile().getInt("loaded-anticheats.multiple-anticheats." + Carded) + "";
+			UpdateUserPerms (user.getPlayer(), user.NumberIDs);
 			if (Sudo != null)
 			{
 				Sudo.sendMessage(RebugMessage + "Successfully Changed " + user.getName() + "'s AntiCheats to: " + user.AntiCheat);
@@ -1484,7 +1485,7 @@ public class Rebug extends JavaPlugin implements Listener
 			}
 		}
 		
-		UpdateUserPerms (user, ItemName[0]);
+		UpdateUserPerms (user.getPlayer(), ItemName[0]);
 		user.NumberIDs = "";
 		if (user.AutoCloseAntiCheatMenu)
 			user.getPlayer().closeInventory();
@@ -1499,7 +1500,8 @@ public class Rebug extends JavaPlugin implements Listener
 			PTNormal.KickPlayer(user.getPlayer(), RebugMessage + "Reconnect required in order to make sure " + user.getColoredAntiCheat() + ChatColor.DARK_GRAY + " works properly!");
 			return;
 		}
-		user.AntiCheat = ItemName[0];
+		user.AntiCheat = ItemName[0].equalsIgnoreCase("vanilla") ? "Vanilla" : 
+		ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', getLoadedAntiCheatsFile().getString("loaded-anticheats." + ItemName[0].toLowerCase() + ".display-name")));
 		user.SelectedAntiCheats = user.AntiCheat.equalsIgnoreCase("Vanilla") ? 0 : 1;
 		String NewAC = user.getColoredAntiCheat(), striped = ChatColor.stripColor(user.AntiCheat).toLowerCase();
    		if (getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + striped + ".has-short-name"))

@@ -130,19 +130,21 @@ public class Menu extends Command
 			{
 				if (args.length >= 3)
 				{
-					if (user.CommandTarget == null || !user.CommandTarget.getName().equals(args[2]))
+					if (user.getCommandTarget(true) == null || !user.getCommandTarget(false).getName().equals(args[2]))
 					{
-						user.CommandTarget = null;
-						user.CommandTarget = Bukkit.getPlayer(args[2]);
-						if (user.CommandTarget == null)
+						user.Target = null;
+						Player temp = Bukkit.getPlayer(args[2]);
+						if (temp == null)
 						{
 							Log(sender, Rebug.RebugMessage + "Unknown Player!");
 							return;
 						}
+						user.Target = temp.getUniqueId();
+						temp = null;
 					}
 				}
 				else
-					user.CommandTarget = user.getPlayer();
+					user.Target = user.getUUID();
 			}
 			switch (menu.toLowerCase())
 			{
@@ -172,7 +174,13 @@ public class Menu extends Command
 			case "exploits":
 				if ((user.hasPermission("me.killstorm103.rebug.user.use_exploits") || user.hasPermission("me.killstorm103.rebug.user.use_crashers")) || Rebug.hasAdminPerms(user.getPlayer()))
 				{
-					if (user.CommandTarget == user.getPlayer() || user.CommandTarget != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") || user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || Rebug.hasAdminPerms(user.getPlayer())))
+					if (user.getCommandTarget(true) == null)
+					{
+						user.sendMessage("Your Command Target was null so they must of left the server!");
+						return;
+					}
+					
+					if (user.getCommandTarget(false) == user.getPlayer() || user.getCommandTarget(false) != user.getPlayer() && (user.hasPermission("me.killstorm103.rebug.user.use_exploits.others") || user.hasPermission("me.killstorm103.rebug.user.use_crashers.others") || Rebug.hasAdminPerms(user.getPlayer())))
 						user.getPlayer().openInventory(user.getExploits());
 					else
 						user.sendMessage("You don't have permission to use this on other players!");

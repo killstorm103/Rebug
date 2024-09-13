@@ -28,7 +28,8 @@ public class Version extends Command
 		return "gets the version of rebug";
 	}
 	@Override
-	public boolean hasCommandCoolDown() {
+	public boolean hasCommandCoolDown () 
+	{
 		return false;
 	}
 	@Override
@@ -39,7 +40,7 @@ public class Version extends Command
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) throws Exception 
 	{
-		Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.GRAY + "v" + Rebug.PluginVersion() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.GRAY + Rebug.PluginEdition() + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + " made by " + ChatColor.YELLOW + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|", false);
+		Log(sender, ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.GRAY + "v" + Rebug.PluginVersion() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + " made by " + ChatColor.YELLOW + Rebug.getAuthor() + " " + ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "|", false);
 	}
 
 	@Override
