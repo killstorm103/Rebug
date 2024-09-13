@@ -6,6 +6,9 @@ Custom Slots: true
 Disabled-AntiCheat:
   disabled: false
   kick-on-Invalid-anticheat: false
+
+custom-info-menu-slot: false
+info-item-slot: 20
 is-vanilla-enabled: true
 custom-vanilla-menu-slot: false
 vanilla-item-slot: 15
@@ -16,8 +19,11 @@ loaded-anticheats:
   create-inventory: true
   debug-clicked-item: false
   multiple-anticheats:
-    soon: 124124515215
     saturn_thotpatrol:  12
+    wave_thotpatrol: 13
+    saturn_thotpatrol_wave: 123
+    saturn_wave_vulcan: 124
+    lightanticheat_kauri_foxaddition: 1124
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
   Inventory-size: 27
@@ -34,13 +40,9 @@ loaded-anticheats:
   - '&cPAC'
   - '&3LightAntiCheat'
   - '&cAntiCheatPlus'
-  - '&1Sloth'
   - '&dThotPatrol'
   - '&bWatchCat'
   - '&6FoxAddition'
-  - '&cAntiHaxerMan'
-  - '&cGhostAnticheat'
-  - '&bAlice'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -57,25 +59,6 @@ loaded-anticheats:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
   
-  alice:
-    permission-to-use: false
-    enabled: true
-    is-multi-enabled: true
-    display-name: '&bAlice'
-    has-short-name: false
-    short-name: '&bAlice'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 332
-    item-name: LONG_GRASS
-    fix-description: false
-    offset-description: 45
-    alert-message: Alice
-    requires-reconnect: false
-    menu-slot: 13
   foxaddition:
     permission-to-use: false
     enabled: true
@@ -94,7 +77,7 @@ loaded-anticheats:
     offset-description: 45
     alert-message: FA
     requires-reconnect: false
-    menu-slot: 12
+    menu-slot: 13
   thotpatrol:
     permission-to-use: false
     enabled: true
@@ -113,7 +96,7 @@ loaded-anticheats:
     offset-description: 45
     alert-message: ThotPatrol
     requires-reconnect: false
-    menu-slot: 11
+    menu-slot: 12
   anticheatplus:
     permission-to-use: false
     enabled: true
@@ -132,7 +115,7 @@ loaded-anticheats:
     offset-description: 45
     alert-message: anticheat+
     requires-reconnect: false
-    menu-slot: 10
+    menu-slot: 11
   
   saturn:
     permission-to-use: false
@@ -152,7 +135,7 @@ loaded-anticheats:
     offset-description: 45
     alert-message: ness
     requires-reconnect: false
-    menu-slot: 1
+    menu-slot: 2
   wave:
     permission-to-use: false
     enabled: true
@@ -170,7 +153,7 @@ loaded-anticheats:
     offset-description: 49
     alert-message: wave
     requires-reconnect: false
-    menu-slot: 2
+    menu-slot: 3
   lightanticheat:
     permission-to-use: false
     enabled: true
@@ -188,25 +171,7 @@ loaded-anticheats:
     offset-description: 30
     alert-message: lightac
     requires-reconnect: false
-    menu-slot: 9
-  antihaxerman:
-    permission-to-use: false
-    enabled: true
-    is-multi-enabled: true
-    display-name: '&cAntiHaxerMan'
-    has-short-name: false
-    short-name: '&cAHM'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 166
-    fix-description: false
-    offset-description: 30
-    alert-message: ahm
-    requires-reconnect: false
-    menu-slot: 1
+    menu-slot: 10
   pac:
     permission-to-use: false
     enabled: true
@@ -224,7 +189,7 @@ loaded-anticheats:
     offset-description: 49
     alert-message: pac
     requires-reconnect: false
-    menu-slot: 4
+    menu-slot: 5
   kauri:
     permission-to-use: false
     enabled: true
@@ -242,7 +207,7 @@ loaded-anticheats:
     offset-description: 49
     alert-message: kauri
     requires-reconnect: true
-    menu-slot: 5
+    menu-slot: 6
   grimac:
     permission-to-use: false
     enabled: true
@@ -260,7 +225,7 @@ loaded-anticheats:
     offset-description: 49
     alert-message: grim
     requires-reconnect: true
-    menu-slot: 7
+    menu-slot: 8
   horizon:
     permission-to-use: false
     enabled: true
@@ -278,7 +243,7 @@ loaded-anticheats:
     offset-description: 49
     alert-message: horizon
     requires-reconnect: false
-    menu-slot: 8
+    menu-slot: 9
   nocheatplus:
     permission-to-use: false
     enabled: true
@@ -296,7 +261,7 @@ loaded-anticheats:
     offset-description: 44
     alert-message: ncp
     requires-reconnect: false
-    menu-slot: 3
+    menu-slot: 4
   vulcan:
     permission-to-use: false
     enabled: true
@@ -314,22 +279,4 @@ loaded-anticheats:
     offset-description: 49
     alert-message: vulcan
     requires-reconnect: false
-    menu-slot: 6
-  ghostanticheat:
-    permission-to-use: false
-    enabled: false
-    is-multi-enabled: true
-    display-name: '&cGhostAnticheat'
-    has-short-name: true
-    short-name: '&cGhostAC'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 288
-    fix-description: false
-    offset-description: 49
-    alert-message: Ghost
-    requires-reconnect: false
-    menu-slot: 14
+    menu-slot: 7
