@@ -1,7 +1,7 @@
 Rebug is a Test server plugin mainly made for Spigot 1.8.8 but it does work on other versions
 
-- Supports: 1.8.8-1.13.2
-- Tested Versions: 1.8.8, 1.9, 1.9.4, 1.10.2, 1.11.2, 1.12, 1.13.2
+- Supports: 1.8.8-1.14.x
+- Tested Versions: 1.8.8, 1.9, 1.9.4, 1.10.2, 1.11.2, 1.12, 1.13.2, 1.14.x
 
 it's my first plugin!
 
@@ -11,10 +11,10 @@ it's a AntiCheat Switcher with other things like crashers and other exploits for
 
 
 Info:
-- Java: jdk 21
+- Java: jdk 11
 - if you want to see what i've added to rebug live you can join my discord server: https://discord.gg/5xWHx3MUUr
 
 Known Bugs:
-- None
+- Users can place items inside menus like the AntiCheats menu for example
 - 
 - To Report a bug open a issue but join my discord server first and check rebugs live changelog to make sure it hasn't been fixed already!
