@@ -1,8 +1,33 @@
+ConsoleFilter:
+  enabled: true
+  blocked:
+  - was kicked for floating too long!
+  - moved wrongly!
+  - now inherits permissions from
+  - had their existing parent groups cleared, and now only inherits
+  - You are also running NoCheatPlus!
+  - NoCheatPlus has been known to conflict with AntiCheat's results and create false cheat detections.
+  - Please remove or disable NoCheatPlus to silence this warning.
+  - No new version available
+  - No blocks filled
+  - group (none) is not in sorting list! Sorting list
+  - Registered check
+  - 'lost connection: Flying is not enabled on this server'
+  - logged in with entity id
+  - handleDisconnection() called twice
+  - Another command is being executed, waiting for it to finish...
+  - moved too quickly!
+  - 'have a high latency. Count:'
+  - failed
+  - was punished for
+  - 'lost connection: Disconnected'
+  - You are currently using free(trial) version of Matrix!
 are-users-allowed-to-disable-kicks: true
 on-join-commands:
   everytime:
   - grim verbose
   - foxaddition verbose
+  - matrix verbose
   once:
   - horizon verbose
 client-command-checker:
@@ -52,6 +77,8 @@ use-one-rank: true
 user-staff-group-command: lp user %user% parent add
 is-clear-lag-plugin-enabled: true
 clear-lag-command: lagg clear
+cancel-explosions-break-blocks: false
+AlwaysAllowedToBuild: false
 scaffold-test-area:
   minX: 3
   minY: 52
@@ -69,3 +96,26 @@ world-spawn:
   posZ: 319
   Yaw: -91.200165
   Pitch: -0.5999501
+events:
+  packetevents:
+    PacketSendEvent: true
+    PacketReceiveEvent: true
+  bukkit:
+    PlayerJoinEvent: true
+    PlayerQuitEvent: true
+    PlayerKickEvent: true
+    PlayerMoveEvent: true
+    PlayerDeathEvent: true
+    PlayerRespawnEvent: true
+    PlayerChangedWorldEvent: true
+    FoodLevelChangeEvent: true
+    AsyncPlayerChatEvent: true
+    EnchantItemEvent: false
+    EntityDamageEvent: true
+    EntityExplodeEvent: true
+    EntityShootBowEvent: true
+    ProjectileHitEvent: true
+    BlockPlaceEvent: true
+    BlockBreakEvent: true
+    InventoryClickEvent: true
+    WeatherChangeEvent: false
