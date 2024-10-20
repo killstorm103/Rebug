@@ -15,6 +15,6 @@ Info:
 - if you want to see what i've added to rebug live you can join my discord server: https://discord.gg/5xWHx3MUUr
 
 Known Bugs:
-- Users can place items inside menus like the AntiCheats menu for example (Fixed in V2.2)
+- None
 - 
 - To Report a bug open a issue but join my discord server first and check rebugs live changelog to make sure it hasn't been fixed already!
