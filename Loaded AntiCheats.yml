@@ -125,6 +125,23 @@ alerts-to-scan-for:
     - '&'
     - '&&'
     - '&&&'
+manually-added-anticheats:
+    ## don't use color codes!
+    ## for setting the AntiCheat item go to loaded-anticheats.(AntiCheat name Section)
+    ## for enabling/disabling the AntiCheat go to loaded-anticheats.(AntiCheat name Section)
+    ac-names: 
+    - 'Vulcan'
+    vulcan:
+      authors: '[frep, GladUrBad, Joshb_, Elevated, retrooper]'
+      version: '2.9.0'
+      description: 
+      - ''
+      - 'Vulcan Cheat Detection'
+      - 'a shit paid AntiCheat that should be free!'
+      soft_depend: 
+      - 'ProtocolSupport'
+      hard_depend: 
+      - 'None'
 loaded-anticheats:
   use-custom-sound: false
   custom-sound: block.anvil.use
@@ -142,7 +159,6 @@ loaded-anticheats:
   ## AC Names:
   ## make them what their name is in their plugin.yml, color codes is supported use: &(code)
   ac-names:
-  - '&4Vulcan'
   - '&1NoCheatPlus'
   - '&8GrimAC'
   - '&1Horizon'
@@ -163,6 +179,7 @@ loaded-anticheats:
   - '&bArc'
   - '&cCardinal'
   - '&cLittleNoCheat'
+  - '&7Frequency'
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -178,6 +195,27 @@ loaded-anticheats:
   ## has_extra_lore: Boolean, lore:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
+  frequency:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&7Frequency'
+    has-short-name: false
+    short-name: '&cLNC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 30
+    item-name: LONG_GRASS
+    fix-description: false
+    offset-description: 45
+    alert-message: frequency
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot: 19
+  
   littlenocheat:
     permission-to-use: false
     enabled: true

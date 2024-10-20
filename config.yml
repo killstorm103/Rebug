@@ -118,4 +118,7 @@ events:
     BlockPlaceEvent: true
     BlockBreakEvent: true
     InventoryClickEvent: true
+    InventoryDragEvent: true
     WeatherChangeEvent: false
+stop-enchanting-and-anvil-use: false
+enchanting-and-anvil-use-permission: me.killstorm103.rebug.user.enchant_anvil
