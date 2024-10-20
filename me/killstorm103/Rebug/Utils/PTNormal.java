@@ -40,7 +40,7 @@ public class PTNormal {
 	public static final String UnsupportedInVersion = Rebug.RebugMessage
 			+ "That isn't supported in this Server Version!";
 
-	public static List<String> getPlayerNames() {
+	public static List<String> getPlayerNames () {
 		List<String> t = new ArrayList<>();
 		t.clear();
 		Player[] Players = new Player[Bukkit.getOnlinePlayers().size()];
@@ -61,6 +61,18 @@ public class PTNormal {
 	public void SendTitle (Player player, String title, String subtitle)
 	{
 	//	PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayClientMessage);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static int getMaterialByID (int ID)
+	{
+		for (Material material : Material.values())
+		{
+			if (material != null && material != Material.AIR && material.getId() == ID)
+				return ID;
+		}
+		
+		return 2;
 	}
 
 	// TODO Rework//fix
@@ -94,15 +106,16 @@ public class PTNormal {
 		return (Player) entity;
 	}
 
-	public static boolean isInventoryFull(Player player) 
+	public static boolean isHotbarInventoryFull(Player player) 
 	{
 		return player.getInventory().firstEmpty() == -1;
 	}
-
-	public static boolean isInventoryFull(Inventory inventory) {
-		return inventory.firstEmpty() == -1;
+	public static boolean isInventoryFull(Inventory inventory) 
+	{
+		if (inventory == null) return false;
+		
+		return inventory.firstEmpty() ==- 1;
 	}
-
 	public static ItemStack RepairItem(ItemStack item) {
 		ItemStack Stack = new ItemStack(item.getType());
 		Stack.setItemMeta(item.getItemMeta());

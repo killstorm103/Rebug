@@ -17,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
@@ -803,7 +804,6 @@ public class EventPackets implements PacketListener {
 							}
 							if (landed)
 							{
-								
 								// Test
 								for (String scan : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("alerts-to-scan-for.setback"))
 								{

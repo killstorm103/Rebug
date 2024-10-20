@@ -5,17 +5,20 @@ import java.util.List;
 public class Config {
 	public static final int getAntiCheatItemID(String AC) 
 	{
-		int ID = -Integer.MAX_VALUE;
+		int ID = 2;
 		try {
-			ID = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + AC + ".item");
-		} catch (Exception e) {
+			ID = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + AC.toLowerCase() + ".item");
+		} 
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return ID;
 	}
 
 	// Used for 1.13+ cause spigots gay!
-	public static final String getAntiCheatItemNameID(String AC) {
+	public static final String getAntiCheatItemNameID(String AC)
+	{
 		String ID = "";
 		try {
 			ID = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("loaded-anticheats." + AC + ".item-name");
@@ -43,11 +46,11 @@ public class Config {
 		return Rebug.getINSTANCE().getLoadedItemsFile().getInt("Inventory-size");
 	}
 
-	public static final int getItemData(String ac)
+	public static final int getItemData(String ac, boolean manual)
 	{
 		int data = 0;
 		try {
-			data = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + ac + ".data");
+			data = manual ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("manually-added-anticheats." + ac.toLowerCase() + ".data") : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + ac.toLowerCase() + ".data");
 		}
 		catch (Exception e) 
 		{

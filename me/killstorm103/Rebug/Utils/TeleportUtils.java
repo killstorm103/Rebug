@@ -1,12 +1,12 @@
 package me.killstorm103.Rebug.Utils;
 
+import java.util.HashSet;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.util.HashSet;
 
 public class TeleportUtils {
 

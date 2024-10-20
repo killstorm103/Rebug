@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
 import me.killstorm103.Rebug.Main.Rebug;
 
 public class PluginMessage_Listener implements PluginMessageListener, Listener

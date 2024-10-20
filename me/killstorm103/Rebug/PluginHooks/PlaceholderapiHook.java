@@ -5,14 +5,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.killstorm103.Rebug.Main.Config;
 import me.killstorm103.Rebug.Main.Rebug;
 import me.killstorm103.Rebug.Utils.PTNormal;
 import me.killstorm103.Rebug.Utils.User;
 
-public class PlaceholderapiHook extends PlaceholderExpansion {
-
+public class PlaceholderapiHook extends PlaceholderExpansion 
+{
+	
 	@Override
 	public @NotNull String getAuthor() {
 		return "killstorm103";

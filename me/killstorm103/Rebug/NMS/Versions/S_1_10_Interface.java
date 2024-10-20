@@ -1459,28 +1459,31 @@ public class S_1_10_Interface implements NMS_Interface, InventoryHolder {
 		switch (menu.toLowerCase()) {
 		case "anticheats menu":
 			if (ItemsAndMenusUtils.AntiCheatMenu == null) {
-				Inventory inventory = PTNormal.createInventory(this,
-						Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats.Inventory-size"),
-						ChatColor.RED + "AntiCheats");
-				int size = Config.getLoadedAntiCheats().size();
-
-				if (size < 1)
+				Inventory inventory = PTNormal.createInventory(this, Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats.Inventory-size"), ChatColor.RED + "AntiCheats");
+int size = Config.getLoadedAntiCheats().size(), manualsize = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("manually-added-anticheats.ac-names").size();
+				
+				Rebug.anticheats.clear();
+				Rebug.manual_anticheats.clear();
+				if (size < 1 && manualsize < 1)
 					Rebug.getINSTANCE().Log(Level.WARNING, "Add the AntiCheats to: loaded-anticheats in the config file!");
-
-				else 
+				
+				else
 				{
 					Menu.TabAntiCheats.clear();
 					Menu.TabAntiCheats.add("Vanilla");
-					for (Plugin AC : Bukkit.getPluginManager().getPlugins()) {
-						for (int i = 0; i < size; i++) {
-							String name = ChatColor.translateAlternateColorCodes('&',
-									Config.getLoadedAntiCheats().get(i));
+				}
+				if (size >= 1)
+				{
+					for (Plugin AC : Bukkit.getPluginManager().getPlugins())
+					{
+						for (int i = 0; i < size; i++) 
+						{
+							String name = ChatColor.translateAlternateColorCodes('&', Config.getLoadedAntiCheats().get(i));
 							name = ChatColor.stripColor(name);
-							if (name != null && AC != null && AC.getName().equalsIgnoreCase(name)
-									&& !Rebug.anticheats.containsKey(AC)) {
+							if (name != null && AC != null && AC.getName().equalsIgnoreCase(name) && !Rebug.anticheats.containsKey(AC)) 
+							{
 								if (Rebug.debug)
-									Bukkit.getConsoleSender().sendMessage(
-											Rebug.RebugMessage + "Adding AntiCheat to list= " + AC.getName());
+									Bukkit.getConsoleSender().sendMessage(Rebug.RebugMessage + "Adding AntiCheat to list= " + AC.getName());
 
 								Menu.TabAntiCheats.add(name);
 								Rebug.anticheats.put(AC, name);
@@ -1488,7 +1491,16 @@ public class S_1_10_Interface implements NMS_Interface, InventoryHolder {
 						}
 					}
 				}
-				if (!Rebug.anticheats.isEmpty()) {
+				if (manualsize >= 1)
+				{
+					for (String ac : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("manually-added-anticheats.ac-names"))
+					{
+						Menu.TabAntiCheats.add(ac);
+						Rebug.manual_anticheats.put(ac, false);
+					}
+				}
+				if (!Rebug.anticheats.isEmpty() || !Rebug.manual_anticheats.isEmpty())
+				{
 					item = Reset(Material.ENCHANTMENT_TABLE);
 					itemMeta.setDisplayName(ChatColor.WHITE + "Info");
 					lore.add("");
@@ -1524,15 +1536,146 @@ public class S_1_10_Interface implements NMS_Interface, InventoryHolder {
 					lore.add(ChatColor.AQUA + "Author: " + ChatColor.WHITE + "Mojang");
 					itemMeta.setLore(lore);
 					item.setItemMeta(itemMeta);
-					inventory.setItem(
-							Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot")
-									? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot")
-									: 1,
-							item);
+					inventory.setItem(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("custom-vanilla-menu-slot") ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("vanilla-item-slot"): 1, item);
+				}
+				int adding = 2;
+				final boolean CustomSlots = Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("Custom Slots");
+				if (!Rebug.manual_anticheats.isEmpty())
+				{
+					for (Map.Entry<String, Boolean> mapped : Rebug.manual_anticheats.entrySet())
+					{
+						String name = mapped.getKey(), config_name = name.toLowerCase();
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+								.get("loaded-anticheats." + config_name + ".has-data") != null
+								&& Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+										.getBoolean("loaded-anticheats." + config_name + ".has-data"))
+							item = Reset(Material.getMaterial(Config.getAntiCheatItemID(config_name)), 1, (short) 0,
+									(byte) Config.getItemData(config_name, true));
+						else
+							item = Reset(Material.getMaterial(Config.getAntiCheatItemID(config_name)));
+						
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + config_name + ".enable_enchantment") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + config_name + ".enable_enchantment")) 
+						{
+							if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + config_name + ".enchantments") != null)
+							{
+								for (String enchant : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("loaded-anticheats." + config_name + ".enchantments")) 
+								{
+									int ID = Integer.valueOf(enchant.split(":")[0]),
+											level = Integer.valueOf(enchant.split(":")[1]);
+									Enchantment enchantment = Enchantment.getById(ID);
+									if (enchantment == null)
+										Bukkit.getConsoleSender()
+												.sendMessage(Rebug.RebugMessage
+														+ "Unknown enchantment in Loaded AntiCheats.yml (AntiCheat= " + config_name
+														+ ") (enchant ID= " + ID + " level= " + level + ")");
 
-					int adding = 2;
-					final boolean CustomSlots = Rebug.getINSTANCE().getLoadedAntiCheatsFile()
-							.getBoolean("Custom Slots");
+									else {
+										item.addUnsafeEnchantment(enchantment, level);
+										itemMeta.addEnchant(enchantment, level, true);
+									}
+								}
+							}
+							else
+								Rebug.getINSTANCE().Log(Level.SEVERE, "loaded-anticheats." + config_name + ".enchantments Was NULL!");
+						}
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+								.get("loaded-anticheats." + config_name + ".enable_item_flag") != null
+								&& Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+										.getBoolean("loaded-anticheats." + config_name + ".enable_item_flag")) {
+							for (String itemflag : Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+									.getStringList("loaded-anticheats." + config_name + ".ItemFlags")) {
+								ItemFlag flag = ItemFlag.valueOf(itemflag);
+								if (flag == null)
+									Rebug.getINSTANCE().Log(Level.SEVERE, "Unknown ItemFlag in Loaded AntiCheats.yml! (AntiCheat= " + config_name
+													+ " ItemFlag= " + itemflag + ")");
+								else
+									itemMeta.addItemFlags(flag);
+							}
+						}
+						
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + config_name + ".unbreakable") != null)
+							itemMeta.spigot().setUnbreakable(Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + config_name + ".unbreakable"));
+						
+						itemMeta.setDisplayName(ChatColor.WHITE + name);
+						lore.add("");
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + config_name + ".enabled") == null)
+							lore.add(ChatColor.AQUA + "Status: " + ChatColor.DARK_RED + "Disabled");
+						else
+							lore.add(ChatColor.AQUA + "Status: " + (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getBoolean("loaded-anticheats." + config_name + ".enabled") ? ChatColor.GREEN + "Enabled" : ChatColor.DARK_RED + "Disabled"));
+						
+						lore.add("");
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("manually-added-anticheats." + config_name + ".version") == null)
+							lore.add(ChatColor.AQUA + "Version: " + ChatColor.WHITE + "Unknown!");
+						else
+							lore.add(ChatColor.AQUA + "Version: " + ChatColor.WHITE + Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString("manually-added-anticheats." + config_name + ".version"));
+						
+						
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".authors") != null)
+							lore.add(ChatColor.AQUA + "Author(s): " + ChatColor.WHITE + Rebug.getINSTANCE().getLoadedAntiCheatsFile().getString ("manually-added-anticheats." + config_name + ".authors"));
+						else
+							lore.add(ChatColor.AQUA + "Author(s): " + ChatColor.WHITE + "Unknown!");
+						
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".description") != null)
+						{
+							int start = 0;
+							for (String s : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList("manually-added-anticheats." + config_name + ".description"))
+							{
+								lore.add(start == 0 ? ChatColor.AQUA + "Description: " + ChatColor.WHITE + s : ChatColor.WHITE + s);
+								start ++;
+							}
+						}
+						else
+							lore.add(ChatColor.AQUA + "Description: " + ChatColor.WHITE + "None");
+						
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".soft_depend") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".soft_depend").size () > 0)
+						{
+							int start = 0;
+							if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".soft_depend").size() == 1)
+								lore.add(ChatColor.AQUA + "Soft Depend: " + ChatColor.WHITE + Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".soft_depend").get(0));
+							
+							else
+							{
+								for (String s : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".soft_depend"))
+								{
+									lore.add(start == 0 ? ChatColor.AQUA + "Soft Depend: " + ChatColor.WHITE + s : ChatColor.WHITE + s);
+									start ++;
+								}
+							}
+						}
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".hard_depend") != null && Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".hard_depend").size() > 0)
+						{
+							int start = 0;
+							if (Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".hard_depend").size() == 1)
+								lore.add(ChatColor.AQUA + "Hard Depend: " + ChatColor.WHITE + Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".hard_depend").get(0));
+							else
+							{
+								for (String s : Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".hard_depend"))
+								{
+									lore.add(start == 0 ? ChatColor.AQUA + "Hard Depend: " + ChatColor.WHITE + s : ChatColor.WHITE + s);
+									start ++;
+								}
+							}
+						}
+						if ((Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".soft_depend") == null || Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".soft_depend").size() < 1) && (Rebug.getINSTANCE().getLoadedAntiCheatsFile().get ("manually-added-anticheats." + config_name + ".hard_depend") == null || Rebug.getINSTANCE().getLoadedAntiCheatsFile().getStringList ("manually-added-anticheats." + config_name + ".hard_depend").size () < 1))
+							lore.add(ChatColor.AQUA + "Dependencies: " + ChatColor.WHITE + "None");
+						
+						
+
+						if (Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+								.get("loaded-anticheats." + config_name + ".has_extra_lore") != null
+								&& Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+										.getBoolean("loaded-anticheats." + config_name + ".has_extra_lore")) {
+							for (String lores : Rebug.getINSTANCE().getLoadedAntiCheatsFile()
+									.getStringList("loaded-anticheats." + config_name + ".lore"))
+								lore.add(ChatColor.translateAlternateColorCodes('&', lores));
+						}
+
+						itemMeta.setLore(lore);
+						item.setItemMeta(itemMeta);
+						inventory.setItem(CustomSlots && Rebug.getINSTANCE().getLoadedAntiCheatsFile().get("loaded-anticheats." + config_name + ".menu-slot") != null ? Rebug.getINSTANCE().getLoadedAntiCheatsFile().getInt("loaded-anticheats." + config_name + ".menu-slot") : adding++, item);
+					}
+				}
+				if (!Rebug.anticheats.isEmpty()) {
 					for (Map.Entry<Plugin, String> map : Rebug.anticheats.entrySet()) {
 						Plugin AntiCheat = map.getKey();
 						String author = "Unknown", name = map.getValue().toLowerCase(),
@@ -1568,7 +1711,7 @@ public class S_1_10_Interface implements NMS_Interface, InventoryHolder {
 								&& Rebug.getINSTANCE().getLoadedAntiCheatsFile()
 										.getBoolean("loaded-anticheats." + name + ".has-data"))
 							item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)), 1, (short) 0,
-									(byte) Config.getItemData(name));
+									(byte) Config.getItemData(name, false));
 						else
 							item = Reset(Material.getMaterial(Config.getAntiCheatItemID(name)));
 
@@ -1731,10 +1874,11 @@ public class S_1_10_Interface implements NMS_Interface, InventoryHolder {
 						inventory.setItem(CustomSlots ? Rebug.getINSTANCE().getLoadedAntiCheatsFile()
 								.getInt("loaded-anticheats." + name + ".menu-slot") : adding++, item);
 					}
-				} else {
+				} 	
+				if (Rebug.manual_anticheats.isEmpty() && Rebug.anticheats.isEmpty())
+				{
 					inventory = null;
-					Rebug.getINSTANCE().Log(Level.SEVERE,
-							"Failed to create AntiCheats Menu(Rebug.anticheatsloaded was Empty)!");
+					Rebug.getINSTANCE().Log(Level.SEVERE, "Failed to create AntiCheats Menu(Rebug.anticheatsloaded was Empty)!");
 				}
 				ItemsAndMenusUtils.AntiCheatMenu = inventory;
 			}
