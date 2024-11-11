@@ -1,5 +1,6 @@
 Rebug is a Test server plugin mainly made for Spigot 1.8.8 but it does work on other versions
 
+- Supported Server SoftWares: Paper, Spigot, Bukkit, anything else is untested and not guaranteed to work!
 - Supports: 1.8.8-1.14.x
 - Tested Versions: 1.8.8, 1.9, 1.9.4, 1.10.2, 1.11.2, 1.12, 1.13.2, 1.14.x
 
