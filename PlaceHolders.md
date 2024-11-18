@@ -1,4 +1,6 @@
-// ## Prefix: rebug_<param>
+- Prefix: rebug_#param#
+
+
 - other params:
 -  plugin
 -  server_version
