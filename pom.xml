@@ -2,13 +2,20 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.killstorm103.Rebug</groupId>
   <artifactId>Rebug</artifactId>
-  <version>2.1</version>
+  <version>2.3</version>
   <name>Rebug</name>
   <description>Rebug is a Test Server plugin, it's a AntiCheat Switcher with other things like crashers and other exploits for clients</description>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
+		<resource>
+        <directory>src</directory>
+        <includes>
+            <include>plugin.yml</include>
+        </includes>
+        <filtering>true</filtering>
+     </resource>
       <resource>
         <directory>src</directory>
         <excludes>
