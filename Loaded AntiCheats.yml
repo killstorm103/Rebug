@@ -10,15 +10,17 @@ Disabled-AntiCheat:
 
 custom-info-menu-slot: false
 info-item-slot: 20
-is-vanilla-enabled: true
-custom-vanilla-menu-slot: false
-vanilla-item-slot: 15
-allowed-multiple-anticheats: true
-limiter-enabled: false
-max-anticheats: 5
 log-anticheat-switches-to-console: true
 switched-anticheat-message: '%user% Switched their AntiCheat to: %anticheat%'
 alerts-to-scan-for:
+  debug-to-players: false
+  debug:
+    replace-message-text: false
+    message: false
+    message-length: false ## raw is message.length (), casted is Alert_Related.length (String[] Alert_Related = StringUtils.split(message);)
+    contains-alert-message: false
+    casted-alert-message: false
+    past-chat-type: false
   check-chat-types:
     chat: true
     system: true
@@ -36,7 +38,7 @@ alerts-to-scan-for:
   minimum-message-length: 2
   use-config-scanner: true
   
-  ## alerts but without %s and - instead of spaces!
+  ## alerts but without %s and - instead of spaces!, put the number of where in the message the user/player is
   alerts-user-numbers:
     rebug_user-failed: 1
     rebug_user-failed-check: 1
@@ -48,6 +50,8 @@ alerts-to-scan-for:
     rebug_user-is-using: 1
     rebug_user-was-punished: 1
     rebug_user-was-setback: 1
+    verbose-rebug_user-violated: 2
+    rebug_user-might-use: 1
   alerts:
     - '%rebug_user% failed'
     - '%rebug_user% failed check'
@@ -59,72 +63,95 @@ alerts-to-scan-for:
     - '%rebug_user% is using'
     - '%rebug_user% was punished'
     - '%rebug_user% was setback'
+    - 'verbose %rebug_user% violated'
+    - '%rebug_user% might use'
     
   ## if a word from punished or setback is found inside Alert Message it will tell Rebug it was a punished or setback Alert!
   setback:
   - 'setback'
+  - 'Your position was fixed!'
   punished:
   - 'punished'
+  
+  use-replaceall: false
   replace-message-text:
-    - '[['
-    - ']]'
-    - '{{'
-    - '}}'
-    - '['
-    - ']'
-    - '{'
-    - '}'
-    - '>>'
-    - '<<'
-    - '>'
-    - '<'
-    - '/'
-    - '//'
-    - 'Â'
-    - 'ÂÂ'
-    - 'ÂÂÂ'
-    - '('
-    - ')'
-    - '┬'
-    - 'º'
-    - '┬º'
-    - '*'
-    - '**'
-    - '^'
-    - ':'
-    - '::'
-    - ';'
-    - ';;'
-    - '|'
-    - '||'
-    - '|||'
-    - '-'
-    - '--'
-    - '---'
-    - '+'
-    - '++'
-    - '+++'
-    - '='
-    - '=='
-    - '==='
-    - '%'
-    - '%%'
-    - '%%%'
-    - '$'
-    - '$$'
-    - '$$$'
-    - '#'
-    - '##'
-    - '###'
-    - '!'
-    - '!!'
-    - '!!!'
-    - '.'
-    - '..'
-    - '...'
-    - '&'
-    - '&&'
-    - '&&&'
+  - '[['
+  - ']]'
+  - '{{'
+  - '}}'
+  - '['
+  - ']'
+  - '{'
+  - '}'
+  - '>>'
+  - '<<'
+  - '>'
+  - '<'
+  - '/'
+  - '//'
+  - '///'
+  - 'Â'
+  - 'ÂÂ'
+  - 'ÂÂÂ'
+  - '('
+  - ')'
+  - '┬'
+  - '┬┬'
+  - '┬┬┬'
+  - 'º'
+  - '┬º'
+  - '*'
+  - '**'
+  - '^'
+  - ':'
+  - '::'
+  - ';'
+  - ';;'
+  - '|'
+  - '||'
+  - '|||'
+  - '-'
+  - '--'
+  - '---'
+  - '+'
+  - '++'
+  - '+++'
+  - '='
+  - '=='
+  - '==='
+  - '%'
+  - '%%'
+  - '%%%'
+  - '$'
+  - '$$'
+  - '$$$'
+  - '#'
+  - '##'
+  - '###'
+  - '!'
+  - '!!'
+  - '!!!'
+  - '.'
+  - '..'
+  - '...'
+  - '&'
+  - '&&'
+  - '&&&'
+  - 'ã'
+  - 'ãã'
+  - 'ããã'
+  - '€'
+  - '€€'
+  - '€€€'
+  - 'Œ'
+  - 'ŒŒ'
+  - 'ŒŒŒ'
+  - '?'
+  - '??'
+  - '???'
+  - '-'
+  - '--'
+  - '---'
 manually-added-anticheats:
     ## don't use color codes!
     ## for setting the AntiCheat item go to loaded-anticheats.(AntiCheat name Section)
@@ -138,15 +165,65 @@ manually-added-anticheats:
       - ''
       - 'Vulcan Cheat Detection'
       - 'a shit paid AntiCheat that should be free!'
+      ## don't have anything in soft/hard_depend or remove them for it to say Dependencies: None!
       soft_depend: 
       - 'ProtocolSupport'
       hard_depend: 
-      - 'None'
 loaded-anticheats:
+  vanilla:
+    enabled: true
+    custom-slot: false
+    slot: 15
+    item:
+      safe-guard: true
+      use-material-id: false
+      default: 
+        name: DIRT
+        id: 2
+      v1_8_R3: 
+        name: DIRT
+        id: 2
+
   use-custom-sound: false
   custom-sound: block.anvil.use
   create-inventory: true
   debug-clicked-item: false
+  safe-guard:
+    enabled: true
+  multiple-anticheat:
+    enabled: true
+    limiter-enabled: false
+    max-anticheats: 5
+    item:
+      safe-guard: true
+      use-material-id: false
+      default:
+        name: ENCHANTMENT_TABLE
+        id: 116
+      v1_8_R3: 
+        name: ENCHANTMENT_TABLE
+        id: 116
+      v1_13_R1:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_13_R2:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_14_R1:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_15_R1:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_16_R1:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_16_R2:
+        name: ENCHANTING_TABLE
+        id: 111
+      v1_16_R3:
+        name: ENCHANTING_TABLE
+        id: 111
   multiple-anticheats:
     saturn_thotpatrol:  12
     wave_thotpatrol: 13
@@ -157,29 +234,33 @@ loaded-anticheats:
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
   Inventory-size: 27
   ## AC Names:
-  ## make them what their name is in their plugin.yml, color codes is supported use: &(code)
+  ## make them what their name is in their plugin.yml, don't use color codes here!
   ac-names:
-  - '&1NoCheatPlus'
-  - '&8GrimAC'
-  - '&1Horizon'
-  - '&bWave'
-  - '&0Saturn'
-  - '&dKauri'
-  - '&cPAC'
-  - '&3LightAntiCheat'
-  - '&cAntiCheatPlus'
-  - '&dThotPatrol'
-  - '&bWatchCat'
-  - '&6FoxAddition'
-  - '&cAntiCheatReloaded'
-  - '&cHawk'
-  - '&aLink'
-  - '&cWarden'
-  - '&cMatrix'
-  - '&bArc'
-  - '&cCardinal'
-  - '&cLittleNoCheat'
-  - '&7Frequency'
+  - 'NoCheatPlus'
+  - 'GrimAC'
+  - 'Horizon'
+  - 'Wave'
+  - 'Saturn'
+  - 'Kauri'
+  - 'PAC'
+  - 'LightAntiCheat'
+  - 'AntiCheatPlus'
+  - 'ThotPatrol'
+  - 'WatchCat'
+  - 'FoxAddition'
+  - 'AntiCheatReloaded'
+  - 'Hawk'
+  - 'Link'
+  - 'Warden'
+  - 'Matrix'
+  - 'Arc'
+  - 'Cardinal'
+  - 'LittleNoCheat'
+  - 'Frequency'
+  - 'TakaAntiCheat'
+  - 'Medusa'
+  - 'Negativity'
+  - 'Reflex'  
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
@@ -195,6 +276,76 @@ loaded-anticheats:
   ## has_extra_lore: Boolean, lore:
   ## - 'string' 
   ## - 'string' (color codes supported using &(code)string)
+  reflex:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&2Reflex'
+    has-short-name: false
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: false
+    data: 2
+    item: 261
+    item-name: LONG_GRASS
+    fix-description: true
+    offset-description: 45
+    alert-message: ReflexBoot
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot: 20
+  negativity:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&2Negativity'
+    has-short-name: false
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    has-data: true
+    data: 1
+    item: 351
+    item-name: LONG_GRASS
+    fix-description: false
+    offset-description: 45
+    alert-message: negativity
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot: 20
+  
+  
+  takaanticheat:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&bTakaAntiCheat'
+    has-short-name: true
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      use-material-id: false
+      default:
+        has-data: false
+        data: 2
+        name: LONG_GRASS
+        id: 310
+      v1_8_R3:
+        has-data: false
+        data: 2
+        name: LONG_GRASS
+        id: 310
+    fix-description: false
+    offset-description: 45
+    alert-message: takaac
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot: 19
   frequency:
     permission-to-use: false
     enabled: true
@@ -226,33 +377,21 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: true
-    data: 2
-    item: 31
-    item-name: LONG_GRASS
+    item:
+      use-material-id: true
+      default:
+        has-data: true
+        data: 2
+        name: LONG_GRASS
+        id: 31
+      v1_8_R3:
+        has-data: true
+        data: 2
+        name: LONG_GRASS
+        id: 31
     fix-description: false
     offset-description: 45
     alert-message: littlenocheat
-    requires-reconnect: false
-    requires-combining: false
-    menu-slot: 18
-  cardinal:
-    permission-to-use: false
-    enabled: true
-    is-multi-enabled: true
-    main-name: '&cCardinal'
-    has-short-name: true
-    short-name: '&cCAC'
-    unbreakable: false
-    enable_enchantment: false
-    has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 418
-    item-name: LONG_GRASS
-    fix-description: false
-    offset-description: 45
-    alert-message: cac
     requires-reconnect: false
     requires-combining: false
     menu-slot: 18
@@ -266,10 +405,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 417
-    item-name: LONG_GRASS
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 417
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 417
     fix-description: false
     offset-description: 45
     alert-message: arc
@@ -286,10 +433,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 416
-    item-name: LONG_GRASS
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 416
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 416
     fix-description: false
     offset-description: 45
     alert-message: matrix
@@ -306,10 +461,28 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: true
-    data: 1
-    item: 31
-    item-name: LONG_GRASS
+    item:
+      use-material-id: false
+      default:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+        id: 31
+      v1_8_R3:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+        id: 31
+      v1_13_R1:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 31
+      v1_14_R1:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 31
     fix-description: false
     offset-description: 45
     alert-message: FA
@@ -326,10 +499,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 288
-    item-name: LONG_GRASS
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 288
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 288
     fix-description: false
     offset-description: 45
     alert-message: hawk
@@ -346,10 +527,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 331
-    item-name: LONG_GRASS
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 331
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 331
     fix-description: false
     offset-description: 45
     alert-message: link
@@ -366,10 +555,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 1
-    item: 85
-    item-name: DAYLIGHT_DETECTOR
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+        id: 85
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+        id: 85
     fix-description: false
     offset-description: 45
     alert-message: ThotPatrol
@@ -386,10 +583,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 10
-    item: 151
-    item-name: DAYLIGHT_DETECTOR
+    item:
+      use-material-id: false
+      default:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+        id: 151
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+        id: 151
     fix-description: false
     offset-description: 45
     alert-message: anticheat+
@@ -406,10 +611,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 10
-    item: 152
-    item-name: REDSTONE_BLOCK
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+        id: 152
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+        id: 152
     fix-description: true
     offset-description: 30
     alert-message: acr
@@ -427,10 +640,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 10
-    item: 120
-    item-name: ENDER_PORTAL_FRAME
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 120
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 120
     fix-description: true
     offset-description: 45
     alert-message: saturn
@@ -447,9 +668,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 326
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 326
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 326
     fix-description: false
     offset-description: 49
     alert-message: wave
@@ -466,9 +696,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 339
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 339
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 339
     fix-description: true
     offset-description: 30
     alert-message: lightac
@@ -485,9 +724,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: true
-    data: 6
-    item: 35
+    item:
+      use-material-id: true
+      default:
+        has-data: true
+        data: 1
+        name: ENDER_PORTAL_FRAME
+        id: 6
+      v1_8_R3:
+        has-data: true
+        data: 6
+        name: ENDER_PORTAL_FRAME
+        id: 35
     fix-description: false
     offset-description: 49
     alert-message: pac
@@ -504,9 +752,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: true
-    data: 5
-    item: 175
+    item:
+      use-material-id: true
+      default:
+        has-data: true
+        data: 5
+        name: ENDER_PORTAL_FRAME
+        id: 175
+      v1_8_R3:
+        has-data: true
+        data: 5
+        name: ENDER_PORTAL_FRAME
+        id: 175
     fix-description: false
     offset-description: 49
     alert-message: kauri
@@ -523,9 +780,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 397
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 5
+        name: ENDER_PORTAL_FRAME
+        id: 397
+      v1_8_R3:
+        has-data: false
+        data: 5
+        name: ENDER_PORTAL_FRAME
+        id: 397
     fix-description: true
     offset-description: 49
     alert-message: grim
@@ -543,9 +809,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 173
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 173
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 173
     fix-description: false
     offset-description: 49
     alert-message: horizon
@@ -562,9 +837,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 5
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 5
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 5
     fix-description: true
     offset-description: 44
     alert-message: ncp
@@ -581,9 +865,18 @@ loaded-anticheats:
     unbreakable: false
     enable_enchantment: false
     has_extra_lore: false
-    has-data: false
-    data: 2
-    item: 327
+    item:
+      use-material-id: true
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 327
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 327
     fix-description: false
     offset-description: 49
     alert-message: vulcan

@@ -1,7 +1,177 @@
-## item in the menu that deletes the item you have in your Cursor when you click it!
-delete-item: true
-## item in the menu that debugs the item you have in your Cursor when you click it!
-debug-item: true
+special-item:
+  delete:
+    enabled: true
+    default:
+      use-material-id: false
+      name: WOOL
+      id: 35
+      has-data: true
+      data: 14
+    v1_8_R3:
+      use-material-id: true
+      name: WOOL
+      id: 35
+      has-data: true
+      data: 14
+    v1_13_R1:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_13_R2:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_14_R1:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_15_R1:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R1:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R2:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R3:
+      use-material-id: false
+      name: RED_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    
+    
+  debug:    
+    enabled: true
+    default:
+      use-material-id: false
+      name: WOOL
+      id: 35
+      has-data: true
+      data: 1
+    v1_8_R3:
+      use-material-id: true
+      name: WOOL
+      id: 35
+      has-data: true
+      data: 1
+    v1_13_R1:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_13_R2:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_14_R1:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_15_R1:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R1:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R2:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+    v1_16_R3:
+      use-material-id: false
+      name: ORANGE_WOOL
+      id: 35
+      has-data: false
+      data: 1
+  deadglass:
+    default:
+      use-material-id: false
+      name: STAINED_GLASS_PANE
+      id: 160
+      has-data: true
+      data: 2
+    v1_8_R3:
+      use-material-id: true
+      name: STAINED_GLASS_PANE
+      id: 160
+      has-data: true
+      data: 2
+    v1_13_R1:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_13_R2:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_14_R1:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_15_R1:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_16_R1:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_16_R2:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+    v1_16_R3:
+      use-material-id: false
+      name: PURPLE_STAINED_GLASS_PANE
+      id: 160
+      has-data: false
+      data: 10
+      
+  
+   
+
 ## Size of the Items Menu/Inventory!
 ## Inventory Size can be: 9, 18, 27, 36, 45, 54
 Inventory-size: 54
@@ -18,49 +188,50 @@ items:
   ## hasLore: Boolean, Lore:
   ## - 'string'
   ## - 'string' (color codes supported using &(code)string)
-  SLIME_BLOCK:
+  default:
+    SLIME_BLOCK:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 17
-  STONE:
+    STONE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 0
-  WOOL:
+    WOOL:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 9
-  WOOD_STEP:
+    WOOD_STEP:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 1
-  COOKED_BEEF:
+    COOKED_BEEF:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 36
-  DIAMOND_AXE:
+    DIAMOND_AXE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 19
-  DIAMOND_SWORD:
+    DIAMOND_SWORD:
       unbreakable: false
       enable_item_flag: false
       ItemFlag:
@@ -74,7 +245,7 @@ items:
       - '19:2'
       amount: 1
       slot: 18
-  GOLDEN_APPLE1:
+    GOLDEN_APPLE1:
       unbreakable: false
       enable_item_flag: false
       hasData: false
@@ -82,7 +253,7 @@ items:
       numbered: 1
       amount: 64
       slot: 37
-  GOLDEN_APPLE:
+    GOLDEN_APPLE:
       unbreakable: false
       enable_item_flag: false
       hasData: true
@@ -90,32 +261,32 @@ items:
       amount: 64
       slot: 38
       data: 1
-  MUSHROOM_SOUP:
+    MUSHROOM_SOUP:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 39
-  RABBIT_STEW:
+    RABBIT_STEW:
       unbreakable: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 40
-  CAKE:
+    CAKE:
       unbreakable: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 41
-  WATER_BUCKET:
+    WATER_BUCKET:
       unbreakable: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 10
-  BOW1:
+    BOW1:
       unbreakable: false
       enable_item_flag: false
       hasData: false
@@ -129,7 +300,7 @@ items:
       slot: 11
       enchantments:
       - '51:1'
-  BOW:
+    BOW:
       unbreakable: true
       enable_item_flag: true
       ItemFlag:
@@ -142,35 +313,35 @@ items:
       amount: 1
       slot: 12
       display-name: '&cTeleport Bow'
-  ARROW:
+    ARROW:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 13
-  FIREBALL:
+    FIREBALL:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 14
-  ENDER_PEARL:
+    ENDER_PEARL:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 16
       slot: 15
-  SNOW_BALL:
+    SNOW_BALL:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 16
       slot: 16
-  TNT:
+    TNT:
       unbreakable: false
       enable_item_flag: false
       hasData: false
@@ -178,105 +349,903 @@ items:
       amount: 64
       slot: 3
       display-name: '&cSpecial TNT'
-  SNOW:
+    SNOW:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 4
-  FENCE:
+    FENCE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 5
-  OBSIDIAN:
+    OBSIDIAN:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 6
-  TRAP_DOOR:
+    TRAP_DOOR:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 7
-  FENCE_GATE:
+    FENCE_GATE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 8
-  WOOD_STAIRS:
+    WOOD_STAIRS:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 64
       slot: 2
-  DIAMOND_SPADE:
+    DIAMOND_SPADE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 20
-  DIAMOND_PICKAXE:
+    DIAMOND_PICKAXE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 21
-  DIAMOND_HOE:
+    DIAMOND_HOE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 22
-  SHEARS:
+    SHEARS:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 23
-  FISHING_ROD:
+    FISHING_ROD:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 24
-  DIAMOND_HELMET:
+    DIAMOND_HELMET:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 27
-  DIAMOND_CHESTPLATE:
+    DIAMOND_CHESTPLATE:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 28
-  DIAMOND_LEGGINGS:
+    DIAMOND_LEGGINGS:
       unbreakable: false
       enable_item_flag: false
       hasData: false
       enable_enchantment: false
       amount: 1
       slot: 29
-  DIAMOND_BOOTS:
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+  v1_8_R3:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    WOOD_STEP:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: true
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_SOUP:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - '51:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - '51:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIREBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOW_BALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    TRAP_DOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    WOOD_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SPADE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+  v1_13_R1:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+  v1_13_R2:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
       unbreakable: false
       enable_item_flag: false
       hasData: false
@@ -284,3 +1253,1335 @@ items:
       amount: 1
       slot: 30
   
+  v1_14_R1:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+      
+  v1_15_R1:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+      
+  v1_16_R1:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+  v1_16_R2:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
+  v1_16_R3:
+    SLIME_BLOCK:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 17
+    STONE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 0
+    WHITE_WOOL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 9
+    OAK_SLAB:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 1
+    COOKED_BEEF:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 36
+    DIAMOND_AXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 19
+    DIAMOND_SWORD:
+      unbreakable: false
+      enable_item_flag: false
+      ItemFlag:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: false
+      enchantments:
+      - '51:1'
+      - '19:2'
+      amount: 1
+      slot: 18
+    GOLDEN_APPLE1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      numbered: 1
+      amount: 64
+      slot: 37
+    ENCHANTED_GOLDEN_APPLE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 38
+      data: 1
+    MUSHROOM_STEW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 39
+    RABBIT_STEW:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 40
+    CAKE:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 41
+    WATER_BUCKET:
+      unbreakable: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 10
+    BOW1:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      hasLore: false
+      Lore:
+      - '&cdick'
+      - '&2titties'
+      enable_enchantment: true
+      numbered: 1
+      amount: 1
+      slot: 11
+      enchantments:
+      - 'ARROW_INFINITE:1'
+    BOW:
+      unbreakable: true
+      enable_item_flag: true
+      ItemFlag:
+      - HIDE_ENCHANTS
+      - HIDE_UNBREAKABLE
+      hasData: false
+      enable_enchantment: true
+      enchantments:
+      - 'ARROW_INFINITE:1'
+      amount: 1
+      slot: 12
+      display-name: '&cTeleport Bow'
+    ARROW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 13
+    FIRE_CHARGE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 14
+    ENDER_PEARL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 15
+    SNOWBALL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 16
+      slot: 16
+    TNT:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 3
+      display-name: '&cSpecial TNT'
+    SNOW:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 4
+    OAK_FENCE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 5
+    OBSIDIAN:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 6
+    OAK_TRAPDOOR:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 7
+    OAK_FENCE_GATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 8
+    OAK_STAIRS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 64
+      slot: 2
+    DIAMOND_SHOVEL:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 20
+    DIAMOND_PICKAXE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 21
+    DIAMOND_HOE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 22
+    SHEARS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 23
+    FISHING_ROD:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 24
+    DIAMOND_HELMET:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 27
+    DIAMOND_CHESTPLATE:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 28
+    DIAMOND_LEGGINGS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 29
+    DIAMOND_BOOTS:
+      unbreakable: false
+      enable_item_flag: false
+      hasData: false
+      enable_enchantment: false
+      amount: 1
+      slot: 30
