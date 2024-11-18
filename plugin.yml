@@ -1,6 +1,6 @@
 name: Rebug
-version: '2.2'
-main: me.killstorm103.Rebug.Main.Rebug
+version: '2.3'
+main: me.killstorm103.Rebug.Shared.Main.Rebug
 author: killstorm103
 description: REBUG is a Test Server Plugin that allows you to switch between different AntiCheats and allows users to test exploits on their clients
 api-version: 1.13
