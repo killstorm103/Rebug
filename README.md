@@ -1,16 +1,14 @@
-Rebug Essential is a Test server plugin mainly made for Spigot 1.8.8 but it does work on other versions
-Essential is a recoded version of Rebug made to be compatible with all versions of Minecraft, Essential doesn't have extra features like client crashers players can test on their client
+Rebug is a Test server/AntiCheat Switcher plugin
+Essential is a recoded version of Rebug made to be compatible with all versions of Minecraft, Essential doesn't have extra features like client crashers players can test on their client Rebug Extra will have this
 
-- Supported Server SoftWares: Bukkit, Spigot, Paper, Leaf, PandaSpigot, Purpur, PaperSpigot, Limbo, Magma, anything else is untested and not guaranteed to work!
+- Supported Server SoftWares: Bukkit, Spigot, Paper, Leaf, PandaSpigot, Purpur, PaperSpigot, Limbo, Magma, Folia (Experimental)
 - Supports: 1.8.8-1.21.x
-- Tested Versions: 1.8.8, 1.9, 1.9.4, 1.10.2, 1.11.2, 1.12, 1.13, 1.13.2, 1.14.x, 1.15.2, 1.16.x, 1.20, 1.21.x
+- Tested Versions: 1.8.8, 1.9, 1.9.4, 1.10.2, 1.11, 1.12.2, 1.13.2, 1.14.x, 1.15.2, 1.16.x, 1.17.x, 1.18.x, 1.19.4, 1.20.1, 1.20.6, 1.21.x
+- Anything not listed is untested and not guaranteed to work!
 
 it's my first plugin!
 
 it's made for my Minecraft server to test things like AntiCheats and Exploits(Rebug Extra will have exploits).
-
-it's a AntiCheat Switcher
-
 
 Info:
 - Java: jdk 21
