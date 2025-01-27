@@ -1,0 +1,130 @@
+on-join-and-quit:
+  join:
+    custom-message-enabled: true
+    message: '&7[&a+&7] %user%'
+    commands:
+      everytime:
+      - grim verbose
+      - foxaddition verbose
+      - matrix verbose
+      once:
+      - horizon verbose
+  quit:
+    custom-message-enabled: true
+    message: '&7[&c-&7] %user%'
+commands:
+  allow-sub-commands: true
+  register-on-new-thread: true
+  thread-sleep: -1
+  getuuid: false
+  back: true
+  discord: true
+  heal: true
+  feed: true
+  healandfeed: true
+  ac: true
+  settings: true
+scoreboard:
+  enabled: true
+  plugin: 2
+  custom:
+    slots-that-change:
+      onground:
+        enabled: true
+        text: '&cOnGround&a %user_onground%'
+        replace: false
+        slot: 0
+      sneaking:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 1
+      sprinting:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 2
+      blocking:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 3
+      timer_balance:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 4
+      pps:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 5
+      bpsy:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 6
+      bpsxz:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 7
+      cps:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 8
+      anticheat:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 10
+    list:
+    - '&2OnGround&a %user_onground%'
+    - '&4Sneaking&a %user_issneaking%'
+    - '&4Sprinting&a %user_issprinting%'
+    - '&4Blocking&a %user_isblocking%'
+    - '&4TB&r %user_timer_balance%'
+    - '&4PPS&r %user_pps%'
+    - '&4BPS (Y)&r %user_bpsy%'
+    - '&4BPS (XZ)&r %user_bpsxz%'
+    - '&4CPS&r %user_cps%'
+    - '&4Client&r %user_client%'
+    - '&4AC&r %user_anticheat%'
+    - '&r '
+    - '&8| &cTest &aServer &8|'
+  title: '&7| &l&7killstorm103''s&r &7|'
+  marks:
+    x: '&l&cX'
+user:
+  update-perms-command: lp user %user% parent set %anticheat%
+  use-ranks: true
+  ranks: 1
+  staff-group-command: lp user %user% parent add %rank%
+world:
+  explosions:
+    modifier: true
+    break-blocks: false
+tab:
+  title: '&8| &l&7killstorm103''s&r &8| &cTest &2Server &8|'
+clip:
+  vclip:
+    enabled: true
+    max-value: 500
+  hclip:
+    enabled: true
+    max-value: 50
+discord:
+  disabled: false
+  reason: Giving out the discord invite Link is disabled!
+  color-code-support: false
+  link: https://discord.gg/5xWHx3MUUr
+  messages:
+    msg:
+      enabled: true
+      text: 'Our discord server invite link:'
+      color-code-support: true
+    msg2:
+      enabled: true
+      text: '%link%'
+      color-code-support: false

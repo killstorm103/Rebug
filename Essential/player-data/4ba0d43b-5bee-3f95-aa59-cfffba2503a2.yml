@@ -1,0 +1,33 @@
+Player Name: killstorm103
+Player Settings:
+  AntiCheat: Vanilla
+  Amount Of Selected AntiCheats: 0
+  AntiCheat Number IDs: ''
+  Fire Resistance: false
+  Auto Refill Blocks: true
+  Time Adjuster: true
+  Proximity Player Hider: false
+  Reach Debugger: false
+  Exterranl Damage: true
+  Potions: true
+  Other CustomPayLoad: true
+  Hunger: false
+  Register Packet: true
+  Hitbox Debugger: false
+  Modifi AllowFlight: true
+  Fall Damage: true
+  ClientBrand Packet: true
+  Night Vision: true
+  S08 Alerts: true
+  Punishes: true
+  RayTrace Debugger: false
+  Flags: true
+  Infinite Blocks: false
+  Damage Resistance: false
+  Double Jump: false
+  Setbacks: true
+  Hide Online Players: false
+  Client Command Checker: false
+  World Time: 1000
+  Proximity Hider Distance: 10.0
+  Double Jump Height: 0.5

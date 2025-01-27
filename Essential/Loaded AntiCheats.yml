@@ -1,0 +1,846 @@
+default-anticheat: Vanilla
+force-default-anticheat: false
+## me.killstorm103.rebug.user.bypass_force_default_anticheat
+bypass-permission-enabled: true
+bypass-requires-combining-permission: true
+Custom Slots: true
+Disabled-AntiCheat:
+  disabled: false
+  kick-on-Invalid-anticheat: false
+
+custom-info-menu-slot: false
+info-item-slot: 20
+log:
+  server:
+    anticheat-switches: true
+    message: '%user% Switched their AntiCheat from: %oldac% to: %anticheat%'
+alerts-to-scan-for:
+  debug-to-players: false
+  debug:
+    identifier: false
+    was-message-cancelled: false
+    message-cancelled-debug-player: false
+    replace-message-text: false
+    message: false
+    message-length: false ## raw is message.length (), casted is Alert_Related.length (String[] Alert_Related = StringUtils.split(message);)
+    contains-alert-message: false
+    was-alert-message-detected: false
+    casted-alert-message: false
+    past-chat-type: false
+  check-chat-types:
+    chat: true
+    system: true
+    emote_command: false
+    game_info: false
+    msg_command: false
+    msg_command_incoming: false
+    msg_command_outgoing: false
+    raw: false
+    say_command: false
+    team_msg_command: false
+    team_msg_command_incoming: false
+    team_msg_command_outgoing: false
+    
+  minimum-message-length: 2
+  
+  ## alerts but without %s and - instead of spaces!, put the number of where in the message the user/player is
+  alerts-user-numbers:
+    rebug_user-failed: 1
+    rebug_user-failed-check: 1
+    rebug_user-was-flagged: 1
+    rebug_user-has-violated-check: 1
+    the-player-rebug_user-tried-to-use: 3
+    rebug_user-tried: 1
+    rebug_user-might-be-using: 1
+    rebug_user-is-using: 1
+    rebug_user-was-punished: 1
+    rebug_user-was-setback: 1
+    verbose-rebug_user-violated: 2
+    rebug_user-might-use: 1
+  alerts:
+    - '%rebug_user% failed'
+    - '%rebug_user% failed check'
+    - '%rebug_user% was flagged'
+    - '%rebug_user% has violated check'
+    - 'the player %rebug_user% tried to use'
+    - '%rebug_user% tried'
+    - '%rebug_user% might be using'
+    - '%rebug_user% is using'
+    - '%rebug_user% was punished'
+    - '%rebug_user% was setback'
+    - 'verbose %rebug_user% violated'
+    - '%rebug_user% might use'
+    
+  ## if a word from punished or setback is found inside Alert Message it will tell Rebug it was a punished or setback Alert!
+  setback:
+  - 'setback'
+  - 'Your position was fixed!'
+  punished:
+  - 'punished'
+  
+  use-replaceall: false
+  replace-message-text:
+  - '['
+  - ']'
+  - '{'
+  - '}'
+  - '>'
+  - '<'
+  - '/'
+  - 'Â'
+  - '('
+  - ')'
+  - '┬'
+  - 'º'
+  - '*'
+  - '^'
+  - ':'
+  - ';'
+  - '|'
+  - '-'
+  - '+'
+  - '='
+  - '%'
+  - '$'
+  - '#'
+  - '!'
+  - '.'
+  - '&'
+  - 'ã'
+  - '€'
+  - 'Œ'
+  - '?'
+  - '-'
+  - '»'
+manually-added-anticheats:
+    ## don't use color codes!
+    ## for setting the AntiCheat item go to loaded-anticheats.(AntiCheat name Section)
+    ## for enabling/disabling the AntiCheat go to loaded-anticheats.(AntiCheat name Section)
+    ac-names: 
+    - 'Vulcan'
+    vulcan:
+      authors: '[frep, GladUrBad, Joshb_, Elevated, retrooper]'
+      version: '2.9.0'
+      description: 
+      - ''
+      - 'Vulcan Cheat Detection'
+      - 'a shit paid AntiCheat that should be free!'
+      ## don't have anything in soft/hard_depend or remove them for it to say Dependencies: None!
+      soft_depend: 
+      - 'ProtocolSupport'
+      hard_depend: 
+loaded-anticheats:
+  vanilla:
+    enabled: true
+    server-type:
+      enabled: true
+      detection: true
+      custom: Spigot
+    server-type-version:
+      enabled: true
+      detection: true
+      custom: '-1'
+    custom-slot: false
+    slot: 15
+    item:
+      default: 
+        name: DIRT
+      v1_8_R3: 
+        name: DIRT
+  
+  use-selected-sound:
+    default: block.anvil.use
+    v1_8_R1: random.anvil_use
+    v1_8_R2: random.anvil_use
+    v1_8_R3: random.anvil_use
+    
+  create-inventory: true
+  debug-clicked-item: false
+  multiple-anticheat:
+    enabled: true
+    limiter-enabled: false
+    max-anticheats: 5
+    item:
+      default:
+        name: ENCHANTMENT_TABLE
+
+  multiple-anticheats:
+    saturn_thotpatrol:  1
+    themis_lightanticheat: 2
+    wave_thotpatrol: 13
+    saturn_thotpatrol_wave: 123
+    saturn_wave_vulcan: 124
+    lightanticheat_kauri_foxaddition: 1124
+  ## Size of the Anticheats Menu/Inventory!
+  ## Inventory Size can be: 9, 18, 27, 36, 45, 54
+  Inventory-size: 27
+  ## AC Names:
+  ## make them what their name is in their plugin.yml, don't use color codes here!
+  ac-names:
+  - 'NoCheatPlus'
+  - 'GrimAC'
+  - 'Horizon'
+  - 'Wave'
+  - 'Saturn'
+  - 'Kauri'
+  - 'PAC'
+  - 'Themis'
+  - 'LightAntiCheat'
+  - 'AntiCheatPlus'
+  - 'ThotPatrol'
+  - 'WatchCat'
+  - 'FoxAddition'
+  - 'AntiCheatReloaded'
+  - 'Hawk'
+  - 'Link'
+  - 'Warden'
+  - 'Matrix'
+  - 'Arc'
+  - 'Cardinal'
+  - 'LittleNoCheat'
+  - 'Frequency'
+  - 'TakaAntiCheat'
+  - 'Medusa'
+  - 'Negativity'
+  - 'Reflex'  
+  ## AC items:
+  ## Name them what their name is above but in lower case and without color codes!
+  ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
+  ## item is the item number ID
+  ## fix-description: Boolean, use this and , offset-description: Number, to fix the AntiCheats description if it's going off of the screen!
+  ## unbreakable: Boolean
+  ## enable_enchantment: Boolean, enchantments:
+  ## - 'ID:Level'
+  ## - 'ID:Level' (so on!)
+  ## enable_item_flag: Boolean, ItemFlags: 
+  ## - Flag
+  ## - Flag (so on!)
+  ## has_extra_lore: Boolean, lore:
+  ## - 'string' 
+  ## - 'string' (color codes supported using &(code)string)
+  themis:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&5Themis'
+    has-short-name: false
+    short-name: '&bThemis'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: true
+        data: 1
+        name: IRON_CHESTPLATE
+      v1_8_R3:
+        has-data: true
+        data: 1
+        name: IRON_CHESTPLATE
+    fix-description: true
+    offset-description: 45
+    alert-message: themis
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 5
+      
+  reflex:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&2Reflex'
+    has-short-name: false
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+      v1_8_R3:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+    fix-description: true
+    offset-description: 45
+    alert-message: ReflexBoot
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 20
+  negativity:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&2Negativity'
+    has-short-name: false
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+      v1_8_R3:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+    fix-description: false
+    offset-description: 45
+    alert-message: negativity
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 20
+  
+  
+  takaanticheat:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&bTakaAntiCheat'
+    has-short-name: true
+    short-name: '&bTakaAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      
+      default:
+        has-data: false
+        data: 2
+        name: DIAMOND_SWORD
+      v1_8_R3:
+        has-data: false
+        data: 2
+        name: DIAMOND_SWORD
+    fix-description: false
+    offset-description: 45
+    alert-message: takaac
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 19
+  frequency:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&7Frequency'
+    has-short-name: false
+    short-name: '&cLNC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: true
+        data: 2
+        name: LONG_GRASS
+      v1_8_R3:
+        has-data: true
+        data: 2
+        name: LONG_GRASS
+    fix-description: false
+    offset-description: 45
+    alert-message: frequency
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 19
+  
+  littlenocheat:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cLittleNoCheat'
+    has-short-name: true
+    short-name: '&cLNC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 2
+        name: GOLD_SWORD
+      v1_8_R3:
+        has-data: false
+        data: 2
+        name: GOLD_SWORD
+    fix-description: false
+    offset-description: 45
+    alert-message: littlenocheat
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 18
+  arc:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&bArc'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      
+      default:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 417
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 417
+    fix-description: false
+    offset-description: 45
+    alert-message: arc
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 17
+  matrix:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cMatrix'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      
+      default:
+        has-data: false
+        data: 1
+        name: NETHER_STAR
+        id: 416
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: NETHER_STAR
+        id: 416
+    fix-description: false
+    offset-description: 45
+    alert-message: matrix
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 16
+  foxaddition:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&6FoxAddition'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+      v1_8_R3:
+        has-data: true
+        data: 1
+        name: LONG_GRASS
+        id: 31
+      v1_13_R1:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 31
+      v1_14_R1:
+        has-data: false
+        data: 1
+        name: LONG_GRASS
+        id: 31
+    fix-description: false
+    offset-description: 45
+    alert-message: FA
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 13
+      v1_21_R3: 4
+  hawk:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cHawk'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: false
+        data: 1
+        name: FEATHER
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: FEATHER
+    fix-description: false
+    offset-description: 45
+    alert-message: hawk
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 14
+  link:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&aLink'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+    fix-description: false
+    offset-description: 45
+    alert-message: link
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot: 15
+  thotpatrol:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&dThotPatrol'
+    has-short-name: false
+    short-name: '&cAC+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: false
+        data: 1
+        name: FENCE
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: FENCE
+    fix-description: false
+    offset-description: 45
+    alert-message: ThotPatrol
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 12
+  anticheatplus:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cAntiCheatPlus'
+    has-short-name: true
+    short-name: '&cAntiCheat+'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item: 
+      default:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: DAYLIGHT_DETECTOR
+    fix-description: false
+    offset-description: 45
+    alert-message: anticheat
+    requires-reconnect: false
+    requires-combining: true
+    menu-slot:
+      default: 11
+  anticheatreloaded:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cAntiCheatReloaded'
+    has-short-name: true
+    short-name: '&cACR'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: REDSTONE_BLOCK
+    fix-description: true
+    offset-description: 30
+    alert-message: acr
+    requires-reconnect: false
+    requires-combining: true
+    menu-slot:
+      default: 14
+  
+  saturn:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&0Saturn'
+    has-short-name: false
+    short-name: '&0Saturn'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: ENDER_PORTAL_FRAME
+    fix-description: true
+    offset-description: 45
+    alert-message: saturn
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 2
+  wave:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&bWave'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: WATER_BUCKET
+      v1_8_R3:
+        name: WATER_BUCKET
+        has-data: false
+        data: 1
+    fix-description: false
+    offset-description: 49
+    alert-message: wave
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 3
+  lightanticheat:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&3LightAntiCheat'
+    has-short-name: true
+    short-name: '&3LightAC'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: PAPER
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: PAPER
+    fix-description: true
+    offset-description: 30
+    alert-message: lightac
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 10
+      v1_21_R3: 7
+  pac:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&cPAC'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      
+      default:
+        has-data: true
+        data: 1
+        name: WOOL
+      v1_8_R3:
+        has-data: true
+        data: 6
+        name: WOOL
+    fix-description: false
+    offset-description: 49
+    alert-message: pac
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 5
+  kauri:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&dKauri'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: true
+        data: 5
+        name: DOUBLE_PLANT
+      v1_8_R3:
+        has-data: true
+        data: 5
+        name: DOUBLE_PLANT
+    fix-description: false
+    offset-description: 49
+    alert-message: kauri
+    requires-reconnect: true
+    requires-combining: false
+    menu-slot: 6
+  grimac:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&8GrimAC'
+    has-short-name: true
+    short-name: '&8Grim'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 5
+        name: SKULL_ITEM
+      v1_8_R3:
+        has-data: false
+        data: 5
+        name: SKULL_ITEM
+    fix-description: true
+    offset-description: 49
+    alert-message: grim
+    requires-reconnect: true
+    requires-combining: false
+    api: false
+    menu-slot:
+      default: 8
+      v1_21_R3: 2
+  horizon:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&1Horizon'
+    has-short-name: false
+    short-name: Hori
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: COAL_BLOCK
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: COAL_BLOCK
+    fix-description: false
+    offset-description: 49
+    alert-message: horizon
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 9
+  nocheatplus:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&1NoCheatPlus'
+    has-short-name: true
+    short-name: '&o&1NC&cP'
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: GRASS
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: GRASS
+    fix-description: true
+    offset-description: 44
+    alert-message: ncp
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 4
+      v1_21_R3: 6
+  vulcan:
+    permission-to-use: false
+    enabled: true
+    is-multi-enabled: true
+    main-name: '&4Vulcan'
+    has-short-name: false
+    short-name: NCP
+    unbreakable: false
+    enable_enchantment: false
+    has_extra_lore: false
+    item:
+      default:
+        has-data: false
+        data: 1
+        name: LAVA_BUCKET
+      v1_8_R3:
+        has-data: false
+        data: 1
+        name: LAVA_BUCKET
+    fix-description: false
+    offset-description: 49
+    alert-message: vulcan
+    requires-reconnect: false
+    requires-combining: false
+    menu-slot:
+      default: 7
+      v1_21_R3: 3

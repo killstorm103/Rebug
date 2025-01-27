@@ -1,0 +1,717 @@
+package me.killstorm103.Rebug.Main;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import lombok.Getter;
+import me.killstorm103.Rebug.Command.Command.Types;
+import me.killstorm103.Rebug.Command.Commands.*;
+import me.killstorm103.Rebug.Command.Handler.EventCommandPreProcess;
+import me.killstorm103.Rebug.Command.Handler.ShortCutBasic;
+import me.killstorm103.Rebug.Events.*;
+import me.killstorm103.Rebug.Hooks.PlaceholderapiHook;
+import me.killstorm103.Rebug.Tasks.OneSecondUpdater;
+import me.killstorm103.Rebug.Utils.FileUtils;
+import me.killstorm103.Rebug.Utils.ItemsAndMenusUtils;
+import me.killstorm103.Rebug.Utils.PT;
+import me.killstorm103.Rebug.Utils.Scheduler;
+import me.killstorm103.Rebug.Utils.ServerVersionUtil;
+import me.killstorm103.Rebug.Utils.User;
+
+
+@SuppressWarnings("deprecation")
+public class RebugPlugin extends JavaPlugin 
+{
+	public final HashMap<UUID, User> USERS = new HashMap<>();
+	public final ArrayList<UUID> isAlertsEnabledOnce = new ArrayList<>();
+	public static final Map<Plugin, String> anticheats = new HashMap<>();
+	public static final Map<String, Boolean> manual_anticheats = new HashMap<>();
+	public static final Map<String, String> End_Game_AntiCheats = new HashMap<>();
+	public static final Map<String, Map<String, Boolean>> ServerRanks = new HashMap<>(), StaffRanks = new HashMap<>();
+	private final static List<String> list_configs;
+	
+	@Getter
+	private static final Map<String, Boolean> SettingsBooleans = new HashMap<>();
+	@Getter
+	private static final Map<String, String> SettingsActions = new HashMap<>();
+	@Getter
+	private static final Map<String, Integer> SettingsIntegers = new HashMap<>();
+	@Getter
+	private static final Map<String, Double> SettingsDoubles = new HashMap<>();
+	@Getter
+	private static final Map<String, String> SettingsList = new HashMap<>();
+	
+	static 
+	{
+		list_configs = new ArrayList<>();
+		list_configs.add("config");
+		list_configs.add("loaded anticheats");
+		list_configs.add("player settings");
+		list_configs.add("server");
+		list_configs.add("menus");
+	}
+	@Getter
+	private static RebugPlugin INSTANCE;
+
+	@Getter
+	private static final String RebugMessage = ChatColor.BOLD.toString() + ChatColor.DARK_GRAY + "| " + ChatColor.DARK_RED + "REBUG " + ChatColor.DARK_GRAY + ">> ", PluginName = "Rebug", 
+    Author = "killstorm103", Edition = "Essential";
+
+	@Getter
+	private static String PluginVersion;
+
+	@Override
+	public void onEnable()
+	{
+		long time = System.currentTimeMillis();
+		INSTANCE = this;
+		PluginVersion = getDescription().getVersion();
+		FileUtils.initFolder();
+		getConfig().options().copyDefaults(true).copyHeader(true); 
+		for (int i = 0; i < list_configs.size(); i++)
+			FileUtils.createCustomConfig(list_configs.get(i));
+
+		try 
+		{
+			ServerVersionUtil.setServer_Version(getServer().getClass().getPackage().getName().split("\\.")[3]);
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			try
+			{
+				String version = Bukkit.getServer().getBukkitVersion().split("-")[0], suffix = "";
+				if (version.chars().filter(c -> c == '.').count() == 1) 
+				{
+					suffix = "R1";
+					version = 'v' + version.replace('.', '_') + '_' + suffix;
+				}
+				else
+				{
+					int minor = Integer.parseInt(version.split("\\.")[2].charAt(0) + "");
+					version = 'v' + version.replace('.', '_').replace("_" + minor, "") + '_' + "R" + (minor - 1);
+				}
+				ServerVersionUtil.setServer_Version(version);
+			}
+			catch (Exception ee) 
+			{
+				e.printStackTrace();
+				ee.printStackTrace();
+			}
+		}
+		String target = Bukkit.getName();
+		Log(Level.INFO, "Bukkit.getName()= " + target);
+		ServerVersionUtil.CreateINSTANCE(target);
+			
+		
+		isAlertsEnabledOnce.clear();
+		Scheduler.runTimerAsynchronously(OneSecondUpdater.getMainTask(), 0, 20);
+
+		Log(Level.INFO, "Enabling Packet Events");
+		PacketEvents.getAPI().getEventManager().registerListener(new EventPacket(), PacketListenerPriority.HIGHEST);
+		PacketEvents.getAPI().init();
+		try
+		{
+			ServerVersionUtil.setVersionName(PacketEvents.getAPI().getServerManager().getVersion().name().substring(2).replace("_", "."));
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		Log(Level.INFO, ServerVersionUtil.getServer_Version().equalsIgnoreCase("Unknown") ? "Failed to get the Server's version!" : "Detected Server Version: " + ServerVersionUtil.getServer_Version() + " (" + ServerVersionUtil.getVersionName() + ")");
+		Log(Level.INFO, "Detected " + ServerVersionUtil.getSoftWareType() + " as the Server SoftWare Type!");
+		if (FileUtils.getServerConfig().get("server.softwares.types." + ServerVersionUtil.getSoftWareType()) != null && ServerVersionUtil.getDetectedSoftWares() == 1)
+			Log(Level.INFO, "Detected SoftWare Version: " + ServerVersionUtil.getVersionOfSoftWare());
+		else
+		{
+			Log(Level.WARNING, "Detected " + ServerVersionUtil.getDetectedSoftWares() + " Server SoftWare Types or SoftWare Type is Spoofed or ");
+			Log(Level.WARNING, ServerVersionUtil.getSoftWareType() + " isn't set in Server.yml");
+			Log(Level.INFO, "So didn't try checking SoftWare Version");
+		}
+		try
+		{
+			ServerVersionUtil.setNetworkId(PacketEvents.getAPI().getServerManager().getVersion().getProtocolVersion());
+			Log(Level.INFO, "NetworkID: " + ServerVersionUtil.getNetworkId());
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		ServerVersionUtil.setServerNewerThan1_8(PT.isServerNewerOrEquals(ServerVersion.V_1_9));
+		PluginManager pm = Bukkit.getPluginManager();
+		Plugin placeholder = pm.getPlugin("PlaceholderAPI");
+		Log(Level.INFO, "trying to Hook PlaceholderAPI!");
+		if (placeholder != null && placeholder.isEnabled())
+			PlaceholderapiHook.registerHook();
+		else
+			Log(Level.WARNING, "The Plugin PlaceholderAPI wasn't Found or was Disabled!, it is recommended you download and install it!");
+		
+		Log(Level.INFO, "Enabling Events/Listeners");
+		pm.registerEvents(new EventJoinAndLeave(), this);
+		pm.registerEvents(new EventCommandPreProcess(), this);
+		pm.registerEvents(new EventMenu(), this);
+		pm.registerEvents(new EventPlayer(), this);
+		pm.registerEvents(new EventWorld(), this);
+		
+		Log(Level.INFO, "Registering Commands!");
+		cmd.clear();
+		commands.clear();
+		getCommand("rebug").setExecutor(this);
+		getCommand("rebug").setTabCompleter(this);
+		commands.add(new AntiCheatMenuCMD());
+		commands.add(new Version());
+		commands.add(new GetUUID());
+		commands.add(new DamageCMD());
+	//	commands.add(new ClientCMD());
+		commands.add(new BackCMD());
+		commands.add(new SetHealthCMD());
+		commands.add(new HealCMD());
+		commands.add(new FeedCMD());
+		commands.add(new Credits());
+		commands.add(new Discord());
+		commands.add(new HealAndFeedCMD());
+		commands.add(new PlayerInfoCMD());
+		//commands.add(new DebugItemCMD());
+		commands.add(new Reload());
+		commands.add(new VClip());
+		commands.add(new Help());
+		commands.add(new DebugRebugCMD());
+		commands.add(new SlashFly());
+		commands.add(new SetUserAntiCheat());
+		commands.add(new ShowCommands());
+		commands.add(new CheckAC());
+		commands.add(new SettingsMenuCommand());
+		
+		
+		Log(Level.INFO, "Registering Shortcut/SubAliase Commands (if any)!");
+		if (getConfig().getBoolean("commands.register-on-new-thread"))
+		{
+			new Thread ()
+			{
+				@Override
+				public void run ()
+				{
+					long sleep = getConfig().getLong("commands.thread-sleep");
+					try
+					{
+						if (sleep > 0)
+							sleep (sleep);
+						
+						for (me.killstorm103.Rebug.Command.Command cmds : commands)
+						{
+							if (cmds != null && getConfig().get ("commands.") + cmds.getName().toLowerCase() != null && getConfig().getBoolean("commands." + cmds.getName().toLowerCase()) && !PT.isStringNull(cmds.SubAliases()))
+							{
+								for (int i = 0; i < cmds.SubAliases().length; i ++)
+								{
+									if (cmds == null || PT.isStringNull(cmds.SubAliases())) continue;
+									
+									getCommand(cmds.SubAliases()[i]).setExecutor(new ShortCutBasic());
+									getCommand(cmds.SubAliases()[i]).setTabCompleter(new ShortCutBasic());
+								}
+							}
+						}
+					}
+					catch (Exception e) {
+					}
+				}
+			}.start();
+		}
+		else
+		{
+			Log(Level.WARNING, "Enable commands: register-on-new-thread in the Config");
+			Log(Level.WARNING, "If you get a error about getCommand(String) is null!");
+			for (me.killstorm103.Rebug.Command.Command cmds : commands)
+			{
+				if (cmds != null && getConfig().get ("commands.") + cmds.getName().toLowerCase() != null && getConfig().getBoolean("commands." + cmds.getName().toLowerCase()) && !PT.isStringNull(cmds.SubAliases()))
+				{
+					for (int i = 0; i < cmds.SubAliases().length; i ++)
+					{
+						if (cmds == null || PT.isStringNull(cmds.SubAliases())) continue;
+						
+						getCommand(cmds.SubAliases()[i]).setExecutor(new ShortCutBasic());
+						if (cmds.hasCommandCoolDown())
+							getCommand(cmds.SubAliases()[i]).setTabCompleter(new ShortCutBasic());
+					}
+				}
+			}
+		}
+		Log(Level.INFO, "Loading Server Ranks from config!");
+		try
+		{
+			StaffRanks.clear();
+			ServerRanks.clear();
+			Map<String, Boolean> stats = new HashMap<String, Boolean>();
+			FileUtils.getServerConfig().getConfigurationSection("ranks").getKeys(false).forEach(key -> 
+			{
+				boolean isStaff = FileUtils.getServerConfig().getConfigurationSection("ranks").getBoolean(key + ".is-staff", false);
+				String perm = FileUtils.getServerConfig().getConfigurationSection("ranks").getString(key + ".permission");
+				if (!PT.isStringNull(perm))
+				{
+					stats.put(perm, isStaff);
+					ServerRanks.put(key, stats);
+					if (isStaff)
+						StaffRanks.put(key, stats);
+				}
+			});
+			stats.clear();
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		Scheduler.runLater(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Log(Level.WARNING, "Trying to create Menus!");
+				ItemsAndMenusUtils.getINSTANCE().getRebugSettings();
+				ItemsAndMenusUtils.getINSTANCE().getAntiCheats();
+			}
+			
+		}, FileUtils.getServerConfig().getLong("server.onEnable.create-menus-delay", 100));
+		
+		Log(Level.INFO, "Enabled Rebug Essential in " + (System.currentTimeMillis() - time) + "ms");
+		if (ServerVersionUtil.getSoftWareType().equalsIgnoreCase("Bukkit") || ServerVersionUtil.getSoftWareType().equalsIgnoreCase("CraftBukkit"))
+			Log(Level.WARNING, "Bukkit is outdated and not Recommended!, you should use Spigot/Paper or another Fork instead!");
+	}
+
+	@Override
+	public void onLoad() {
+		PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+		PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).bStats(false);
+		PacketEvents.getAPI().load();
+		anticheats.clear();
+		manual_anticheats.clear();
+	}
+
+	@Override
+	public void onDisable() {
+		Bukkit.getOnlinePlayers().forEach(FileUtils::savePlayer);
+		Scheduler.cancelTasks(this);
+		PacketEvents.getAPI().terminate();
+	}
+
+	public void Log(@NotNull Level JavaUtilLog, @NotNull String message)
+	{
+		getLogger().log(JavaUtilLog, message);
+	}
+
+	public static void Debug(@NotNull Object object, @NotNull String msg) 
+	{
+		if (!SettingsBooleans.getOrDefault("Debug", false))
+			return;
+
+		getINSTANCE().Log(Level.INFO, msg);
+		Player player = null;
+		if (object instanceof Player) 
+		{
+			player = (Player) object;
+		}
+		if (object instanceof User) 
+			player = ((User) object).getPlayer();
+
+		if (player != null && (!SettingsBooleans.getOrDefault("Debug To Ops Only", true) || PT.hasAdminPerms(player)))
+			player.sendMessage(getRebugMessage() + msg);
+	}
+	public boolean isCommandAllowedShortCut (String name)
+	{
+		me.killstorm103.Rebug.Command.Command cmd = getCommandBySubName(name);
+		if (cmd != null && !PT.isStringNull(cmd.SubAliases()) && getConfig().get ("commands.") + cmd.getName().toLowerCase() != null && getConfig().getBoolean("commands." + cmd.getName().toLowerCase()))
+			return true;
+		
+		return false;
+	}
+	public static User getUser (@NotNull Player player) 
+	{
+		if (player == null)
+		{
+			getINSTANCE().Log(Level.SEVERE, "getUser's player is @NotNull but is Null!");
+			return null;
+		}
+		for (User user : getINSTANCE().USERS.values()) 
+		{
+			if (user.getPlayer() != player && !user.getPlayer().getUniqueId().equals(player.getUniqueId()))
+				continue;
+
+			return user;
+		}
+		return null;
+	}
+
+	// TODO Recode this and make it less messy!
+	public void Reload_Configs(CommandSender sender) {
+		if (SettingsBooleans.getOrDefault("Kick On Reload Config", false)) 
+		{
+			for (Player players : Bukkit.getOnlinePlayers())
+				PT.KickPlayer(players, ChatColor.DARK_RED + "Rejoin reloading Rebug's Config!");
+		}
+		boolean noerror;
+		try {
+			getConfig().load(FileUtils.getConfigFile());
+			getConfig().save(FileUtils.getConfigFile());
+			FileUtils.LoadedAntiCheatsFile = YamlConfiguration.loadConfiguration(FileUtils.LoadedAntiCheatsConfigFile);
+			FileUtils.PlayerSettingsConfig = YamlConfiguration.loadConfiguration(FileUtils.PlayerSettingsFile);
+			FileUtils.MenusConfig = YamlConfiguration.loadConfiguration(FileUtils.MenusConfigFile);
+			FileUtils.ServerConfig = YamlConfiguration.loadConfiguration(FileUtils.ServerFile);
+			ServerRanks.clear();
+			StaffRanks.clear();
+			ItemsAndMenusUtils.setAntiCheatMenu(null);
+			ItemsAndMenusUtils.setItemsMenu(null);
+			ItemsAndMenusUtils.setRebugSettingsMenu(null);
+			ItemsAndMenusUtils.getINSTANCE().getRebugSettings();
+			ItemsAndMenusUtils.getINSTANCE().getAntiCheats();
+			for (Player p : Bukkit.getOnlinePlayers()) 
+			{
+				User used = getUser(p);
+				if (used != null) 
+				{
+					if (used.getPlayer().getOpenInventory() == used.getSettingsMenu())
+						used.getPlayer().closeInventory();
+
+					used.setSettingsMenu(null);
+				}
+			}
+			Map<String, Boolean> stats = new HashMap<String, Boolean>();
+			FileUtils.getServerConfig().getConfigurationSection("ranks").getKeys(false).forEach(key -> 
+			{
+				boolean isStaff = FileUtils.getServerConfig().getConfigurationSection("ranks").getBoolean(key + ".is-staff");
+				stats.put(FileUtils.getServerConfig().getConfigurationSection("ranks").getString(key + ".permission"), isStaff);
+				ServerRanks.put(key, stats);
+				if (isStaff)
+					StaffRanks.put(key, stats);
+			});
+			stats.clear();
+
+			if (sender instanceof Player)
+				sender.sendMessage(RebugMessage + "Successfully Reloaded Config!");
+
+			Log(Level.INFO, "Successfully Reloaded Config!");
+			noerror = true;
+		} catch (Exception e) {
+			noerror = false;
+			if (sender instanceof Player)
+				sender.sendMessage(RebugMessage + "Failed to Reload Config!");
+
+			Log(Level.SEVERE, "Failed to Reload Config!");
+			e.printStackTrace();
+		}
+		if (noerror) {
+			if (FileUtils.getLoadedAntiCheatsFile().getBoolean("Disabled-AntiCheat.disabled")) {
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					p.closeInventory();
+					User used = getUser(p);
+					if (used != null) {
+						String def = FileUtils.getLoadedAntiCheatsFile().getString("default-anticheat");
+						if (used.getSelectedAntiCheats() < 2) {
+							if (!used.getAntiCheat().equalsIgnoreCase("Vanilla")
+									&& !used.getAntiCheat().equalsIgnoreCase(def)) {
+								if (FileUtils.getLoadedAntiCheatsFile()
+										.get("loaded-anticheats." + used.getAntiCheat().toLowerCase()) == null
+										|| !FileUtils.getLoadedAntiCheatsFile().getBoolean("loaded-anticheats."
+												+ used.getAntiCheat().toLowerCase() + ".enabled")) {
+									if (FileUtils.getLoadedAntiCheatsFile()
+											.getBoolean("Disabled-AntiCheat.kick-on-Invalid-anticheat"))
+										PT.KickPlayer(used.getPlayer(), RebugMessage + used.getAntiCheat()
+												+ " was Disabled! - Invalid AntiCheat upon Config Reload");
+									else {
+										used.sendMessage(used.getAntiCheat()
+												+ " was Disabled! - Invalid AntiCheat upon Config Reload");
+										used.setAntiCheat(PT.isStringNull(def) ? "Vanilla" : def);
+										used.setNumberIDs("");
+										used.setSelectedAntiCheats(0);
+										String NewAC = used.getColoredAntiCheat(),
+												striped = ChatColor.stripColor(used.getAntiCheat()).toLowerCase();
+										if (FileUtils.getLoadedAntiCheatsFile()
+												.getBoolean("loaded-anticheats." + striped + ".has-short-name"))
+											NewAC = NewAC.replace(NewAC,
+													ChatColor.translateAlternateColorCodes('&',
+															FileUtils.getLoadedAntiCheatsFile().getString(
+																	"loaded-anticheats." + striped + ".short-name"))
+															+ ChatColor.RESET);
+
+										PT.UpdateUserPerms(used.getPlayer(), used.getAntiCheat());
+										PT.CallEvent(new EventUpdateScore(used.getPlayer(),
+												new String[] { ChatColor.DARK_RED + "AC " + NewAC }, new int[] { 10 }));
+									}
+								}
+							}
+						} else {
+							String[] check = PT.SplitString(used.getAntiCheat());
+							for (int i = 0; i < check.length; i++) {
+								if (PT.isStringNull(check[i])) {
+									used.setNumberIDs("");
+									used.setAntiCheat(PT.isStringNull(def) ? "Vanilla" : def);
+									used.setSelectedAntiCheats(0);
+									used.sendMessage("a AC String was Null somehow so chaged you to: "
+											+ (PT.isStringNull(def) ? "Vanilla" : def));
+									break;
+								}
+								if (check[i].equalsIgnoreCase("Vanilla")) {
+									used.setNumberIDs("");
+									used.setAntiCheat(PT.isStringNull(def) ? "Vanilla" : def);
+									used.setSelectedAntiCheats(0);
+									used.sendMessage(
+											"Your AntiCheat was somehow Mulit while being Vanilla! so fixed that!");
+									break;
+								}
+								if (FileUtils.getLoadedAntiCheatsFile()
+										.get("loaded-anticheats." + check[i].toLowerCase()) == null
+										|| !FileUtils.getLoadedAntiCheatsFile().getBoolean(
+												"loaded-anticheats." + check[i].toLowerCase() + ".enabled")) {
+									if (FileUtils.getLoadedAntiCheatsFile()
+											.getBoolean("Disabled-AntiCheat.kick-on-Invalid-anticheat"))
+										PT.KickPlayer(used.getPlayer(), RebugMessage + check[i]
+												+ " was Disabled! - Invalid AntiCheat upon Config Reload");
+									else {
+										used.sendMessage(
+												check[i] + " was Disabled! - Invalid AntiCheat upon Config Reload");
+										used.setAntiCheat(PT.isStringNull(def) ? "Vanilla" : def);
+										used.setNumberIDs("");
+										used.setSelectedAntiCheats(0);
+										String NewAC = used.getColoredAntiCheat(),
+												striped = ChatColor.stripColor(used.getAntiCheat()).toLowerCase();
+										if (FileUtils.getLoadedAntiCheatsFile()
+												.getBoolean("loaded-anticheats." + striped + ".has-short-name"))
+											NewAC = NewAC.replace(NewAC,
+													ChatColor.translateAlternateColorCodes('&',
+															FileUtils.getLoadedAntiCheatsFile().getString(
+																	"loaded-anticheats." + striped + ".short-name"))
+															+ ChatColor.RESET);
+
+										PT.UpdateUserPerms(used.getPlayer(), used.getAntiCheat());
+										PT.CallEvent(new EventUpdateScore(used.getPlayer(),
+												new String[] { ChatColor.DARK_RED + "AC " + NewAC }, new int[] { 10 }));
+									}
+								}
+							}
+						}
+					}
+				}
+				FileUtils.getLoadedAntiCheatsFile().set("Disabled-AntiCheat.disabled", false);
+				try {
+					FileUtils.getLoadedAntiCheatsFile().save(FileUtils.LoadedAntiCheatsConfigFile);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	public static final String AllCommands_Permission = "me.killstorm103.rebug.commands.*";
+	private final ArrayList<me.killstorm103.Rebug.Command.Command> commands = new ArrayList<me.killstorm103.Rebug.Command.Command>();
+	public ArrayList<me.killstorm103.Rebug.Command.Command> getCommands() {
+		return commands;
+	}
+	
+	public int getAccessToCommandsNumber (CommandSender sender)
+	{
+		int access = getCommands().size();
+		if (sender instanceof Player) 
+		{
+			Player player = (Player) sender;
+			if (!player.hasPermission(AllCommands_Permission) && !PT.hasAdminPerms(player)) 
+			{
+				for (me.killstorm103.Rebug.Command.Command c : getCommands())
+				{
+					if (!player.hasPermission(c.getPermission()))
+						access --;
+				}
+			}
+			return access;
+		}
+		for (me.killstorm103.Rebug.Command.Command c : getCommands())
+		{
+			if (c.getType() == Types.Player)
+				access --;
+		}
+		return access;
+	}
+
+	public me.killstorm103.Rebug.Command.Command getCommandByName(String name) {
+		Iterator<me.killstorm103.Rebug.Command.Command> iter = commands.iterator();
+		while (iter.hasNext()) {
+			me.killstorm103.Rebug.Command.Command mod = iter.next();
+			if (mod.getName().equalsIgnoreCase(name))
+				return mod;
+		}
+		return null;
+	}
+
+	public me.killstorm103.Rebug.Command.Command getCommandBySubName (String name)
+	{
+		Iterator<me.killstorm103.Rebug.Command.Command> iter = commands.iterator();
+		while (iter.hasNext()) 
+		{
+			me.killstorm103.Rebug.Command.Command mod = iter.next();
+			if (!PT.isStringNull(mod.SubAliases()))
+			{
+				for (int o = 0; o < mod.SubAliases().length; o++) 
+				{
+					if (mod.SubAliases()[o].equalsIgnoreCase(name))
+						return mod;
+				}
+			}
+		}
+		return null;
+	}
+
+	private final List<String> cmd = new ArrayList<>();
+	public final List<String> getCMDList ()
+	{
+		if (cmd.isEmpty())
+		{
+			for (me.killstorm103.Rebug.Command.Command c : getCommands())
+			{
+				cmd.add(c.getName());
+			}
+		}
+		
+		return cmd;
+	}
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) 
+	{
+		if (alias.equalsIgnoreCase("rebug")) 
+		{
+			if (args.length == 1)
+			{
+				List<String> list = new ArrayList<>();
+				StringUtil.copyPartialMatches(args[args.length - 1], getCMDList(), list);
+				return list;
+			}
+			if (args.length > 1)
+			{
+				me.killstorm103.Rebug.Command.Command c = getCommandByName(args[0]);
+				if (c != null && c.HasCustomTabComplete(sender, command, args, alias))
+					return c.onTabComplete(sender, command, args, alias);
+			}
+			return super.onTabComplete(sender, command, alias, args);
+		}
+		return super.onTabComplete(sender, command, alias, args);
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+	{
+		Debug(sender, "args.length= " + args.length + " command= " + command);
+		Debug(sender, "label: " + label + (args.length > 0 ? " args[0]: " + args[0].replace("/", "") : "") + (args.length > 1 ? " " + args[1] : ""));
+		me.killstorm103.Rebug.Command.Command commands = null;
+		if (label.equalsIgnoreCase("rebug")) 
+		{
+			if (args.length == 0) {
+				Bukkit.dispatchCommand(sender, "rebug help");
+				return true;
+			}
+			commands = getCommandByName(args[0]);
+			commands = commands == null ? getCommandBySubName(args[0].replace("/", "")) : commands;
+			if (commands == null)
+			{
+				sender.sendMessage(RebugMessage + args[0] + " is a Unknown Command try /rebug help!");
+				return true;
+			}
+		}
+		else
+			commands = commands == null ? getCommandBySubName(args.length > 0 ? args[0].replace("/", "") : label) : commands;
+		
+		if (commands != null) 
+		{
+			try {
+				Types type = commands.getType();
+				if (type == null)
+				{
+					Log(Level.WARNING, commands.getName() + "'s Command Type was somehow Null!");
+					type = Types.AnySender;
+				}
+				if (type.equals(Types.Player) && !(sender instanceof Player))
+				{
+					Log(Level.INFO, "Only Players can use this Command!");
+					return true;
+				}
+				if (type.equals(Types.Console) && sender instanceof Player)
+				{
+					sender.sendMessage(RebugMessage + "Only Console can use this Command!");
+					return true;
+				}
+				User user = null;
+				if (sender instanceof Player) 
+				{
+					user = getUser((Player) sender);
+					if (user == null) 
+					{
+						sender.sendMessage(RebugMessage + "\"User\" was somehow null when executing command!");
+						return true;
+					}
+				}
+				if (user == null) 
+				{
+					commands.onCommand(sender, label, args);
+					return true;
+				}
+				if ((user.hasPermission(commands.getPermission()) || user.hasPermission(AllCommands_Permission) || PT.hasAdminPerms(user))) 
+				{
+					if (commands.hasCommandCoolDown() && !user.hasPermission("me.killstorm103.rebug.command_bypass_delay") && !PT.hasAdminPerms(user))
+					{
+						if (commands.CoolDown.containsKey(user.getUUID()))
+						{
+							if (commands.CoolDown.get(user.getUUID()) > System.currentTimeMillis()) 
+							{
+								long time = (commands.CoolDown.get(user.getUUID()) - System.currentTimeMillis()) / 1000;
+								user.sendMessage("Command is on CoolDown for " + time + " second" + (time > 1 ? "s" : "") + "!");
+								return true;
+							}
+							else
+							{
+								commands.onCommand(sender, label, args);
+								commands.CoolDown.put(user.getUUID(), System.currentTimeMillis() + (5 * 1000));
+								return true;
+							}
+						}
+						else 
+						{
+							commands.onCommand(sender, label, args);
+							commands.CoolDown.put(user.getUUID(), System.currentTimeMillis() + (5 * 1000));
+							return true;
+						}
+					}
+					else
+					{
+						commands.onCommand(sender, label, args);
+						return true;
+					}
+				} 
+				else
+				{
+					user.sendMessage("You don't have Permission to use this command!");
+					return true;
+				}
+			} 
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		} 
+		return super.onCommand(sender, command, label, args);
+	}
+}
