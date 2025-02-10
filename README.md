@@ -1,4 +1,5 @@
 Rebug is a Test Server/AntiCheat Switcher plugin
+
 Versions/Editions:
 - Essential: is a Essential version of Rebug which only allows you to switch between different AntiCheats
 - Extra: Allows you to switch between different AntiCheats and has extra features like exploits players can use on themselves to test and see if their client is vulnerable
