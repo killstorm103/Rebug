@@ -1,0 +1,123 @@
+Rebug Settings:
+  menu:
+    size: 18
+    
+  Double Jump Cooldown:
+    type: Double
+    default-setting-value: 10
+    max-value: 500
+    min-value: 0
+    item:
+      description:
+      - Cooldown for Users
+      - Double Jumping
+      - if Disabled or Value = 0
+      - Users won't have a cooldown
+      slot: 8
+      default:
+        material: LEVER
+        has-data: false
+        data: 0
+    
+  Auto Clear Scaffold After Place:
+    type: Boolean
+    default-setting-value: false
+    item:
+      description: 
+      - Auto Clear Scaffold
+      - test area Or don't
+      - without this Enabled
+      - User Setting Auto Refill
+      - Blocks Won't work
+      slot: 7
+      default:
+        material: STONE
+        has-data: false
+        data: 0
+          
+  Back:
+    type: Action
+    default-setting-value: false
+    item:
+      description:
+      - Go back to User Settings Menu
+      slot: 0
+      default:
+        material: IRON_DOOR
+        has-data: false
+        data: 0
+    
+  Op/Deop:
+    type: Action
+    item:
+      description:
+      - Op/Deop Yourself
+      slot: 1
+      default:
+        material: BOOK
+        has-data: false
+        data: 0
+    
+          
+  Debug To Ops Only:
+    type: Boolean
+    default-setting-value: true
+    item:
+      description:
+      - Enable/Disable Debugging to Ops only
+      slot: 3
+      default:
+        material: PAPER
+        has-data: false
+        data: 0
+            
+    
+  Reload Config:
+    type: Action
+    default-setting-value: false
+    item:
+      description:
+      - Reload Rebugs Configs
+      slot: 6
+      default:
+        material: REDSTONE
+        has-data: false
+        data: 0
+    
+  Kick On Reload Config:
+    type: Boolean
+    default-setting-value: false
+    item:
+      description:
+      - if Enabled onlines Players
+      - will get kicked when
+      - you reload Rebugs Config!
+      slot: 5
+      default:
+        material: PAPER
+        has-data: false
+        data: 0
+    
+  Debug: 
+    type: Boolean
+    default-setting-value: false
+    item:
+      description:
+      - Enable/Disable Debugging Rebug
+      slot: 2
+      default:
+        material: REDSTONE
+        has-data: false
+        data: 0
+      
+  Per Player Alerts:
+    type: Boolean
+    default-setting-value: true
+    item:
+      description:
+      - Enable/Disable Per Player AntiCheat Alerts
+      slot: 4
+      default:
+        material: DROPPER
+        has-data: false
+        data: 0

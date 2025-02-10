@@ -1,0 +1,243 @@
+on-join-and-quit:
+  join:
+    custom-message-enabled: true
+    message: '&7[&a+&7] %user%'
+    commands:
+      everytime:
+      - grim verbose
+      - foxaddition verbose
+      - matrix verbose
+      once:
+      - horizon verbose
+  quit:
+    custom-message-enabled: true
+    message: '&7[&c-&7] %user%'
+command:
+  settings:
+    # # to change the label open up RebugEssential.jar and open plugin.yml
+    # # and add a new command by the new label name or change the rebug command to
+    # # whatever name you want for the label
+    # # if you change label you will have to do this everytime you download and install a new version of Rebug!
+    command-label: rebug
+    main-command:
+      label: rebug
+      register-using-paper: false
+    cooldown-bypass-permission: rebug.command.bypass.delay
+    permission-for-all-commands: rebug.commands.*
+    allow-sub-commands: true
+    register-commands-using-paper: false
+    register-on-new-thread:
+      enabled: false
+      normal: true
+    thread-sleep: 0
+    debug:
+      onEnable-sub-commands: false
+      onTabComplete-sub-commands: false
+  commands:
+    # # for enabling Shurtcut commands
+    # # if you want it to show up as a command suggestion
+    # # you'll need to open RebugEssential.jar and open plugin.yml
+    # # and then add the command to the commands list!
+    # # if you want to do this you will have to do this everytime you download and install a new version of Rebug!
+    # # when disabling a ShortCut for a command remember to remove the command from the plugin.yml or it'll show up as a command suggestion!
+    getuuid:
+      description: get the players uuid
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 20
+    back:
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+    discord:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 10
+    heal:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 6
+    clientcommandchecker:
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 6
+    feed:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 6
+    healandfeed:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 7
+    ac:
+      description: Change what AntiCheat or AntiCheats you have selected
+      permission: rebug.user.select.anticheats
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    checkac:
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    settings:
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    version:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 6
+    damage:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 6
+    credits:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    player:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 8
+    health:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 6
+    setuseranticheat:
+      shortcut-enabled: true
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    showcommands:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 5
+    fly:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: false
+      cooldown: 10
+    vclip:
+      shortcut-enabled: false
+      remove-slash: false
+      has-cooldown: true
+      cooldown: 5
+scoreboard:
+  enabled: true
+  plugin: 2
+  custom:
+    slots-that-change:
+      onground:
+        enabled: true
+        text: '&cOnGround&a %user_onground%'
+        replace: false
+        slot: 0
+      sneaking:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 1
+      sprinting:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 2
+      blocking:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 3
+      timer_balance:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 4
+      pps:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 5
+      bpsy:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 6
+      bpsxz:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 7
+      cps:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 8
+      anticheat:
+        enabled: true
+        text: ''
+        replace: false
+        slot: 10
+    list:
+    - '&2OnGround&a %user_onground%'
+    - '&4Sneaking&a %user_issneaking%'
+    - '&4Sprinting&a %user_issprinting%'
+    - '&4Blocking&a %user_isblocking%'
+    - '&4TB&r %user_timer_balance%'
+    - '&4PPS&r %user_pps%'
+    - '&4BPS (Y)&r %user_bpsy%'
+    - '&4BPS (XZ)&r %user_bpsxz%'
+    - '&4CPS&r %user_cps%'
+    - '&4Client&r %user_client%'
+    - '&4AC&r %user_anticheat%'
+    - '&r '
+    - '&8| &cTest &aServer &8|'
+  title: '&7| &l&7killstorm103''s&r &7|'
+  marks:
+    x: '&l&cX'
+user:
+  update-perms-command: lp user %user% parent set %anticheat%
+  use-ranks: true
+  ranks: 1
+  staff-group-command: lp user %user% parent add %rank%
+world:
+  explosions:
+    modifier: true
+    break-blocks: false
+tab:
+  title: '&8| &l&7killstorm103''s&r &8| &cTest &2Server &8|'
+clip:
+  vclip:
+    enabled: true
+    max-value: 500
+  hclip:
+    enabled: true
+    max-value: 50
+discord:
+  disabled: false
+  reason: Giving out the discord invite Link is disabled!
+  color-code-support: false
+  link: https://discord.gg/5xWHx3MUUr
+  messages:
+    msg:
+      enabled: true
+      text: 'Our discord server invite link:'
+      color-code-support: true
+    msg2:
+      enabled: true
+      text: '%link%'
+      color-code-support: false

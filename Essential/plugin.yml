@@ -1,0 +1,37 @@
+name: RebugEssential
+version: '1.0-Pre2'
+main: me.killstorm103.Rebug.RebugPlugin
+author: killstorm103
+description: This is a Essential Version of Rebug so it only allows you to switch between AntiCheats!
+folia-supported: true
+website: github.com/killstorm103/Rebug
+softdepend:
+- Netherboard
+- PlaceholderAPI
+- GrimAC
+depend:
+- packetevents
+
+commands:
+  rebug:
+    description: command prefix for using rebugs commands
+    usage: rebug <command>
+  ac:
+    description: Open AntiCheats Menu or do /ac <ac> (ac) (....)
+    usage: ac <ac> (ac) (....)
+  checkac:
+    description: check the given players AntiCheat(s)
+    usage: checkac <user/player>
+  setuseranticheat:
+    description: set a given user's anticheat(s)
+    usage: setuseranticheat <ac> (ac) (....)
+  settings:
+    description: Open Player and Rebug Settings Menu
+    usage: settings
+  back:
+    description: Back to where you died
+    usage: back
+  clientcommandchecker:
+    description: Back to where you died
+    usage: back
+    
