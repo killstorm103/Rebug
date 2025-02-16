@@ -24,6 +24,7 @@ Info:
 - Rebug comes ready to go all you have to do is: download and install the AntiCheats you want to be able to test and setup groups/permissions, if your not using LuckPerms you will need to edit the config a little!
 - To use placeholders it's %rebug_(params)
 - You can find the Placeholders here: https://github.com/killstorm103/Rebug/blob/main/Essential/me/killstorm103/Rebug/Hooks/PlaceholderapiHook.java
+- For a Scoreboard i would recommend: AnimatedScoreboard by JasperJH: https://www.spigotmc.org/resources/animatedscoreboard.20848/
 
 
 Known Bugs:
