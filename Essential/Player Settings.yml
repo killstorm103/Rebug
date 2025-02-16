@@ -6,6 +6,19 @@ Rebug Settings:
       has-data: false
       data: 0
 
+Anti-Force Close Menu:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Stops the server/anticheat
+    - force closing your gui/menu your in
+    slot: 20
+    default:
+      material: ANVIL
+      has-data: false
+      data: 0
 Time Adjuster:
   enabled: true
   type: Boolean
@@ -109,8 +122,9 @@ Client Command Checker:
   type: Boolean
   default-setting-value: true
   sendOnce: true
+  time-to-pass: 120
   component:
-    already-passed-message: You already passed this check!
+    already-passed-message: You already passed or failed this check, try again by doing /rebug clientcommandchecker!
     successfully-passed-message: '&aSuccessfully passed Client Command Checker!'
     button: '&l&b████████████'
     command: '/rebug clientcommandchecker'

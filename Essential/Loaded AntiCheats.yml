@@ -194,9 +194,24 @@ loaded-anticheats:
     lightanticheat_kauri_foxaddition: 1124
   ## Size of the Anticheats Menu/Inventory!
   ## Inventory Size can be: 9, 18, 27, 36, 45, 54
-  Inventory-size: 27
+  Inventory:
+    size: 27
+    paged:
+      enabled: false
+      buttons:
+        ## to find out the slot number start counting from the top left, start counting from 0
+        next-page-slot: 
+          default: 26
+        previous-page-slot:
+          default: 18
+        current-page-count:
+          enabled: true
+          slot:
+            default: 22
+      
   ## AC Names:
   ## make them what their name is in their plugin.yml, don't use color codes here!
+  ## to find what their name is inside their plugin.yml open up their .jar file!
   ac-names:
   - 'NoCheatPlus'
   - 'GrimAC'
@@ -226,6 +241,7 @@ loaded-anticheats:
   - 'Reflex'  
   ## AC items:
   ## Name them what their name is above but in lower case and without color codes!
+  ## main-name is the name inside their plugin.yml!, put color codes here if you want!, &l would be for Bold text for example
   ## has-data (for example: red wool has-data would be true and data would be 14 and item would be 35)
   ## item is the item number ID
   ## fix-description: Boolean, use this and , offset-description: Number, to fix the AntiCheats description if it's going off of the screen!
@@ -781,9 +797,16 @@ loaded-anticheats:
     fix-description: true
     offset-description: 49
     alert-message: grim
-    requires-reconnect: true
+    requires-reconnect: false
     requires-combining: false
-    api: false
+    api:
+      check:
+        for-disabled-alerts: true
+        for-plugin: false
+      enabled:
+        normal: true
+        on-join: false
+        on-leave: false
     menu-slot:
       default: 8
       v1_21_R3: 2

@@ -39,7 +39,7 @@ server:
           default:
           - Spigot
           v1_8_R3:
-          - Paper
+          - PaperSpigot
     
     types:
       Magma:

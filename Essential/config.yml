@@ -40,6 +40,8 @@ command:
     # # and then add the command to the commands list!
     # # if you want to do this you will have to do this everytime you download and install a new version of Rebug!
     # # when disabling a ShortCut for a command remember to remove the command from the plugin.yml or it'll show up as a command suggestion!
+    damagetick:
+      shortcut-enabled: true
     getuuid:
       description: get the players uuid
       shortcut-enabled: false
@@ -138,78 +140,24 @@ command:
       has-cooldown: true
       cooldown: 5
 scoreboard:
-  enabled: true
-  plugin: 2
-  custom:
-    slots-that-change:
-      onground:
-        enabled: true
-        text: '&cOnGround&a %user_onground%'
-        replace: false
-        slot: 0
-      sneaking:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 1
-      sprinting:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 2
-      blocking:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 3
-      timer_balance:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 4
-      pps:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 5
-      bpsy:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 6
-      bpsxz:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 7
-      cps:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 8
-      anticheat:
-        enabled: true
-        text: ''
-        replace: false
-        slot: 10
-    list:
-    - '&2OnGround&a %user_onground%'
-    - '&4Sneaking&a %user_issneaking%'
-    - '&4Sprinting&a %user_issprinting%'
-    - '&4Blocking&a %user_isblocking%'
-    - '&4TB&r %user_timer_balance%'
-    - '&4PPS&r %user_pps%'
-    - '&4BPS (Y)&r %user_bpsy%'
-    - '&4BPS (XZ)&r %user_bpsxz%'
-    - '&4CPS&r %user_cps%'
-    - '&4Client&r %user_client%'
-    - '&4AC&r %user_anticheat%'
-    - '&r '
-    - '&8| &cTest &aServer &8|'
   title: '&7| &l&7killstorm103''s&r &7|'
   marks:
     x: '&l&cX'
 user:
+  one-second-updater-use-asynchronously: true
+  is-moving-check:
+    asynchronously: true
+    delayTicks: 5
+    periodTicks: 0
+  values:
+    booleans:
+      # # Use Tick and X instead of true or false, if this values.boolean is true
+      # # by default it will be true if the value is not found!
+      onground: true
+      ismoving: true
+      isblocking: true
+      issprinting: true
+      issneaking: true
   update-perms-command: lp user %user% parent set %anticheat%
   use-ranks: true
   ranks: 1
