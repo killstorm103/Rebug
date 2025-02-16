@@ -33,11 +33,6 @@
   		<version>24.1.0</version>
   	</dependency>
   	<dependency>
-  		<groupId>fr.minuskube</groupId>
-  		<artifactId>netherboard-bukkit</artifactId>
-  		<version>[1.2.3, 2.5.0)</version>
-  	</dependency>
-  	<dependency>
   		<groupId>io.papermc.paper</groupId>
   		<artifactId>paper-api</artifactId>
   		<version>1.21.4-R0.1-SNAPSHOT</version>

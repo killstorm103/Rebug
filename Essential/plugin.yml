@@ -1,12 +1,11 @@
 name: RebugEssential
-version: '1.0-Pre2'
+version: '1.0'
 main: me.killstorm103.Rebug.RebugPlugin
 author: killstorm103
 description: This is a Essential Version of Rebug so it only allows you to switch between AntiCheats!
 folia-supported: true
 website: github.com/killstorm103/Rebug
 softdepend:
-- Netherboard
 - PlaceholderAPI
 - GrimAC
 depend:
@@ -34,4 +33,6 @@ commands:
   clientcommandchecker:
     description: Back to where you died
     usage: back
-    
+  damagetick:
+    description: change your damage tick
+    usage: damagetick
