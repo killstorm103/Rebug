@@ -28,6 +28,6 @@ Info:
 
 
 Known Bugs:
-- None
+- user.isBlocking() isn't working
 - 
 - To Report a bug open a issue but join my discord server first and check rebugs live changelog to make sure it hasn't been fixed already!
