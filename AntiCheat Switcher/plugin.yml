@@ -1,0 +1,38 @@
+name: RebugsAntiCheatSwitcher
+version: '1.1'
+main: me.killstorm103.Rebug.RebugsAntiCheatSwitcherPlugin
+author: killstorm103
+description: Allows you to switch between AntiCheats!
+folia-supported: true
+website: github.com/killstorm103/Rebug
+softdepend:
+- PlaceholderAPI
+- GrimAC
+depend:
+- packetevents
+
+commands:
+  rebugsanticheatswitcher:
+    description: command prefix for using rebugs commands
+    usage: rebugsanticheatswitcher <command>
+  ac:
+    description: Open AntiCheats Menu or do /ac <ac> (ac) (....)
+    usage: ac <ac> (ac) (....)
+  checkac:
+    description: check the given players AntiCheat(s)
+    usage: checkac <user/player>
+  setuseranticheat:
+    description: set a given user's anticheat(s)
+    usage: setuseranticheat <ac> (ac) (....)
+  settings:
+    description: Open Player and Rebug Settings Menu
+    usage: settings
+  back:
+    description: Back to where you died
+    usage: back
+  clientcommandchecker:
+    description: Back to where you died
+    usage: back
+  damagetick:
+    description: change your damage tick
+    usage: damagetick
