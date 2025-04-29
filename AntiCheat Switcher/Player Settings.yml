@@ -1,0 +1,532 @@
+Rebug Settings:   
+  enabled: true   
+  item:
+    slot: 53
+    default:
+      material: TNT
+      has-data: false
+      data: 0
+
+Attack Debugger:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Debugs attacks
+    slot: 15
+    default:
+      material: DIAMOND_SWORD
+      has-data: false
+      data: 0
+
+Anti-Force Close Menu:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Stops the server/anticheat
+    - force closing your gui/menu your in
+    slot: 22
+    default:
+      material: IRON_FENCE
+      has-data: false
+      data: 0
+      
+Time Adjuster:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Adjust the world
+    - time for the Player or not
+    slot: 20
+    default:
+      material: LEVER
+      has-data: false
+      data: 0
+
+World Time:
+  enabled: true
+  type: Integer
+  default-setting-value: 1000
+  max-value: 20000
+  min-value: 1000
+  change-value: 10
+  item:
+    description:
+    - World Time Value
+    - you need
+    - the User Setting
+    - Time Adjuster enabled
+    - for this
+    slot: 21
+    default:
+      material: REDSTONE
+      has-data: false
+      data: 0    
+
+Double Jump:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Enable/Disable Double Jump
+    slot: 16
+    default:
+      material: SLIME_BLOCK
+      has-data: false
+      data: 0
+      
+Double Jump Height:
+  enabled: true
+  type: Double
+  default-setting-value: .5
+  max-value: 10
+  min-value: .5
+  item:
+    description:
+    - Change how high you jump
+    - when using Double Jump
+    slot: 17
+    default:
+      material: LEGACY_PISTON_BASE
+      has-data: false
+      data: 0
+    v1_8_R3:
+      material: PISTON_BASE
+      has-data: false
+      data: 0
+
+Modifi AllowFlight:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - This needs to be enabled
+    - for allowing 
+    - Double Jumping
+    - and needs to
+    - be Disabled for
+    - using /fly, /rebug fly
+    slot: 18
+    default:
+      material: LEVER
+      has-data: false
+      data: 0
+      
+Night Vision:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Night Vision
+    slot: 19
+    default:
+      material: POTION
+      has-data: false
+      data: 0
+  
+Client Command Checker:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  sendOnce: true
+  time-to-pass: 120
+  component:
+    already-passed-message: You already passed or failed this check, try again by doing /rebugsanticheatswitcher clientcommandchecker!
+    successfully-passed-message: '&aSuccessfully passed Client Command Checker!'
+    button: '&l&b████████████'
+    command: '/rebugsanticheatswitcher clientcommandchecker'
+    messages:
+      msg:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg2:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg3:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg4:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg5:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg6:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+      msg7:
+        text: '%rebug% %button%'
+        hover: 'Click this message to check for client commands! %time% left'
+  strings:
+    top: '&e------&aplease click the button&e------'
+    bottom: '&e------&aplease click the button&e------'
+  item:
+    description:
+    - Checks if the player is using cheats
+    - by checking if they have client commands like
+    - .say this is easily bypassed
+    - this is done when the player first joins the server!
+    slot: 9
+    default:
+      material: COMMAND
+      has-data: false
+      data: 0
+  
+Hide Online Players: 
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Hide/Unhide All Online Players
+    slot: 6
+    default:
+      material: EXP_BOTTLE
+      has-data: false
+      data: 0
+  
+Proximity Player Hider:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  permission: me.killstorm.daddy
+  item:
+    description:
+    - Hide players that are near you!
+    slot: 7
+    default:
+      material: IRON_DOOR
+      has-data: false
+      data: 0
+      
+Proximity Hider Distance:
+  enabled: true
+  type: Double
+  default-setting-value: 6
+  max-value: 20
+  min-value: 1.5
+  distance: 10
+  permission: me.killstorm.daddy
+  item:
+    description:
+    - Right and Left Click
+    - to increase/decrease 
+    - Distance for 
+    - Proximity Player Hider
+    - to hide players
+    slot: 8
+    default:
+      material: IRON_DOOR
+      has-data: false
+      data: 0
+  
+Fire Resistance:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Enable/Disable Fire Resistance
+    slot: 5
+    default:
+      material: FIREBALL
+      has-data: false
+      data: 0
+  
+Damage Resistance: 
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Enable/Disable Damage Resistance
+    slot: 4
+    default:
+      material: ARMOR_STAND
+      has-data: false
+      data: 0
+  
+Hunger:
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Enable/Disable Hunger
+    slot: 0
+    default:
+      material: COOKED_BEEF
+      has-data: false
+      data: 0
+  
+Exterranl Damage:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Exterranl Damage
+    slot: 3
+    default:
+      material: ARROW
+      has-data: false
+      data: 0
+  
+Fall Damage:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable FallDamage
+    slot: 2
+    default:
+      material: FEATHER
+      has-data: false
+      data: 0
+  
+Flags: 
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Show anticheat flags
+    slot: 27
+    default:
+      material: BANNER
+      has-data: false
+      data: 0
+      
+Flagged Move: 
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Tells you when your
+    - Movement was prevented
+    - by the server
+    - ''
+    - User Setting Only
+    - available on some 
+    - Paper servers
+    slot: 30
+    default:
+      material: BANNER
+      has-data: false
+      data: 0
+      
+Bypass Move Failed: 
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  permission: rebugsanticheatswitcher.user.setting.bypassmovefailed
+  item:
+    description:
+    - Allows you to
+    - Bypass being flagged
+    - Back
+    - ''
+    - May only work
+    - on none AntiCheat flag backs!
+    - ''
+    - User Setting Only
+    - available on some 
+    - Paper servers
+    slot: 31
+    default:
+      material: LEVER
+      has-data: false
+      data: 0
+  
+Punishes:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Show anticheat alerts for
+    - you were/would of been Punished
+    slot: 28
+    default:
+      material: BANNER
+      has-data: false
+      data: 0
+  
+Setbacks:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Show anticheat alerts for
+    - you were/would of been Setback
+    slot: 29
+    default:
+      material: BANNER
+      has-data: false
+      data: 0
+  
+Potions:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Potion Effects
+    slot: 1
+    default:
+      material: POTION
+      has-data: false
+      data: 0
+  
+Auto Refill Blocks:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  ticks: 200
+  locked-to-area: true
+  locked-to-world: false
+  cancel: true
+  area:
+    world-name: world
+    minX: -65
+    minY: 64
+    minZ: -20
+    maxX: -75
+    maxY: 74
+    maxZ: -30
+  item:
+    description:
+    - Enable/Disable Auto Block Refill
+    - for Scaffold Test Area
+    slot: 11
+    default:
+      material: STONE
+      has-data: false
+      data: 0
+  
+Infinite Blocks: 
+  enabled: true
+  type: Boolean
+  default-setting-value: false
+  item:
+    description:
+    - Enable/Disable blocks you place being Infinite
+    slot: 10
+    default:
+      material: DISPENSER
+      has-data: false
+      data: 0
+      
+S08 Alerts:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  ticks: 100
+  item:
+    description:
+    - Enable/Disable Alerts for S08
+    slot: 32
+    default:
+      material: PAPER
+      has-data: false
+      data: 0
+      
+Register Packet:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Alerts
+    - for Register CustomPayLoad
+    slot: 34
+    default:
+      material: BOOK
+      has-data: false
+      data: 0
+
+ClientBrand Packet:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Alerts
+    - for ClientBrand CustomPayLoad
+    slot: 33
+    default:
+      material: BOOK
+      has-data: false
+      data: 0
+
+Other CustomPayLoad:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Enable/Disable Alerts
+    - for Other CustomPayLoads
+    slot: 35
+    default:
+      material: BOOK
+      has-data: false
+      data: 0
+
+Hitbox Debugger:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    state: in Development
+    description: 
+    - uses Particles to
+    - Show you a players 
+    - hitbox when you hit them
+    - may not work on older clients
+    slot: 12
+    default:
+      material: SKULL_ITEM
+      has-data: false
+      data: 0
+
+RayTrace Debugger:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    state: in Development
+    description:
+    - uses Particles to
+    - Show you where you
+    - were looking when you hit a player
+    - may not work on older clients
+    slot: 13
+    default:
+      material: DIAMOND_SWORD
+      has-data: false
+      data: 0
+      
+Reach Debugger:
+  enabled: true
+  type: Boolean
+  default-setting-value: true
+  item:
+    description:
+    - Debugs reach idk
+    slot: 14
+    default:
+      material: DIAMOND_SWORD
+      has-data: false
+      data: 0

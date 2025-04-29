@@ -1,0 +1,109 @@
+ranks:
+  killstorm103:
+    rank: Owner
+    is-staff: true
+  stormalt:
+    rank: Owner
+    is-staff: true
+    
+server:
+  onEnable:
+    create-menus-delay: 5
+  softwares:
+    path-min: 2
+    replace:
+    - '-'
+    - '@'
+    - '('
+    - ')'
+    force:
+      set-name: false
+      name: Hidden
+      set-version: false
+      version: idk it's hidden
+      scan:
+        alert-only: true
+        types:
+          default:
+          - Spigot
+          v1_8_R3:
+          - PaperSpigot
+    
+    types:
+      Magma:
+        path:
+          default: 
+          - org.magmafoundation.magma.MagmaStart
+        grab-version-from-at:
+          default: '3'
+      Duck Fucker:
+        grab-version-from-at:
+          default: '2'
+      Limbo:
+        path:
+          default:
+          - com.loohp.limbo
+        grab-version-from-at:
+          default: '1'
+      Spigot:
+        path: 
+          default:
+          - org.spigotmc.SpigotConfig
+        grab-version-from-at:
+          default: '0, 2, 3'
+      Bukkit:
+        grab-version-from-at: 
+          default: '0, 2'
+      CraftBukkit:
+        name: Bukkit
+        grab-version-from-at: 
+          default: '0, 2'
+      Paper:
+        path:
+          default:        
+          - com.destroystokyo.paper.ParticleBuilder
+          - io.papermc.paperclip.Paperclip
+        grab-version-from-at:
+          default: '1'
+          v1_16_R3: '2'
+      PaperSpigot:
+        name: Paper
+        path: 
+          default:        
+          - com.destroystokyo.paper.ParticleBuilder
+          - io.papermc.paperclip.Paperclip
+        grab-version-from-at:
+          default: '1'
+      Purpur:
+        path:
+          default:
+          - 
+        grab-version-from-at:
+          default: '1, 2'
+      PandaSpigot:
+        path:
+          default:
+          - com.hpfxd.pandaspigot.paperclip.Paperclip
+        grab-version-from-at:
+          default: '2'
+      Leaf:
+        path: 
+          default:
+          - cn.dreeam.leaper.QuantumLeaper
+        grab-version-from-at: 
+          default: '2'
+      Folia:
+        path:
+          default:
+          - io.papermc.paper.threadedregions.RegionizedServer
+        grab-version-from-at: 
+          default: '2'
+      Velocity:
+        path:
+          default:
+          - com.velocitypowered.natives.compression.VelocityCompressorFactory
+          - com.velocitypowered.natives.compression.VelocityCompressor
+          - com.velocitypowered.proxy.VelocityServer
+          - com.velocitypowered.api.proxy.ProxyServer
+        grab-version-from-at:
+          default: '1'
